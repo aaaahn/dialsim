@@ -1,0 +1,455 @@
+<!--This work © 2023 by Timothy W Meyer, Andrew Ahn is licensed under CC BY 4.0 -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dr Coplon Dialysis Simulator</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+    <script src="https://unpkg.com/chart.js"></script>
+    <style>
+      body {
+        display: grid;
+        /* grid-template-columns: 33% auto; */
+        grid-template-columns: 1fr 2fr; /* 1:3 ratio for the left and right columns: */
+        gap: 10px;
+      }
+      #menu {
+        grid-column: 1;
+        display: grid;
+        gap: 10px;
+      }
+      .menu-item {
+        grid-column: span 4;
+        display: flex;
+        justify-content: space-between;
+        align-items: center; /* Center items vertically within each menu item */
+      }
+      .menu-item label {
+        flex: 1; /* Adjust the label width to 2/4 (50% of the available space) */
+        text-align: left; /* Align labels to the right for better appearance */
+        padding-right: 10px; /* Add some right padding for labels */
+      }
+      .menu-item input {
+        flex: 1; /* Adjust the input width to 1/4 (25% of the available space) */
+        /* width: 100%; */
+      }
+      #right-side {
+        gap: 10px;
+      }
+      #chart-container {
+        width: 100%; /* Specify the width of the chart's container */
+        height: 500px; /* You can adjust the height as needed */
+        grid-column: 1 / span 4;
+      }
+      #chart {
+        width: 100%; /* Make sure the chart respects its container's width */
+        height: 100%; /* Make sure the chart respects its container's height */
+      }
+      button {
+        font-size: 2em; /* Increase the font size */
+        padding: 10px 20px; /* Increase the padding */
+        width: 200px; /* Increase the width */
+        font-weight: bold; /* Make the font bold */
+        grid-column: 1 / span 4;
+      }
+      h3 {
+        text-align: center; /* Center the text */
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="menu">
+      <menu>
+        <!-- Your menu components here -->
+        <h3>Dialysis Parameters</h3>
+        <div class="menu-item">
+        <label for="duration"> Duration(hours) </label>
+          <input
+            type="number"
+            id="duration"
+            name="duration"
+            required
+            step="0.01"
+            min="0"
+            max="9"
+            value="3.33"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="bloodflow"> Blood Flow(mL/min) </label>
+          <input
+            type="number"
+            id="bloodflow"
+            name="bloodflow"
+            required
+            step="10"
+            min="0"
+            max="999"
+            value="360"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="dialysateflow"> Dialysate Flow (mL/min) </label>
+          <input
+            type="number"
+            id="dialysateflow"
+            name="dialysateflow"
+            required
+            step="10"
+            min="0"
+            max="999"
+            value="500"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="koa"> KoA(mL/min) </label>
+          <input
+            type="number"
+            id="koa"
+            name="koa"
+            required
+            step="10"
+            min="0"
+            max="999"
+            value="500"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="sigma"> Sigma(0 &le; s &le; 1)</label>
+          <input
+            type="number"
+            id="sigma"
+            name="sigma"
+            min="0"
+            max="1"
+            required
+            step="0.1"
+            value="0"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="uf"> UF to offset Fluid Gain (L/t)* </label>
+          <input
+            type="number"
+            id="uf"
+            name="uf"
+            required
+            step="1"
+            min="0"
+            max="999"
+            step="0.1"
+            value="0"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="additionaluf"> Additional UF (L/t)* </label>
+          <input
+            type="number"
+            id="additionaluf"
+            name="additionaluf"
+            required
+            step="1"
+            min="0"
+            max="999"
+            value="0"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="predilution"> Predilution (L/t)* </label>
+          <input
+            type="number"
+            id="predilution"
+            name="predilution"
+            required
+            step="1"
+            min="0"
+            max="999"
+            value="0"
+            oninput="ready();"
+          />
+        </div>
+        <input type="checkbox" id="monday" onclick="ready();" checked />Mon
+        <input type="checkbox" id="tuesday" onclick="ready();" />Tue
+        <input type="checkbox" id="wednesday" onclick="ready();" checked />Wed
+        <input type="checkbox" id="thursday" onclick="ready();" />Thu
+        <input type="checkbox" id="friday" onclick="ready();" checked />Fri
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="checkbox" id="saturday" onclick="ready();" />Sat
+        <input type="checkbox" id="sunday" onclick="ready();" />Sun
+
+        <h3>Patient Parameters</h3>
+        <div class="menu-item">
+          <label for="hematocrit"> Hematocrit(%) </label>
+          <input
+            type="number"
+            id="hematocrit"
+            name="hematocrit"
+            required
+            step="1"
+            min="0"
+            max="999"
+            value="0"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="fluidgain"> Fluid Gain (L/day)* </label>
+          <input
+            type="number"
+            id="fluidgain"
+            name="fluidgain"
+            required
+            step="1"
+            min="0"
+            max="999"
+            value="0"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="endogenousclearance">
+            Endogenous Clearance (mL/min)
+          </label>
+          <input
+            type="number"
+            id="endogenousclearance"
+            name="endogenousclearance"
+            required
+            step="1"
+            min="0"
+            max="999"
+            value="0"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="recirculation"> Recirculation (%)* </label>
+          <input
+            type="number"
+            id="recirculation"
+            name="recirculation"
+            required
+            step="1"
+            min="0"
+            max="999"
+            value="0"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="solutetype"> Solute Type* </label>
+          <select name="solutetype" id="solutetype">
+            <option value="urea">Urea</option>
+            <option value="plasma">Plasma</option>
+          </select>
+        </div>
+        <div class="menu-item">
+          <label for="generationrate"> Generation Rate (mg/day) </label>
+          <input
+            type="number"
+            id="generationrate"
+            name="generationrate"
+            required
+            step="100"
+            min="0"
+            max="99999"
+            width="100%"
+            value="9524"
+            oninput="ready();"
+          />
+        </div>
+        <div class="menu-item">
+          <label for="proteinbinding"> Protein Binding (%)* </label>
+          <input
+            type="number"
+            id="proteinbinding"
+            name="proteinbinding"
+            required
+            step="1"
+            min="0"
+            max="999"
+            value="0"
+            oninput="ready();"
+          />
+        </div>
+
+        <h3>Model Parameters</h3>
+        <div class="menu-item">
+          <label for="modeltype"> Model Type(%)* </label>
+          <select name="modeltype" id="modeltype">
+            <option value="model1">1 Comp</option>
+            <option value="model2">2 Comp Urea</option>
+            <option value="model3">2 Comp Ad Lib</option>
+          </select>
+        </div>
+
+        <div class="menu-item">
+          <label for="volumeofdist"> Volume of Distribution (L)* </label>
+          <input
+            type="number"
+            id="volumeofdist"
+            name="volumeofdist"
+            required
+            step="1"
+            min="0"
+            max="999"
+            value="36"
+            oninput="ready();"
+          />
+        </div>
+
+        <div class="menu-item">
+          <label for="fluidgaincompartment1">
+            Fluid Gain to Compartment 1 (%)*
+          </label>
+          <input
+            type="number"
+            id="fluidgaincompartment1"
+            name="fluidgaincompartment1"
+            required
+            step="1"
+            min="0"
+            max="999"
+            value="100"
+            oninput="ready();"
+          />
+        </div>
+      </menu>
+    </div>
+
+    <div id="right-side">
+      <right-side>
+      <br /><br /><br />
+      <div id="chart-container">
+        <canvas id="chart"></canvas>
+      </div>
+      <br />
+      &nbsp;&nbsp;&nbsp;
+      <button onclick="ready()">Solve!</button> &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;
+      <input type="checkbox" id="hold" onclick="ready();" />
+      Hold* &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      <input type="checkbox" id="plottac" onclick="ready();" checked />
+
+      Plot TAC* &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      <input type="checkbox" id="plotintra" onclick="ready();" />
+      Plot Intra.*
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <select name="charttype" id="charttype">
+        <option value="concvstime">Conc vs. Time</option>
+        <option value="volumevstime">Volume vs. Time*</option>
+      </select>
+
+      <h3>Results</h3>
+      <label for="avgclearance"> Average Clearance (mL/min)* </label>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input
+        type="number"
+        id="avgclearance"
+        name="avgclearance"
+        required
+        minlength="0"
+        maxlength="100"
+        value="0"
+        oninput="ready();"
+      />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <label for="srr"> Solute Reduction Ratios* </label>
+      &nbsp;&nbsp;&nbsp;
+      <select name="srr" id="srr">
+        <option value="cvt">0.71</option>
+        <option value="cvt2">model2</option>
+      </select>
+      <br />
+      <label for="timeavgconc"> Time-Averaged Conc. (mg/dL)* </label>
+      &nbsp;&nbsp;&nbsp;
+      <input
+        type="number"
+        id="timeavgconc"
+        name="timeavgconc"
+        required
+        minlength="0"
+        maxlength="100"
+        value="0"
+        oninput="ready();"
+      />
+      <br />
+      <label for="avgpeakconc"> Average Peak Conc. (mg/dL)* </label>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input
+        type="number"
+        id="avgpeakconc"
+        name="avgpeakconc"
+        required
+        minlength="0"
+        maxlength="100"
+        value="0"
+        oninput="ready();"
+      />
+
+      <br />
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+  </right-side>
+
+  <div>
+  </div>
+  <div>
+    </div>
+    <div>
+      </div>
+          <p>(L/t) Liters per treatment</p>
+    <p xmlns:cc="http://creativecommons.org/ns#">
+      This work by
+      <a rel="cc:attributionURL dct:creator" property="cc:attributionName"
+        >Timothy W Meyer, Andrew Ahn</a
+      >
+      is licensed under
+      <a
+        href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1"
+        target="_blank"
+        rel="license noopener noreferrer"
+        style="display: inline-block;"
+        >CC BY 4.0<img
+          style="
+            height: 22px !important;
+            margin-left: 3px;
+            vertical-align: text-bottom;
+          "
+          src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" /><img
+          style="
+            height: 22px !important;
+            margin-left: 3px;
+            vertical-align: text-bottom;
+          "
+          src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"
+      /></a>
+    </p>
+
+<div>
+</div>
+    <details>
+      <summary>WeeklyCalculations</summary>
+      <table id="weeklyTable"></table>
+    </details>
+    <br /><br />
+    <details>
+      <summary>ClearanceCalculations</summary>
+      <table id="resultTable"></table>
+    </details>
+
+    <script src="src/index.js"></script>
+
+  </body>
+</html>

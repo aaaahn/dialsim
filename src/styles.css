@@ -1,0 +1,11 @@
+.madlib {
+  display: flex;
+}
+
+.link {
+  padding-left: 90px;
+}
+
+.item {
+  background-color: #e8e8e8;
+}

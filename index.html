@@ -149,7 +149,7 @@
           />
         </div>
         <div class="menu-item">
-          <label for="additionaluf"> Additional UF (L/t)* </label>
+          <label for="additionaluf"> Additional UF (L/t) </label>
           <input
             type="number"
             id="additionaluf"
@@ -158,21 +158,24 @@
             step="1"
             min="0"
             max="999"
-            value="0"
+            value="1"
             oninput="ready();"
           />
         </div>
         <div class="menu-item">
-          <label for="predilution"> Predilution (L/t)* </label>
+          <select name="replace" id="replace">
+            <option value="predilution">Predilution</option>
+            <option value="postdilution">Postdilution</option>
+          </select>
           <input
             type="number"
-            id="predilution"
-            name="predilution"
+            id="dilution"
+            name="dilution"
             required
             step="1"
             min="0"
             max="999"
-            value="0"
+            value="1"
             oninput="ready();"
           />
         </div>

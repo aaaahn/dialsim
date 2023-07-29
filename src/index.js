@@ -2,6 +2,32 @@
 import "./styles.css";
 import * as goalSeek from "goal-seek";
 
+function calculatePrePostDilution(Qf) {
+  if (Qf === 0) {
+    return 0;
+  }
+
+  // =IF(C6=1,Interface!E10*1000/AB17,0)
+  var selectElement = document.getElementById("replace");
+  var selectedValue = selectElement.value;
+  var selectedText = selectElement.options[selectElement.selectedIndex].text;
+  console.log("Selected value is: " + selectedValue);
+  console.log("Selected text is: " + selectedText);
+  console.log(`selectedText: ${selectedText}`);
+  if (selectedText === "Predilution") {
+    // AB17 is dialysis duration in mins
+    let duration_in_mins = hours_to_mins(
+      parseFloat(document.getElementById("duration").value)
+    ); // let duration = 3.33;
+    let dilution = parseFloat(document.getElementById("dilution").value);
+    let predilution = (dilution * 1000) / duration_in_mins;
+    console.log(`predilution: ${predilution}`);
+    return predilution;
+  } else {
+    return 0;
+  }
+}
+
 function calcTable(newCd) {
   let Qb = parseFloat(document.getElementById("bloodflow").value); // let Qb = 360;
   let Qd = parseFloat(document.getElementById("dialysateflow").value); // 500;
@@ -9,14 +35,17 @@ function calcTable(newCd) {
   let KoA = parseFloat(document.getElementById("koa").value); //  let KoA = 500;
   let sigma = parseFloat(document.getElementById("sigma").value); // 0;
   console.log(`sigma: ${sigma}`);
-  let Qf = 0;
-  let Qr = 0; // Ask Dr. Tim: is this Fluid Gain?
+  let Qf = parseFloat(document.getElementById("additionaluf").value); // 0;
+  console.log(`Qf: ${Qf}`);
+  let Qr = calculatePrePostDilution(Qf); // 0; // Ask Dr. Tim: is this Fluid Gain?
+  console.log(`Qr: ${Qr}`);
   let Hct = parseFloat(document.getElementById("hematocrit").value); // 0;
   console.log(`Hct: ${Hct}`);
   // let f = 0.3378;
   let f = 1.0;
   let Calb = 500;
   let Cp = 100;
+  console.log(`Cp: ${Cp}`);
   let DP0 = 40;
   let DP1 = 40;
   let solute = 0;
@@ -34,17 +63,41 @@ function calcTable(newCd) {
   let Pb = (2 * DP0) / (DP1 + DP0);
 
   let Qp = Qb * (1 - Hct);
+  console.log(`Qp: ${Qp}`);
   let Qprbc = 0.86 * Qb * Hct;
+  console.log(`Qprbc: ${Qprbc}`);
+
   if (solute === 1) {
     Qprbc = 0.86 * Qb * Hct;
   } else {
     Qprbc = 0;
   }
-  let Qpoatinlet = 360;
-  let Cp0 = 100;
-  let Calb0 = (Calb * Qp) / Qpoatinlet;
+  console.log(`Qprbc: ${Qprbc}`);
+
+  // let Qpoatinlet = 360;
+  let Qpoatinlet = Qp + Qr; // =L4+$F$7
+  console.log(`Qpoatinlet: ${Qpoatinlet}`);
   let theta_inblood = 0.07;
-  let theta_atinlet = 0.07;
+  let Calb0 = (Calb * Qp) / Qpoatinlet;
+  console.log(`Calb0: ${Calb0}`);
+  let theta_atinlet = (theta_inblood * Calb0) / Calb;
+  console.log(`theta_inblood * Calb0: ${theta_inblood * Calb0}`);
+  console.log(`Calb: ${Calb}`);
+  // let theta_atinlet = 0.07;
+  console.log(`theta_atinlet: ${theta_atinlet}`);
+  // let Cp0 = 100;
+  let Cp0_old =
+    (Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc) /
+    (Qpoatinlet + Qprbc / (1 - theta_atinlet));
+  let Cp0 =
+    (Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc) /
+    (Qpoatinlet + Qprbc / (1 - theta_atinlet));
+  let Cp0_num = Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc;
+  let Cp0_den = Qpoatinlet + Qprbc / (1 - theta_atinlet);
+  console.log(`Cp0_num: ${Cp0_num}`);
+  console.log(`Cp0_den: ${Cp0_den}`);
+
+  console.log(`Cp0: ${Cp0}`);
 
   let sz = [1001, 17];
   let varNames = [
@@ -291,9 +344,11 @@ function calcWeeklyTable(clearanceValue) {
   wt[sz[0] - 1].conc_ext = extracell_mid + 10; // just add ten to make the first iteration condition true
   console.log(`extracell_mid: ${extracell_mid}`);
   console.log(`wt[sz[0]-1].conc_ext: ${wt[sz[0] - 1].conc_ext}`);
+  let iteration_disabled = false;
   for (
     let iteration = 0;
-    Math.abs(extracell_mid - wt[sz[0] - 1].conc_ext) > 0.01;
+    Math.abs(extracell_mid - wt[sz[0] - 1].conc_ext) > 0.01 &&
+    iteration_disabled;
     iteration++
   ) {
     for (let row = 0; row < sz[0]; row++) {

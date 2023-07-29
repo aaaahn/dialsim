@@ -64,7 +64,7 @@ function calcTable(newCd) {
     "Phi",
     "Pe",
     "Massp",
-    "Massd"
+    "Massd",
   ];
   let vTable = new Array(sz[0]).fill(null).map(() =>
     Object.assign(
@@ -191,6 +191,7 @@ function calcTable(newCd) {
     10
   );
   console.log(`clearanceValue0: ${clearanceValue}`);
+  /*
   if (document.getElementById("clearanceValue"))
     document.getElementById("clearanceValue").innerHTML = clearanceValue;
   console.log(`Qp: ${Qp}`);
@@ -199,7 +200,7 @@ function calcTable(newCd) {
   console.log(`vTable[1000].theta: ${vTable[1000].theta}`);
   console.log("vTable[1000].Cp: " + vTable[1000].Cp);
   console.log(`vTable[1000].Qp: ${vTable[1000].Qp}`);
-
+*/
   // clearanceValue =                ((Qp + Qprbc / (1 - theta_inblood)) * Cp0 - (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) / Cp0;
 
   let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearanceValue); // (clearanceValue) pass in co
@@ -246,7 +247,7 @@ function calcWeeklyTable(clearanceValue) {
     Thursday,
     Friday,
     Saturday, //
-    Sunday // dialysis[day] --> false
+    Sunday, // dialysis[day] --> false
   ]; // javascript arrays are zero indexed
 
   let sz = [1681, 17];
@@ -261,7 +262,7 @@ function calcWeeklyTable(clearanceValue) {
     "debug",
     "point",
     "ptime",
-    "cext"
+    "cext",
   ];
   let wt = new Array(sz[0]).fill(null).map(() =>
     Object.assign(
@@ -428,7 +429,7 @@ function createChart(labels, data) {
           label: "Concentration (mg/dL) vs. Time (hours)",
           data: data,
           borderColor: "rgba(75, 192, 192, 1)",
-          fill: false
+          fill: false,
         },
         {
           type: "line",
@@ -436,9 +437,9 @@ function createChart(labels, data) {
           data: data.map((item) => ({ x: item.x, y: avg })),
           borderColor: "rgba(255, 165, 0, 1)", // Light orange color
           borderDash: [5, 10], // Makes line dotted
-          fill: false
-        }
-      ]
+          fill: false,
+        },
+      ],
     },
     options: {
       responsive: true,
@@ -450,14 +451,14 @@ function createChart(labels, data) {
           max: 168,
           ticks: {
             stepSize: 24,
-            maxTicksLimit: 10
-          }
+            maxTicksLimit: 10,
+          },
         },
         y: {
-          min: 0
-        }
-      }
-    }
+          min: 0,
+        },
+      },
+    },
   });
   console.log(`chart: ${chart}`);
 }
@@ -492,7 +493,7 @@ window.ready = function ready() {
       maxIterations: 1000,
       maxStep: 0.9,
       goal: 0.001,
-      independentVariableIdx: 0
+      independentVariableIdx: 0,
     });
 
     console.log(`result: ${result}`);
@@ -501,241 +502,16 @@ window.ready = function ready() {
     const labels = [0, 24, 48, 72, 96, 120, 144, 168];
     const chartData = weeklyTable.map((item) => ({
       x: item.ptime,
-      y: item.cext
+      y: item.cext,
     }));
     createChart(labels, chartData);
 
-    // document.getElementById("GoalSP").innerHTML = result * calcedSP;
-
-    // new code below
-
-    // The code that populates the vTable array...
-    // const [varNames, vTable] = calcTable(11);
-    // Display the resulting table in HTML
     const wtable = document.getElementById("weeklyTable");
     populateTable(weeklyVarNames, weeklyTable, wtable);
-    // const wTable = populateTable("", weeklyVarNames, weeklyTable);
 
-    // The code that populates the vTable array...
-    // const [varNames, vTable] = calcTable(11);
-    // Display the resulting table in HTML
     const table = document.getElementById("resultTable");
     populateTable(varNames, vTable, table);
-    /*
-    const headerRow = table.insertRow();
-    for (let i = 0; i < varNames.length; i++) {
-      const th = document.createElement("th");
-      th.textContent = varNames[i];
-      headerRow.appendChild(th);
-    }
-    for (let i = 0; i < vTable.length; i++) {
-      const row = table.insertRow();
-
-      for (let j = 0; j < varNames.length; j++) {
-        const cell = row.insertCell();
-        cell.textContent = vTable[i][varNames[j]];
-      }
-    }
-    */
   } catch (e) {
     console.error("error", e);
   }
 };
-
-// ----------save old version for reference ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// This code runs everytime the submit button is clicked
-/*
-window.clicked_old = function clicked_old() {
-  // Read the input values
-  var stock_symbol = document.getElementById("symbol").value;
-  var growthyrs = document.getElementById("growthyrs").value;
-  var discount = document.getElementById("discount").value;
-  var tgrowth = document.getElementById("tgrowth").value;
-
-  //set api strings
-  let analystdata =
-    "https://financialmodelingprep.com/api/v3/analyst-estimates/" +
-    stock_symbol +
-    "?limit=2&apikey=b141cee98d1c9c98167b2dc688c57810";
-  let histdata =
-    "https://financialmodelingprep.com/api/v3/cash-flow-statement/" +
-    stock_symbol +
-    "?limit=2&apikey=b141cee98d1c9c98167b2dc688c57810";
-  let balancesheet =
-    "https://financialmodelingprep.com/api/v3/balance-sheet-statement/" +
-    stock_symbol +
-    "?limit=1&apikey=b141cee98d1c9c98167b2dc688c57810";
-  let enterprisevalues =
-    "https://financialmodelingprep.com/api/v3/enterprise-values/" +
-    stock_symbol +
-    "?limit=1&apikey=b141cee98d1c9c98167b2dc688c57810";
-  let profile =
-    "https://financialmodelingprep.com/api/v3/profile/" +
-    stock_symbol +
-    "?&apikey=b141cee98d1c9c98167b2dc688c57810";
-  //get api data
-  Promise.all([
-    fetch(analystdata),
-    fetch(histdata),
-    fetch(balancesheet),
-    fetch(enterprisevalues),
-    fetch(profile)
-  ])
-    .then(function (responses) {
-      // Get a JSON object from each of the responses
-      return Promise.all(
-        responses.map(function (response) {
-          return response.json();
-        })
-      );
-    })
-    .then(function (data) {
-      //inject the data into matching keys
-      var apicount = 5;
-      for (let i = 0; i < apicount; i++) {
-        for (let key in data[i][0]) {
-          try {
-            for (let x = 0; x < data[i].length; x++) {
-              if (x < 1) {
-                document.getElementById(key).innerHTML = data[i][x][key];
-              } else {
-                document.getElementById(key).innerHTML =
-                  data[i][x][key] +
-                  "," +
-                  document.getElementById(key).innerHTML;
-              }
-            }
-          } catch (error) {
-            //continue;
-          }
-        }
-      }
-      var histdata = document.getElementById("freeCashFlow").innerHTML;
-      histdata = histdata.split(",");
-
-      var analystdata = document.getElementById("estimatedNetIncomeAvg")
-        .innerHTML;
-      var analystdata = analystdata.split(",");
-      var analystCAGR = histdata.concat(analystdata);
-      analystCAGR = analystCAGR.map(function (el) {
-        return el.trim();
-      });
-
-      var i = 0;
-      for (i = 0; i < 4; i++) {
-        analystCAGR[i] = analystCAGR[i].replace("B", "");
-      }
-
-      var CAGR = Math.pow(analystCAGR[3] / analystCAGR[2], 1 / 2) - 1;
-
-      if (isNaN(CAGR)) {
-        CAGR = 0;
-      }
-      document.getElementById("estCAGR").innerHTML =
-        (Math.round(CAGR * 1000) / 1000) * 100 + "%";
-      var additional = [];
-      additional.push(Math.round(analystCAGR[3] * (1 + CAGR)));
-      i = 0;
-      for (i = 0; i < growthyrs - 1; i++) {
-        additional.push(Math.round(additional[i] * (1 + CAGR)));
-      }
-
-      var estimates = [];
-      estimates.push(histdata[0]);
-      estimates.push(histdata[1]);
-      estimates.push(analystdata[0]);
-      estimates.push(analystdata[1]);
-
-      i = 0;
-      for (i = 0; i < growthyrs; i++) {
-        estimates.push(additional[i]);
-      }
-
-      document.getElementById("combined").innerHTML = estimates;
-
-      estimates.shift();
-      estimates.shift();
-
-      var discountarray = [];
-      var x = 1;
-      i = 0;
-      for (i = 0; i < estimates.length; i++) {
-        x = x * (1 - discount / 100);
-        discountarray.push(x);
-      }
-
-      i = 0;
-      var nearDCF = 0;
-      for (i = 0; i < estimates.length; i++) {
-        nearDCF = nearDCF + discountarray[i] * estimates[i];
-      }
-      var TerminalValue =
-        (estimates[estimates.length - 1] * (1 + tgrowth / 100)) /
-        (discount / 100 - tgrowth / 100);
-
-      document.getElementById("nearval").innerHTML = nFormatter(nearDCF, 1);
-      document.getElementById("tval").innerHTML = nFormatter(TerminalValue, 1);
-
-      var cash = document.getElementById("cashAndCashEquivalents").innerHTML;
-
-      var debt = document.getElementById("longTermDebt").innerHTML;
-
-      document.getElementById("val").innerHTML = nFormatter(
-        nearDCF + TerminalValue - cash + debt,
-        1
-      );
-
-      var numshare = document.getElementById("numberOfShares").innerHTML;
-
-      document.getElementById("calcedSP").innerHTML =
-        "$" +
-        Math.round(((nearDCF + TerminalValue - cash + debt) / numshare) * 100) /
-          100;
-
-      if (document.getElementById("price").innerHTML > 0) {
-        window.ready();
-      }
-    })
-    .catch(function (error) {
-      // if there's an error, log it
-      console.log(error);
-    });
-};
-
-
-
-function nFormatter(num, digits) {
-  var isNegative = false;
-  if (num < 0) {
-    isNegative = true;
-    num = num * -1;
-  }
-  const lookup = [
-    { value: 1, symbol: "" },
-    { value: 1e3, symbol: "k" },
-    { value: 1e6, symbol: "M" },
-    { value: 1e9, symbol: "B" },
-    { value: 1e12, symbol: "T" },
-    { value: 1e15, symbol: "P" },
-    { value: 1e18, symbol: "E" }
-  ];
-  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  var item = lookup
-    .slice()
-    .reverse()
-    .find(function (item) {
-      return num >= item.value;
-    });
-  if (isNegative === false) {
-    return item
-      ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol
-      : "0";
-  } else if (isNegative === true) {
-    return item
-      ? "-" + (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol
-      : "0";
-  }
-}
-
-
-*/

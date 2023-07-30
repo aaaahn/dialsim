@@ -2,7 +2,8 @@
 import "./styles.css";
 import * as goalSeek from "goal-seek";
 
-function render_disabled() {
+// make this also a global function by attaching to the window object
+window.render_disabled = function render_disabled() {
   console.log(
     `called - render_disabled: ${document.getElementById("replace").disabled}`
   );
@@ -26,7 +27,10 @@ function render_disabled() {
         document.getElementById("dilution").classList.remove("disabled");
       }
     });
-}
+};
+
+// This line ensures that the render_disabled function is called once the document's content has been fully loaded.
+document.addEventListener("DOMContentLoaded", render_disabled);
 
 function calculatePrePostDilution(Qf) {
   if (Qf === 0) {
@@ -624,6 +628,3 @@ window.ready = function ready() {
     console.error("error", e);
   }
 };
-
-// This line ensures that the render_disabled function is called once the document's content has been fully loaded.
-document.addEventListener("DOMContentLoaded", render_disabled);

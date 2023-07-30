@@ -2,28 +2,58 @@
 import "./styles.css";
 import * as goalSeek from "goal-seek";
 
-function calcTable(newCd) {
+function calculatePrePostDilution(Qf) {
+  if (Qf === 0) {
+    return 0;
+  }
+
+  // =IF(C6=1,Interface!E10*1000/AB17,0)
+  var selectElement = document.getElementById("replace");
+  var selectedValue = selectElement.value;
+  var selectedText = selectElement.options[selectElement.selectedIndex].text;
+  console.log("Selected value is: " + selectedValue);
+  console.log("Selected text is: " + selectedText);
+  console.log(`selectedText: ${selectedText}`);
+  if (selectedText === "Predilution") {
+    // AB17 is dialysis duration in mins
+    let duration_in_mins = hours_to_mins(
+      parseFloat(document.getElementById("duration").value)
+    ); // let duration = 3.33;
+    let dilution = parseFloat(document.getElementById("dilution").value);
+    let predilution = (dilution * 1000) / duration_in_mins;
+    console.log(`predilution: ${predilution}`);
+    return predilution;
+  } else {
+    return 0;
+  }
+}
+
+function calcClearanceTable(newCd) {
   let Qb = parseFloat(document.getElementById("bloodflow").value); // let Qb = 360;
   let Qd = parseFloat(document.getElementById("dialysateflow").value); // 500;
   // console.log("dialysateflow: " + parseFloat(Qd));
   let KoA = parseFloat(document.getElementById("koa").value); //  let KoA = 500;
   let sigma = parseFloat(document.getElementById("sigma").value); // 0;
   console.log(`sigma: ${sigma}`);
-  let Qf = 0;
-  let Qr = 0; // Ask Dr. Tim: is this Fluid Gain?
+  let Qf = parseFloat(document.getElementById("additionaluf").value); // 0;
+  let Qr = calculatePrePostDilution(Qf); // 0; // Ask Dr. Tim: is this Fluid Gain?
+  console.log(`Qr: ${Qr}`);
+  Qf = Qr;
+  console.log(`Qf: ${Qf}`);
   let Hct = parseFloat(document.getElementById("hematocrit").value); // 0;
   console.log(`Hct: ${Hct}`);
   // let f = 0.3378;
   let f = 1.0;
   let Calb = 500;
   let Cp = 100;
+  console.log(`Cp: ${Cp}`);
   let DP0 = 40;
   let DP1 = 40;
   let solute = 0;
   let solute1 = "Urea";
   let solute2 = "Plasma";
-  let PureUF = false;
-  let PureDialysis = true;
+  let PureUF = Qd <= 0 ? true : false; // false;
+  let PureDialysis = Qf <= 0 ? true : false; //  = true;
   let Qpmin = 200;
   let Qdmin = 1000;
   let QpQdisneg = false;
@@ -31,20 +61,46 @@ function calcTable(newCd) {
   let increment = 0.001;
   let Ka = (Cp - Cp * f) / Cp / f / (Calb - Cp + Cp * f);
   let Pa = (DP1 - DP0) / (DP1 + DP0);
+  console.log(`Pa: ${Pa}`);
   let Pb = (2 * DP0) / (DP1 + DP0);
+  console.log(`Pb: ${Pb}`);
 
   let Qp = Qb * (1 - Hct);
+  console.log(`Qp: ${Qp}`);
   let Qprbc = 0.86 * Qb * Hct;
+  console.log(`Qprbc: ${Qprbc}`);
+
   if (solute === 1) {
     Qprbc = 0.86 * Qb * Hct;
   } else {
     Qprbc = 0;
   }
-  let Qpoatinlet = 360;
-  let Cp0 = 100;
-  let Calb0 = (Calb * Qp) / Qpoatinlet;
+  console.log(`Qprbc: ${Qprbc}`);
+
+  // let Qpoatinlet = 360;
+  let Qpoatinlet = Qp + Qr; // =L4+$F$7
+  console.log(`Qpoatinlet: ${Qpoatinlet}`);
   let theta_inblood = 0.07;
-  let theta_atinlet = 0.07;
+  let Calb0 = (Calb * Qp) / Qpoatinlet;
+  console.log(`Calb0: ${Calb0}`);
+  let theta_atinlet = (theta_inblood * Calb0) / Calb;
+  console.log(`theta_inblood * Calb0: ${theta_inblood * Calb0}`);
+  console.log(`Calb: ${Calb}`);
+  // let theta_atinlet = 0.07;
+  console.log(`theta_atinlet: ${theta_atinlet}`);
+  // let Cp0 = 100;
+  let Cp0_old =
+    (Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc) /
+    (Qpoatinlet + Qprbc / (1 - theta_atinlet));
+  let Cp0 =
+    (Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc) /
+    (Qpoatinlet + Qprbc / (1 - theta_atinlet));
+  let Cp0_num = Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc;
+  let Cp0_den = Qpoatinlet + Qprbc / (1 - theta_atinlet);
+  console.log(`Cp0_num: ${Cp0_num}`);
+  console.log(`Cp0_den: ${Cp0_den}`);
+
+  console.log(`Cp0: ${Cp0}`);
 
   let sz = [1001, 17];
   let varNames = [
@@ -74,15 +130,19 @@ function calcTable(newCd) {
   );
 
   for (let row = 0; row < sz[0]; row++) {
-    vTable[row].x = row * 0.001;
+    // vTable[row].x = row * 0.001;
+    vTable[row].x = row === 0 ? 0.0 : vTable[row - 1].x + 0.001;
+    vTable[row].x = parseFloat(vTable[row].x.toFixed(3));
     vTable[row].Phi = 0.5;
-    vTable[row].Qp = Qpoatinlet - Qf * (Pa * Math.pow(row, 2) + Pb * row);
+    vTable[row].Qp =
+      Qpoatinlet - Qf * (Pa * Math.pow(vTable[row].x, 2) + Pb * vTable[row].x);
 
     if (row === 0) {
       vTable[row].Qd = Qd + Qf;
     } else {
       vTable[row].Qd =
-        vTable[row - 1].Qd - Qf * (Pa * Math.pow(row, 2) + Pb * row);
+        vTable[0].Qd -
+        Qf * (Pa * Math.pow(vTable[row].x, 2) + Pb * vTable[row].x);
     }
 
     if (PureUF) {
@@ -91,11 +151,7 @@ function calcTable(newCd) {
       vTable[row].Jv = 2 * Qf * Pa * vTable[row].x + Qf * Pb;
     }
 
-    if (row === 0) {
-      vTable[row].Calb = Calb;
-    } else {
-      vTable[row].Calb = (vTable[row - 1].Calb * Qpoatinlet) / vTable[row].Qp;
-    }
+    vTable[row].Calb = (Calb0 * Qpoatinlet) / vTable[row].Qp;
     // (row === 0) ? vTable[row].Calb = Calb : vTable[row].Calb = (vTable[row - 1].Calb * Qpoatinlet) / vTable[row].Qp;
 
     if (row === 0) {
@@ -184,6 +240,17 @@ function calcTable(newCd) {
   // =ROUND(((L4+L5/(1-L9))*F13-(I1012+L5/(1-M1012))*N1012)/F13,10)let clearanceValue = ((Qp + Qprbc/(1-theta_inblood))* Cp0 - (vTable[1000].Qp + Qprbc/(1-vTable[1000].theta))*vTable[1000].Cp)/Cp0
   // -----------  weekly calculators
   //let clearanceValue = Math.round(((L4 + L5 / (1 - L9)) * F13 - (I1012 + L5 / (1 - M1012)) * N1012) / F13, 10);
+
+  console.log(`----------------------`);
+  console.log(`Qp: ${Qp}`);
+  console.log(`Qprbc: ${Qprbc}`);
+  console.log(`theta_inblood: ${theta_inblood}`);
+  console.log(`Cp: ${Cp}`);
+  console.log("vTable[1000].Cp: " + vTable[1000].Cp);
+  console.log(`Qprbc: ${Qprbc}`);
+  console.log(`vTable[1000].Calb: ${vTable[1000].Calb}`);
+  console.log(`vTable[1000].theta: ${vTable[1000].theta}`);
+  console.log(`----------------------`);
   let clearanceValue = Math.round(
     ((Qp + Qprbc / (1 - theta_inblood)) * Cp -
       (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) /
@@ -203,9 +270,10 @@ function calcTable(newCd) {
 */
   // clearanceValue =                ((Qp + Qprbc / (1 - theta_inblood)) * Cp0 - (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) / Cp0;
 
-  let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearanceValue); // (clearanceValue) pass in co
+  // let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearanceValue); // (clearanceValue) pass in co
 
-  return [varNames, vTable, weeklyVarNames, weeklyTable];
+  // return [varNames, vTable, weeklyVarNames, weeklyTable];
+  return [varNames, vTable, clearanceValue];
 }
 
 function hours_to_mins(duration) {
@@ -230,7 +298,7 @@ function calc_vol_ext() {
 }
 
 function calcWeeklyTable(clearanceValue) {
-  console.log(`clearanceValue: ${clearanceValue}`);
+  console.log(`calcWeeklyTable:clearanceValue: ${clearanceValue}`);
 
   let Monday = document.getElementById("monday").checked; // true;
   let Tuesday = document.getElementById("tuesday").checked; //false;
@@ -281,19 +349,23 @@ function calcWeeklyTable(clearanceValue) {
   console.log(`generation: ${generation}`);
 
   let kc = 0;
-  let extracell_mid = 0.834522427; // this should come from an prior vTable (as argument to this function)
-  let intracell_mid = 0.0;
+  let extracell = 0.834522427; // this should come from an prior vTable (as argument to this function)
+  let intracell = 0.0;
   var duration = parseFloat(document.getElementById("duration").value); // let duration = 3.33;
 
   let increment = 1;
+  let last = sz[0] - 1;
 
   // iterate the calculation until start/end
-  wt[sz[0] - 1].conc_ext = extracell_mid + 10; // just add ten to make the first iteration condition true
-  console.log(`extracell_mid: ${extracell_mid}`);
-  console.log(`wt[sz[0]-1].conc_ext: ${wt[sz[0] - 1].conc_ext}`);
+  wt[0].conc_ext = extracell; // this value has not been assigned yet, so stamp a random value to get overriden with correct calculation in the loop below
+  wt[last].conc_ext = extracell + 1; // this value has not been assigned yet, so stamp a random value to get overriden with correct calculation in the loop below
+  console.log(`extracell: ${extracell}`);
+  console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
+  console.log(`RIGHT: wt[last].conc_ext: ${wt[last].conc_ext}`);
+  let iteration_enabled = true;
   for (
     let iteration = 0;
-    Math.abs(extracell_mid - wt[sz[0] - 1].conc_ext) > 0.01;
+    Math.abs(wt[0].conc_ext - wt[last].conc_ext) > 0.01 && iteration_enabled;
     iteration++
   ) {
     for (let row = 0; row < sz[0]; row++) {
@@ -305,8 +377,8 @@ function calcWeeklyTable(clearanceValue) {
 
       // this if block calculates cols: conc_ext and conc_int
       if (row === 0) {
-        wt[row].conc_ext = extracell_mid;
-        wt[row].conc_int = intracell_mid;
+        wt[row].conc_ext = extracell;
+        wt[row].conc_int = intracell;
       } else {
         // is vol_ext less than zero?
         if (wt[row - 1].vol_ext <= 0) {
@@ -353,11 +425,18 @@ function calcWeeklyTable(clearanceValue) {
     } // for loop ends here
 
     // calc the end - start difference, and add 1/2 to start at a mid point again
-    let extracell_mid_offset = (wt[sz[0] - 1].conc_ext - extracell_mid) / 2;
-    extracell_mid = extracell_mid + extracell_mid_offset;
-    console.log(`wt[sz[0]].conc_ext: ${wt[sz[0] - 1].conc_ext}`);
-    console.log(`extracell_mid_offset: ${extracell_mid_offset}`);
-    console.log(`updated extracell_mid: ${extracell_mid}`);
+    // let extracell_mid_offset = (wt[sz[0] - 1].conc_ext - extracell_mid) / 2;
+    let half_diff = (wt[last].conc_ext - wt[0].conc_ext) / 2;
+    extracell = wt[0].conc_ext + half_diff;
+    console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
+    console.log(`RIGHT: wt[sz[0]].conc_ext: ${wt[sz[0] - 1].conc_ext}`);
+    console.log(`half_diff: ${half_diff}`);
+    console.log(`updated extracell: ${extracell}`);
+    console.log(
+      `Math.abs(wt[0].conc_ext - wt[last].conc_ext): ${Math.abs(
+        wt[0].conc_ext - wt[last].conc_ext
+      )}`
+    );
     console.log(`iteration: ${iteration}`);
   }
 
@@ -383,7 +462,7 @@ window.clicked = function clicked() {
   // window.ready();
 };
 window.clicked();
-calcTable(100);
+// calcTable(100);
 
 function populateTable(varNames, vTable, tableElement) {
   if (tableElement) tableElement.innerHTML = "";
@@ -464,39 +543,43 @@ function createChart(labels, data) {
 }
 
 // AA This function gets invoked when a gui elements like 'range' changes
+/*
+  1. Calculate clearance value via goalSeek
+  2. pass that clearance value to weeklyTableCalculator (which the iterates)
+  3. draw chart * update the two tables
+*/
 window.ready = function ready() {
   var varNames;
   var vTable;
-  var weeklyVarNames;
-  var weeklyTable;
+  var clearance;
 
   function fn(x) {
-    const [lvarNames, lvTable, lweeklyVarNames, lweeklyTable] = calcTable(x);
-    // console.log(vTable);
-    // console.log(lvTable[1000].Cd);
-    console.log(`lvTable[1000].Cd: ${lvTable[1000].Cd}`);
-    //return calcTable(x)[1][1014].Cd;
+    console.log(`goalseek fn(x) - try: x : ${x}`);
+    const [lvarNames, lvTable, lclearance] = calcClearanceTable(x);
+    console.log(`goalseek: lvTable[1000].Cd: ${lvTable[1000].Cd}`);
     varNames = lvarNames;
     vTable = lvTable;
-    weeklyVarNames = lweeklyVarNames;
-    weeklyTable = lweeklyTable;
+    clearance = lclearance;
     return lvTable[1000].Cd;
   }
   //console.log(cal)
-  var fnParams = [11];
+  var fnParams = [30]; // first guess
 
   try {
     var result = goalSeek.default({
       fn,
       fnParams,
-      percentTolerance: 1,
-      maxIterations: 1000,
-      maxStep: 0.9,
+      percentTolerance: 10,
+      maxIterations: 100,
+      maxStep: 5,
       goal: 0.001,
       independentVariableIdx: 0,
     });
 
-    console.log(`result: ${result}`);
+    console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
+    console.log(`final clearance: ${clearance}`);
+    let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearance); // (clearanceValue) pass in co
+
     // Create and update the line chart when "Solve" button is clicked
     // const labels = weeklyTable.map((row) => row.ptime);
     const labels = [0, 24, 48, 72, 96, 120, 144, 168];

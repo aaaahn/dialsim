@@ -6,6 +6,8 @@
     <title>Dr Coplon Dialysis Simulator</title>
     <link rel="stylesheet" href="./src/styles.css" />
     <script src="https://unpkg.com/chart.js"></script>
+    </script>
+
     <style>
       body {
         display: grid;
@@ -32,6 +34,16 @@
       .menu-item input {
         flex: 1; /* Adjust the input width to 1/4 (25% of the available space) */
         /* width: 100%; */
+      }
+      .menu-item input[type="number"],
+      .menu-item select {
+        flex: 1; /* Adjust the input and select width to 1/4 (25% of the available space) */
+        width: 100%; /* Full width within the flex container */
+      }
+      .disabled {
+        background-color: #f0f0f0; /* Light gray background */
+        color: #a0a0a0; /* Gray text color */
+        cursor: not-allowed; /* Change cursor to indicate disabled state */
       }
       #right-side {
         gap: 10px;
@@ -159,24 +171,25 @@
             min="0"
             max="999"
             value="0"
-            oninput="ready();"
+            oninput="ready();render_disabled();"
           />
         </div>
         <div class="menu-item">
-          <select name="replace" id="replace">
+          <select name="replace" id="replace" disabled>
             <option value="predilution">Predilution</option>
             <option value="postdilution">Postdilution</option>
           </select>
+           &nbsp; 
           <input
             type="number"
             id="dilution"
             name="dilution"
-            required
             step="1"
             min="0"
             max="999"
-            value="1"
+            value="0"
             oninput="ready();"
+            disabled
           />
         </div>
         <input type="checkbox" id="monday" onclick="ready();" checked />Mon
@@ -451,8 +464,7 @@
       <summary>ClearanceCalculations</summary>
       <table id="resultTable"></table>
     </details>
-
-    <script src="src/index.js"></script>
-
+    <script src="src/index.js">
+    </script>
   </body>
 </html>

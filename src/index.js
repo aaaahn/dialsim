@@ -2,6 +2,32 @@
 import "./styles.css";
 import * as goalSeek from "goal-seek";
 
+function render_disabled() {
+  console.log(
+    `called - render_disabled: ${document.getElementById("replace").disabled}`
+  );
+  document
+    .getElementById("additionaluf")
+    .addEventListener("input", function () {
+      var additionalufValue = parseFloat(this.value);
+      var isDisabled = additionalufValue === 0;
+
+      document.getElementById("replace").disabled = isDisabled;
+      document.getElementById("dilution").disabled = isDisabled;
+      console.log(`isDisabled: ${isDisabled}`);
+
+      // Applying a class to make the difference obviously visible
+      if (isDisabled) {
+        document.getElementById("replace").classList.add("disabled");
+        document.getElementById("dilution").classList.add("disabled");
+      } else {
+        document.getElementById("dilution").value = additionalufValue;
+        document.getElementById("replace").classList.remove("disabled");
+        document.getElementById("dilution").classList.remove("disabled");
+      }
+    });
+}
+
 function calculatePrePostDilution(Qf) {
   if (Qf === 0) {
     return 0;
@@ -457,7 +483,7 @@ function calculate_ptime(AX9, AG15, AB15) {
 
 // This code runs everytime the submit button is clicked
 window.clicked = function clicked() {
-  // Read the input values
+  // Rrd the input values
   // var stock_symbol = document.getElementById("symbol").value;
   // window.ready();
 };
@@ -598,3 +624,6 @@ window.ready = function ready() {
     console.error("error", e);
   }
 };
+
+// This line ensures that the render_disabled function is called once the document's content has been fully loaded.
+document.addEventListener("DOMContentLoaded", render_disabled);

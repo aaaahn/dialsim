@@ -119,17 +119,9 @@ function calcClearanceTable(newCd) {
   // let theta_atinlet = 0.07;
   console.log(`theta_atinlet: ${theta_atinlet}`);
   // let Cp0 = 100;
-  let Cp0_old =
-    (Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc) /
-    (Qpoatinlet + Qprbc / (1 - theta_atinlet));
   let Cp0 =
     (Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc) /
     (Qpoatinlet + Qprbc / (1 - theta_atinlet));
-  let Cp0_num = Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc;
-  let Cp0_den = Qpoatinlet + Qprbc / (1 - theta_atinlet);
-  console.log(`Cp0_num: ${Cp0_num}`);
-  console.log(`Cp0_den: ${Cp0_den}`);
-
   console.log(`Cp0: ${Cp0}`);
 
   let sz = [1001, 17];
@@ -515,21 +507,16 @@ function populateTable(varNames, vTable, tableElement) {
 
 let chart; // Global variable to hold the chart instance
 
-function createChart(labels, data) {
+function createChart(data) {
   console.log("createChart()");
   if (chart) {
     chart.destroy(); // Destroy the previous chart instance if it exists
-    // console.log("createChart():destroy()");
   }
 
   const ctx = document.getElementById("chart").getContext("2d");
-  // console.log(`ctx: ${ctx}`);
-  // console.log(`labels: ${labels}`);
-  // console.log(`data: ${data}`);
   let y_values = data.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
-  // console.log(`avg: ${avg}`);
   chart = new Chart(ctx, {
     type: "line",
     data: {
@@ -543,9 +530,12 @@ function createChart(labels, data) {
         {
           type: "line",
           label: "Average",
-          data: data.map((item) => ({ x: item.x, y: avg })),
+          data: data.map((item) =>
+            item.x % 3 === 0 ? { x: item.x, y: avg } : {}
+          ),
           borderColor: "rgba(255, 165, 0, 1)", // Light orange color
-          borderDash: [5, 10], // Makes line dotted
+          borderDash: [5, 5],
+          borderWidth: 1,
           fill: false,
         },
       ],
@@ -595,6 +585,7 @@ window.ready = function ready() {
   //console.log(cal)
   var fnParams = [30]; // first guess
 
+  // goal is to get Cd (result) to 0.001
   try {
     var result = goalSeek.default({
       fn,
@@ -611,13 +602,11 @@ window.ready = function ready() {
     let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearance); // (clearanceValue) pass in co
 
     // Create and update the line chart when "Solve" button is clicked
-    // const labels = weeklyTable.map((row) => row.ptime);
-    const labels = [0, 24, 48, 72, 96, 120, 144, 168];
     const chartData = weeklyTable.map((item) => ({
       x: item.ptime,
       y: item.cext,
     }));
-    createChart(labels, chartData);
+    createChart(chartData);
 
     const wtable = document.getElementById("weeklyTable");
     populateTable(weeklyVarNames, weeklyTable, wtable);

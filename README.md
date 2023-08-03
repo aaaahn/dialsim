@@ -11,18 +11,27 @@ https://webclear.netlify.app
 
 ```mermaid
 
-graph RL
+
+
+
+graph TD
     subgraph HTML
        A 
     end
     subgraph Javascript
+        A[Web Page] -- Solve! --> B("calcClearanceTable()")
+        B -- ClearanceValue --> D("calcWeeklyTable()")
         D -- "Iterate(start, end)" -->D
         D --  t,cext --> E(Chart)
         E --> A
         B -- "goalSeek(Cd)" --> B
-        A[Web Page] -- Solve! --> B("calcClearanceTable()")
-        B -- ClearanceValue --> D("calcWeeklyTable()")
     end
+
+
+
+
+
+
 
 ```
 

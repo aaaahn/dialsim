@@ -5,7 +5,9 @@ https://webclear.netlify.app
 
 # Dialysis Simulator
 
+`calcClearanceTable()` - goalseek function iterates to find a starting Cd value that approaches 0 as x (the position in the dialyzer) approaches 1. The inputs from the website run through a table that uses pseudo-calculus to model a series of values.
 
+`calcWeeklyTable()` - Using the clearance value derived from the calcClearanceTable calculations, the Iterate loop searches for an initial urea concentration that roughly matches the ending concentration by continually bisecting the difference between the initial guess and the resulting final concentration.
 
 ```mermaid
 

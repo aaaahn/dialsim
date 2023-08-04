@@ -9,8 +9,6 @@ https://webclear.netlify.app
 
 `calcWeeklyTable()` - Using the clearance value derived from the `calcClearanceTable()` calculations, the table calculates the concentration of urea. The iteratation loop searches for an initial urea concentration that roughly matches the ending concentration by continually bisecting the difference between the initial guess and the resulting final concentration. 
 
-The inputs from the website are used in the Javascript code, which executes all the calculations and table making between the `calcClearanceTable()` and `calcWeeklyTable()` functions. Taking the values from the Weeklytable, the Chart is created, then rendered by HTML.
-
 ```mermaid
 
 
@@ -33,8 +31,8 @@ graph TD
 
 
 
-
-
 ```
+
+The inputs from the Web Page are collected in the Javascript code, which triggers with a press of the `Solve!` button or a change in one of the inputs. Both the calcClearanceTable() and calcWeeklyTable() functions construct a table to hold and report the computations, creating the final table, Weeklytable. From this, the Chart data is populated, then rendered via HTML element canvas.
 
 Created with CodeSandbox

@@ -274,28 +274,11 @@ function calcClearanceTable(newCd) {
   console.log(`vTable[1000].theta: ${vTable[1000].theta}`);
   console.log(`----------------------`);
   */
-  let clearanceValue = Math.round(
+  let clearanceValue =
     ((Qp + Qprbc / (1 - theta_inblood)) * Cp -
       (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) /
-      Cp,
-    10
-  );
+    Cp;
   console.log(`clearanceValue0: ${clearanceValue}`);
-  /*
-  if (document.getElementById("clearanceValue"))
-    document.getElementById("clearanceValue").innerHTML = clearanceValue;
-  console.log(`Qp: ${Qp}`);
-  console.log(`Cp: ${Cp}`);
-  console.log(`Qprbc: ${Qprbc}`);
-  console.log(`vTable[1000].theta: ${vTable[1000].theta}`);
-  console.log("vTable[1000].Cp: " + vTable[1000].Cp);
-  console.log(`vTable[1000].Qp: ${vTable[1000].Qp}`);
-*/
-  // clearanceValue =                ((Qp + Qprbc / (1 - theta_inblood)) * Cp0 - (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) / Cp0;
-
-  // let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearanceValue); // (clearanceValue) pass in co
-
-  // return [varNames, vTable, weeklyVarNames, weeklyTable];
   return [varNames, vTable, clearanceValue];
 }
 
@@ -497,11 +480,38 @@ function populateTable(varNames, vTable, tableElement) {
   }
 }
 
+/** https://www.samproell.io/posts/signal/peak-finding-python-js/
+ * Get indices of all local maxima in a sequence.
+ * @param {number[]} xs - sequence of numbers
+ * @returns {number[]} values of local maxima
+ */
+function find_local_maxima(xs) {
+  let maxima = [];
+  // iterate through all points and compare direct neighbors
+  for (let i = 1; i < xs.length - 1; ++i) {
+    if (xs[i] > xs[i - 1] && xs[i] > xs[i + 1]) maxima.push(xs[i]);
+  }
+  return maxima;
+}
+
 // x and y chart config for single chart
 function buildSingleXYSet(xydata, i) {
   let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
+  document.getElementById("timeavgconc").textContent = parseFloat(avg).toFixed(
+    1
+  );
+  var maxs = find_local_maxima(y_values);
+  console.log(`maxs: ${maxs}`);
+  var avg_max =
+    maxs.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue;
+    }, 0) / maxs.length;
+  console.log(`avg_max: ${avg_max}`);
+  document.getElementById("avgpeakconc").textContent = parseFloat(
+    avg_max
+  ).toFixed(1);
   // https://www.schemecolor.com/tools/color-scheme-generator/rose
   let color_wheel_conc = [
     "rgba(75, 192, 192, 1)",
@@ -625,12 +635,9 @@ window.calculateAndDraw = function calculateAndDraw() {
 
   function fn(x) {
     console.log(`goalseek fn(x) - try: x : ${x}`);
-    const [lvarNames, lvTable, lclearance] = calcClearanceTable(x);
-    console.log(`goalseek: lvTable[1000].Cd: ${lvTable[1000].Cd}`);
-    varNames = lvarNames;
-    vTable = lvTable;
-    clearance = lclearance;
-    return lvTable[1000].Cd;
+    [varNames, vTable, clearance] = calcClearanceTable(x);
+    console.log(`goalseek: lvTable[1000].Cd: ${vTable[1000].Cd}`);
+    return vTable[1000].Cd;
   }
   //console.log(cal)
   var fnParams = [30]; // first guess
@@ -649,6 +656,9 @@ window.calculateAndDraw = function calculateAndDraw() {
 
     console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
     console.log(`final clearance: ${clearance}`);
+    document.getElementById("avgclearance").textContent = parseFloat(
+      clearance
+    ).toFixed(1);
     let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearance); // (clearanceValue) pass in co
 
     // Create and update the line chart when "Solve" button is clicked

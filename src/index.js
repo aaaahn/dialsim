@@ -494,7 +494,7 @@ function find_local_maxima(xs) {
   return maxima;
 }
 
-// x and y chart config for single chart
+// x and y chart config for single chart for the i-th element of the xydata array
 function buildSingleXYSet(xydata, i) {
   let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
@@ -503,12 +503,12 @@ function buildSingleXYSet(xydata, i) {
     1
   );
   var maxs = find_local_maxima(y_values);
-  console.log(`maxs: ${maxs}`);
+  // console.log(`maxs: ${maxs}`);
   var avg_max =
     maxs.reduce((accumulator, currentValue) => {
       return accumulator + currentValue;
     }, 0) / maxs.length;
-  console.log(`avg_max: ${avg_max}`);
+  // console.log(`avg_max: ${avg_max}`);
   document.getElementById("avgpeakconc").textContent = parseFloat(
     avg_max
   ).toFixed(1);
@@ -535,14 +535,14 @@ function buildSingleXYSet(xydata, i) {
   ];
   var xyset = [
     {
-      label: "Concentration(mg/dL)vs.Time(hours)_" + i,
+      label: i === 0 ? "Concentration(mg/dL)vs.Time(hours)" : "Conc" + (i + 1),
       data: xydata,
       borderColor: color_wheel_conc[i],
       fill: false
     },
     {
       type: "line",
-      label: "Average_" + i,
+      label: i === 0 ? "Avg" : "Avg" + (i + 1),
       data: xydata.map((item) =>
         item.x % 3 === 0 ? { x: item.x, y: avg } : {}
       ),
@@ -590,7 +590,11 @@ function buildChartConfig(datasets) {
 }
 
 let chart; // Global variable to hold the chart instance
-
+// always start with a clean canvas
+// build an array of chart dataset composed of two arrays
+//  [ [ {x: 1, 2, 3}, {y: 81, 82, 83} ],     // dataset1
+//    [ {x: 1, 2, 3}, {y: 181, 182, 183} ],  // dataset2
+//    ..]
 function createChart(data) {
   // console.log("createChart()");
   if (chart) {
@@ -604,6 +608,9 @@ function createChart(data) {
 }
 
 let dynamic_calc_state = true;
+// this global state is used to toggle back & forth from two modes:
+// 1. default dynamic calculation state where each input change triggers Solve!
+// 2. non-dynamic (or hold) state where input changes are ignored until Solve! button is pressed
 function set_dynamic_calc_state() {
   let hold = document.getElementById("hold").checked;
   if (hold) {
@@ -668,7 +675,7 @@ window.calculateAndDraw = function calculateAndDraw() {
     }));
     // chartData is an array of xs and ys:
     // [{x: 0, y: 123}, {x: 1, y: 134}..]
-    // allow charting under two conditions:
+    // pass on charting data under two conditions:
     //  1. when the stack is empty (which means web page is in "factory state")
     //  2. when hold is turned on
     if (chartDataStack.length === 0 || !is_in_dynamic_mode()) {

@@ -477,15 +477,6 @@ function calculate_ptime(AX9, AG15, AB15) {
   }
 }
 
-// This code runs everytime the submit button is clicked
-window.clicked = function clicked() {
-  // Rrd the input values
-  // var stock_symbol = document.getElementById("symbol").value;
-  // window.ready();
-};
-window.clicked();
-// calcTable(100);
-
 function populateTable(varNames, vTable, tableElement) {
   if (tableElement) tableElement.innerHTML = "";
   else return;
@@ -505,6 +496,7 @@ function populateTable(varNames, vTable, tableElement) {
   }
 }
 
+// x and y chart config for single chart
 function buildSingleXYSet(xydata, i) {
   let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
@@ -517,7 +509,7 @@ function buildSingleXYSet(xydata, i) {
     "#7F826E"
   ];
   let color_wheel_avg = [
-    "rgba(255, 165, 0, 1)",
+    "rgba(255, 165, 0, 1)", // Light orange color
     "#957DAD",
     "#F7D527",
     "#D1B488",
@@ -525,18 +517,18 @@ function buildSingleXYSet(xydata, i) {
   ];
   var xyset = [
     {
-      label: "Concentration (mg/dL) vs. Time (hours) " + i,
+      label: "Concentration(mg/dL)vs.Time(hours)_" + i,
       data: xydata,
       borderColor: color_wheel_conc[i],
       fill: false
     },
     {
       type: "line",
-      label: "Average " + i,
+      label: "Average_" + i,
       data: xydata.map((item) =>
         item.x % 3 === 0 ? { x: item.x, y: avg } : {}
       ),
-      borderColor: color_wheel_avg[i], // Light orange color
+      borderColor: color_wheel_avg[i],
       borderDash: [5, 5],
       borderWidth: 1,
       fill: false
@@ -545,10 +537,11 @@ function buildSingleXYSet(xydata, i) {
   return xyset;
 }
 
-function buildChartConfig(data_set) {
+// given an array of xy data sets, build an array of chart configs with embedded data
+function buildChartConfig(datasets) {
   var xydata_array = [];
-  for (let i = 0; i < data_set.length; i++) {
-    xydata_array = xydata_array.concat(buildSingleXYSet(data_set[i], i));
+  for (let i = 0; i < datasets.length; i++) {
+    xydata_array = xydata_array.concat(buildSingleXYSet(datasets[i], i));
   }
   console.log(`xydata_array: ${xydata_array}`);
   var chartConfig = {
@@ -657,6 +650,9 @@ window.calculateAndDraw = function calculateAndDraw() {
     }));
     // chartData is an array of xs and ys:
     // [{x: 0, y: 123}, {x: 1, y: 134}..]
+    // allow charting under two conditions:
+    //  1. when the stack is empty (which means web page is in "factory state")
+    //  2. when hold is turned on
     if (chartDataStack.length === 0 || !is_in_dynamic_mode()) {
       chartDataStack.push(chartData);
     }
@@ -674,11 +670,11 @@ window.calculateAndDraw = function calculateAndDraw() {
   }
 };
 
-// AA This function gets invoked when a gui elements like 'range' changes
+// AA This function gets invoked when a gui element changes
 window.ready = function ready() {
   set_dynamic_calc_state();
   console.log(`ready(): dynamic_calc_state : ${dynamic_calc_state}`);
-  if (dynamic_calc_state === false) {
+  if (!is_in_dynamic_mode()) {
     // hold is enabled.  ignore input
     return;
   } else {

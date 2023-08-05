@@ -262,7 +262,7 @@ function calcClearanceTable(newCd) {
   // =ROUND(((L4+L5/(1-L9))*F13-(I1012+L5/(1-M1012))*N1012)/F13,10)let clearanceValue = ((Qp + Qprbc/(1-theta_inblood))* Cp0 - (vTable[1000].Qp + Qprbc/(1-vTable[1000].theta))*vTable[1000].Cp)/Cp0
   // -----------  weekly calculators
   //let clearanceValue = Math.round(((L4 + L5 / (1 - L9)) * F13 - (I1012 + L5 / (1 - M1012)) * N1012) / F13, 10);
-
+  /*
   console.log(`----------------------`);
   console.log(`Qp: ${Qp}`);
   console.log(`Qprbc: ${Qprbc}`);
@@ -273,6 +273,7 @@ function calcClearanceTable(newCd) {
   console.log(`vTable[1000].Calb: ${vTable[1000].Calb}`);
   console.log(`vTable[1000].theta: ${vTable[1000].theta}`);
   console.log(`----------------------`);
+  */
   let clearanceValue = Math.round(
     ((Qp + Qprbc / (1 - theta_inblood)) * Cp -
       (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) /
@@ -501,19 +502,26 @@ function buildSingleXYSet(xydata, i) {
   let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
+  // https://www.schemecolor.com/tools/color-scheme-generator/rose
   let color_wheel_conc = [
     "rgba(75, 192, 192, 1)",
     "#E0BBE4",
     "#E69816",
     "#86BD9E",
-    "#7F826E"
+    "#7F826E",
+    "#7C1F3A",
+    "#C6466D",
+    "#FD6165"
   ];
   let color_wheel_avg = [
     "rgba(255, 165, 0, 1)", // Light orange color
     "#957DAD",
     "#F7D527",
     "#D1B488",
-    "#AC9484"
+    "#AC9484",
+    "#FE7C6B",
+    "#007498",
+    "#FE96A0"
   ];
   var xyset = [
     {
@@ -543,7 +551,7 @@ function buildChartConfig(datasets) {
   for (let i = 0; i < datasets.length; i++) {
     xydata_array = xydata_array.concat(buildSingleXYSet(datasets[i], i));
   }
-  console.log(`xydata_array: ${xydata_array}`);
+  // console.log(`xydata_array: ${xydata_array}`);
   var chartConfig = {
     type: "line",
     data: {
@@ -574,7 +582,7 @@ function buildChartConfig(datasets) {
 let chart; // Global variable to hold the chart instance
 
 function createChart(data) {
-  console.log("createChart()");
+  // console.log("createChart()");
   if (chart) {
     chart.destroy(); // Destroy the previous chart instance if it exists
   }

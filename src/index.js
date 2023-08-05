@@ -142,7 +142,7 @@ function calcClearanceTable(newCd) {
     "Phi",
     "Pe",
     "Massp",
-    "Massd",
+    "Massd"
   ];
   let vTable = new Array(sz[0]).fill(null).map(() =>
     Object.assign(
@@ -337,7 +337,7 @@ function calcWeeklyTable(clearanceValue) {
     Thursday,
     Friday,
     Saturday, //
-    Sunday, // dialysis[day] --> false
+    Sunday // dialysis[day] --> false
   ]; // javascript arrays are zero indexed
 
   let sz = [1681, 17];
@@ -352,7 +352,7 @@ function calcWeeklyTable(clearanceValue) {
     "debug",
     "point",
     "ptime",
-    "cext",
+    "cext"
   ];
   let wt = new Array(sz[0]).fill(null).map(() =>
     Object.assign(
@@ -525,7 +525,7 @@ function createChart(data) {
           label: "Concentration (mg/dL) vs. Time (hours)",
           data: data,
           borderColor: "rgba(75, 192, 192, 1)",
-          fill: false,
+          fill: false
         },
         {
           type: "line",
@@ -536,9 +536,9 @@ function createChart(data) {
           borderColor: "rgba(255, 165, 0, 1)", // Light orange color
           borderDash: [5, 5],
           borderWidth: 1,
-          fill: false,
-        },
-      ],
+          fill: false
+        }
+      ]
     },
     options: {
       responsive: true,
@@ -550,25 +550,39 @@ function createChart(data) {
           max: 168,
           ticks: {
             stepSize: 24,
-            maxTicksLimit: 10,
-          },
+            maxTicksLimit: 10
+          }
         },
         y: {
-          min: 0,
-        },
-      },
-    },
+          min: 0
+        }
+      }
+    }
   });
   console.log(`chart: ${chart}`);
 }
 
-// AA This function gets invoked when a gui elements like 'range' changes
+let dynamic_calc_state = true;
+function set_dynamic_calc_state() {
+  let hold = document.getElementById("hold").checked;
+  // Solve! button sets the dynamic_calc_state to true while on hold
+  if (hold) {
+    dynamic_calc_state = false;
+    // this means we're entering hold state
+    document.body.style.backgroundColor = "#ADD8E6";
+  } else {
+    // reset to factory settings
+    dynamic_calc_state = true;
+    document.body.style.backgroundColor = "#FFFFFF";
+  }
+}
+
 /*
   1. Calculate clearance value via goalSeek
-  2. pass that clearance value to weeklyTableCalculator (which the iterates)
-  3. draw chart * update the two tables
+  2. pass that clearance value to weeklyTableCalculator (which then iterates)
+  3. draw chart
 */
-window.ready = function ready() {
+window.calculateAndDraw = function calculateAndDraw() {
   var varNames;
   var vTable;
   var clearance;
@@ -594,7 +608,7 @@ window.ready = function ready() {
       maxIterations: 100,
       maxStep: 5,
       goal: 0.001,
-      independentVariableIdx: 0,
+      independentVariableIdx: 0
     });
 
     console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
@@ -604,7 +618,7 @@ window.ready = function ready() {
     // Create and update the line chart when "Solve" button is clicked
     const chartData = weeklyTable.map((item) => ({
       x: item.ptime,
-      y: item.cext,
+      y: item.cext
     }));
     createChart(chartData);
 
@@ -615,5 +629,18 @@ window.ready = function ready() {
     populateTable(varNames, vTable, table);
   } catch (e) {
     console.error("error", e);
+  }
+};
+
+// AA This function gets invoked when a gui elements like 'range' changes
+window.ready = function ready() {
+  set_dynamic_calc_state();
+  console.log(`ready(): dynamic_calc_state : ${dynamic_calc_state}`);
+  if (dynamic_calc_state === false) {
+    // hold is enabled.  ignore input
+    return;
+  } else {
+    // hold is disabled.  process input and solve!
+    calculateAndDraw();
   }
 };

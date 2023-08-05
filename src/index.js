@@ -142,7 +142,7 @@ function calcClearanceTable(newCd) {
     "Phi",
     "Pe",
     "Massp",
-    "Massd",
+    "Massd"
   ];
   let vTable = new Array(sz[0]).fill(null).map(() =>
     Object.assign(
@@ -337,7 +337,7 @@ function calcWeeklyTable(clearanceValue) {
     Thursday,
     Friday,
     Saturday, //
-    Sunday, // dialysis[day] --> false
+    Sunday // dialysis[day] --> false
   ]; // javascript arrays are zero indexed
 
   let sz = [1681, 17];
@@ -352,7 +352,7 @@ function calcWeeklyTable(clearanceValue) {
     "debug",
     "point",
     "ptime",
-    "cext",
+    "cext"
   ];
   let wt = new Array(sz[0]).fill(null).map(() =>
     Object.assign(
@@ -477,15 +477,6 @@ function calculate_ptime(AX9, AG15, AB15) {
   }
 }
 
-// This code runs everytime the submit button is clicked
-window.clicked = function clicked() {
-  // Rrd the input values
-  // var stock_symbol = document.getElementById("symbol").value;
-  // window.ready();
-};
-window.clicked();
-// calcTable(100);
-
 function populateTable(varNames, vTable, tableElement) {
   if (tableElement) tableElement.innerHTML = "";
   else return;
@@ -505,40 +496,58 @@ function populateTable(varNames, vTable, tableElement) {
   }
 }
 
-let chart; // Global variable to hold the chart instance
-
-function createChart(data) {
-  console.log("createChart()");
-  if (chart) {
-    chart.destroy(); // Destroy the previous chart instance if it exists
-  }
-
-  const ctx = document.getElementById("chart").getContext("2d");
-  let y_values = data.map((item) => item.y);
+// x and y chart config for single chart
+function buildSingleXYSet(xydata, i) {
+  let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
-  chart = new Chart(ctx, {
+  let color_wheel_conc = [
+    "rgba(75, 192, 192, 1)",
+    "#E0BBE4",
+    "#E69816",
+    "#86BD9E",
+    "#7F826E"
+  ];
+  let color_wheel_avg = [
+    "rgba(255, 165, 0, 1)", // Light orange color
+    "#957DAD",
+    "#F7D527",
+    "#D1B488",
+    "#AC9484"
+  ];
+  var xyset = [
+    {
+      label: "Concentration(mg/dL)vs.Time(hours)_" + i,
+      data: xydata,
+      borderColor: color_wheel_conc[i],
+      fill: false
+    },
+    {
+      type: "line",
+      label: "Average_" + i,
+      data: xydata.map((item) =>
+        item.x % 3 === 0 ? { x: item.x, y: avg } : {}
+      ),
+      borderColor: color_wheel_avg[i],
+      borderDash: [5, 5],
+      borderWidth: 1,
+      fill: false
+    }
+  ];
+  return xyset;
+}
+
+// given an array of xy data sets, build an array of chart configs with embedded data
+function buildChartConfig(datasets) {
+  var xydata_array = [];
+  for (let i = 0; i < datasets.length; i++) {
+    xydata_array = xydata_array.concat(buildSingleXYSet(datasets[i], i));
+  }
+  console.log(`xydata_array: ${xydata_array}`);
+  var chartConfig = {
     type: "line",
     data: {
-      datasets: [
-        {
-          label: "Concentration (mg/dL) vs. Time (hours)",
-          data: data,
-          borderColor: "rgba(75, 192, 192, 1)",
-          fill: false,
-        },
-        {
-          type: "line",
-          label: "Average",
-          data: data.map((item) =>
-            item.x % 3 === 0 ? { x: item.x, y: avg } : {}
-          ),
-          borderColor: "rgba(255, 165, 0, 1)", // Light orange color
-          borderDash: [5, 5],
-          borderWidth: 1,
-          fill: false,
-        },
-      ],
+      datasets: xydata_array
     },
     options: {
       responsive: true,
@@ -550,25 +559,58 @@ function createChart(data) {
           max: 168,
           ticks: {
             stepSize: 24,
-            maxTicksLimit: 10,
-          },
+            maxTicksLimit: 10
+          }
         },
         y: {
-          min: 0,
-        },
-      },
-    },
-  });
-  console.log(`chart: ${chart}`);
+          min: 0
+        }
+      }
+    }
+  };
+  return chartConfig;
 }
 
-// AA This function gets invoked when a gui elements like 'range' changes
+let chart; // Global variable to hold the chart instance
+
+function createChart(data) {
+  console.log("createChart()");
+  if (chart) {
+    chart.destroy(); // Destroy the previous chart instance if it exists
+  }
+
+  const ctx = document.getElementById("chart").getContext("2d");
+  var chartConfig = buildChartConfig(data);
+  chart = new Chart(ctx, chartConfig);
+  // console.log(`chart: ${chart}`);
+}
+
+let dynamic_calc_state = true;
+function set_dynamic_calc_state() {
+  let hold = document.getElementById("hold").checked;
+  if (hold) {
+    dynamic_calc_state = false;
+    // this means we're entering hold state
+    document.body.style.backgroundColor = "#D6EAF8";
+  } else {
+    // reset to factory settings
+    dynamic_calc_state = true;
+    chartDataStack = [];
+    document.body.style.backgroundColor = "#FFFFFF";
+  }
+}
+
+function is_in_dynamic_mode() {
+  return dynamic_calc_state;
+}
+
 /*
   1. Calculate clearance value via goalSeek
-  2. pass that clearance value to weeklyTableCalculator (which the iterates)
-  3. draw chart * update the two tables
+  2. pass that clearance value to weeklyTableCalculator (which then iterates)
+  3. draw chart
 */
-window.ready = function ready() {
+var chartDataStack = [];
+window.calculateAndDraw = function calculateAndDraw() {
   var varNames;
   var vTable;
   var clearance;
@@ -594,7 +636,7 @@ window.ready = function ready() {
       maxIterations: 100,
       maxStep: 5,
       goal: 0.001,
-      independentVariableIdx: 0,
+      independentVariableIdx: 0
     });
 
     console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
@@ -604,9 +646,19 @@ window.ready = function ready() {
     // Create and update the line chart when "Solve" button is clicked
     const chartData = weeklyTable.map((item) => ({
       x: item.ptime,
-      y: item.cext,
+      y: item.cext
     }));
-    createChart(chartData);
+    // chartData is an array of xs and ys:
+    // [{x: 0, y: 123}, {x: 1, y: 134}..]
+    // allow charting under two conditions:
+    //  1. when the stack is empty (which means web page is in "factory state")
+    //  2. when hold is turned on
+    if (chartDataStack.length === 0 || !is_in_dynamic_mode()) {
+      chartDataStack.push(chartData);
+    }
+    // createChart(chartData);
+    console.log(`chartDataStack.length: ${chartDataStack.length}`);
+    createChart(chartDataStack);
 
     const wtable = document.getElementById("weeklyTable");
     populateTable(weeklyVarNames, weeklyTable, wtable);
@@ -615,5 +667,18 @@ window.ready = function ready() {
     populateTable(varNames, vTable, table);
   } catch (e) {
     console.error("error", e);
+  }
+};
+
+// AA This function gets invoked when a gui element changes
+window.ready = function ready() {
+  set_dynamic_calc_state();
+  console.log(`ready(): dynamic_calc_state : ${dynamic_calc_state}`);
+  if (!is_in_dynamic_mode()) {
+    // hold is enabled.  ignore input
+    return;
+  } else {
+    // hold is disabled.  process input and solve!
+    calculateAndDraw();
   }
 };

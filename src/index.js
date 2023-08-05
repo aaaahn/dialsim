@@ -505,40 +505,56 @@ function populateTable(varNames, vTable, tableElement) {
   }
 }
 
-let chart; // Global variable to hold the chart instance
-
-function createChart(data) {
-  console.log("createChart()");
-  if (chart) {
-    chart.destroy(); // Destroy the previous chart instance if it exists
-  }
-
-  const ctx = document.getElementById("chart").getContext("2d");
-  let y_values = data.map((item) => item.y);
+function buildSingleXYSet(xydata, i) {
+  let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
-  chart = new Chart(ctx, {
+  let color_wheel_conc = [
+    "rgba(75, 192, 192, 1)",
+    "#E0BBE4",
+    "#E69816",
+    "#86BD9E",
+    "#7F826E"
+  ];
+  let color_wheel_avg = [
+    "rgba(255, 165, 0, 1)",
+    "#957DAD",
+    "#F7D527",
+    "#D1B488",
+    "#AC9484"
+  ];
+  var xyset = [
+    {
+      label: "Concentration (mg/dL) vs. Time (hours) " + i,
+      data: xydata,
+      borderColor: color_wheel_conc[i],
+      fill: false
+    },
+    {
+      type: "line",
+      label: "Average " + i,
+      data: xydata.map((item) =>
+        item.x % 3 === 0 ? { x: item.x, y: avg } : {}
+      ),
+      borderColor: color_wheel_avg[i], // Light orange color
+      borderDash: [5, 5],
+      borderWidth: 1,
+      fill: false
+    }
+  ];
+  return xyset;
+}
+
+function buildChartConfig(data_set) {
+  var xydata_array = [];
+  for (let i = 0; i < data_set.length; i++) {
+    xydata_array = xydata_array.concat(buildSingleXYSet(data_set[i], i));
+  }
+  console.log(`xydata_array: ${xydata_array}`);
+  var chartConfig = {
     type: "line",
     data: {
-      datasets: [
-        {
-          label: "Concentration (mg/dL) vs. Time (hours)",
-          data: data,
-          borderColor: "rgba(75, 192, 192, 1)",
-          fill: false
-        },
-        {
-          type: "line",
-          label: "Average",
-          data: data.map((item) =>
-            item.x % 3 === 0 ? { x: item.x, y: avg } : {}
-          ),
-          borderColor: "rgba(255, 165, 0, 1)", // Light orange color
-          borderDash: [5, 5],
-          borderWidth: 1,
-          fill: false
-        }
-      ]
+      datasets: xydata_array
     },
     options: {
       responsive: true,
@@ -558,23 +574,41 @@ function createChart(data) {
         }
       }
     }
-  });
-  console.log(`chart: ${chart}`);
+  };
+  return chartConfig;
+}
+
+let chart; // Global variable to hold the chart instance
+
+function createChart(data) {
+  console.log("createChart()");
+  if (chart) {
+    chart.destroy(); // Destroy the previous chart instance if it exists
+  }
+
+  const ctx = document.getElementById("chart").getContext("2d");
+  var chartConfig = buildChartConfig(data);
+  chart = new Chart(ctx, chartConfig);
+  // console.log(`chart: ${chart}`);
 }
 
 let dynamic_calc_state = true;
 function set_dynamic_calc_state() {
   let hold = document.getElementById("hold").checked;
-  // Solve! button sets the dynamic_calc_state to true while on hold
   if (hold) {
     dynamic_calc_state = false;
     // this means we're entering hold state
-    document.body.style.backgroundColor = "#ADD8E6";
+    document.body.style.backgroundColor = "#D6EAF8";
   } else {
     // reset to factory settings
     dynamic_calc_state = true;
+    chartDataStack = [];
     document.body.style.backgroundColor = "#FFFFFF";
   }
+}
+
+function is_in_dynamic_mode() {
+  return dynamic_calc_state;
 }
 
 /*
@@ -582,6 +616,7 @@ function set_dynamic_calc_state() {
   2. pass that clearance value to weeklyTableCalculator (which then iterates)
   3. draw chart
 */
+var chartDataStack = [];
 window.calculateAndDraw = function calculateAndDraw() {
   var varNames;
   var vTable;
@@ -620,7 +655,14 @@ window.calculateAndDraw = function calculateAndDraw() {
       x: item.ptime,
       y: item.cext
     }));
-    createChart(chartData);
+    // chartData is an array of xs and ys:
+    // [{x: 0, y: 123}, {x: 1, y: 134}..]
+    if (chartDataStack.length === 0 || !is_in_dynamic_mode()) {
+      chartDataStack.push(chartData);
+    }
+    // createChart(chartData);
+    console.log(`chartDataStack.length: ${chartDataStack.length}`);
+    createChart(chartDataStack);
 
     const wtable = document.getElementById("weeklyTable");
     populateTable(weeklyVarNames, weeklyTable, wtable);

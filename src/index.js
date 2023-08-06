@@ -274,28 +274,11 @@ function calcClearanceTable(newCd) {
   console.log(`vTable[1000].theta: ${vTable[1000].theta}`);
   console.log(`----------------------`);
   */
-  let clearanceValue = Math.round(
+  let clearanceValue =
     ((Qp + Qprbc / (1 - theta_inblood)) * Cp -
       (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) /
-      Cp,
-    10
-  );
+    Cp;
   console.log(`clearanceValue0: ${clearanceValue}`);
-  /*
-  if (document.getElementById("clearanceValue"))
-    document.getElementById("clearanceValue").innerHTML = clearanceValue;
-  console.log(`Qp: ${Qp}`);
-  console.log(`Cp: ${Cp}`);
-  console.log(`Qprbc: ${Qprbc}`);
-  console.log(`vTable[1000].theta: ${vTable[1000].theta}`);
-  console.log("vTable[1000].Cp: " + vTable[1000].Cp);
-  console.log(`vTable[1000].Qp: ${vTable[1000].Qp}`);
-*/
-  // clearanceValue =                ((Qp + Qprbc / (1 - theta_inblood)) * Cp0 - (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) / Cp0;
-
-  // let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearanceValue); // (clearanceValue) pass in co
-
-  // return [varNames, vTable, weeklyVarNames, weeklyTable];
   return [varNames, vTable, clearanceValue];
 }
 
@@ -497,11 +480,38 @@ function populateTable(varNames, vTable, tableElement) {
   }
 }
 
-// x and y chart config for single chart
+/** https://www.samproell.io/posts/signal/peak-finding-python-js/
+ * Get indices of all local maxima in a sequence.
+ * @param {number[]} xs - sequence of numbers
+ * @returns {number[]} values of local maxima
+ */
+function find_local_maxima(xs) {
+  let maxima = [];
+  // iterate through all points and compare direct neighbors
+  for (let i = 1; i < xs.length - 1; ++i) {
+    if (xs[i] > xs[i - 1] && xs[i] > xs[i + 1]) maxima.push(xs[i]);
+  }
+  return maxima;
+}
+
+// x and y chart config for single chart for the i-th element of the xydata array
 function buildSingleXYSet(xydata, i) {
   let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
+  document.getElementById("timeavgconc").textContent = parseFloat(avg).toFixed(
+    1
+  );
+  var maxs = find_local_maxima(y_values);
+  // console.log(`maxs: ${maxs}`);
+  var avg_max =
+    maxs.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue;
+    }, 0) / maxs.length;
+  // console.log(`avg_max: ${avg_max}`);
+  document.getElementById("avgpeakconc").textContent = parseFloat(
+    avg_max
+  ).toFixed(1);
   // https://www.schemecolor.com/tools/color-scheme-generator/rose
   let color_wheel_conc = [
     "rgba(75, 192, 192, 1)",
@@ -525,14 +535,14 @@ function buildSingleXYSet(xydata, i) {
   ];
   var xyset = [
     {
-      label: "Concentration(mg/dL)vs.Time(hours)_" + i,
+      label: i === 0 ? "Concentration(mg/dL)vs.Time(hours)" : "Conc" + (i + 1),
       data: xydata,
       borderColor: color_wheel_conc[i],
       fill: false
     },
     {
       type: "line",
-      label: "Average_" + i,
+      label: i === 0 ? "Avg" : "Avg" + (i + 1),
       data: xydata.map((item) =>
         item.x % 3 === 0 ? { x: item.x, y: avg } : {}
       ),
@@ -580,7 +590,11 @@ function buildChartConfig(datasets) {
 }
 
 let chart; // Global variable to hold the chart instance
-
+// always start with a clean canvas
+// build an array of chart dataset composed of two arrays
+//  [ [ {x: 1, 2, 3}, {y: 81, 82, 83} ],     // dataset1
+//    [ {x: 1, 2, 3}, {y: 181, 182, 183} ],  // dataset2
+//    ..]
 function createChart(data) {
   // console.log("createChart()");
   if (chart) {
@@ -594,6 +608,9 @@ function createChart(data) {
 }
 
 let dynamic_calc_state = true;
+// this global state is used to toggle back & forth from two modes:
+// 1. default dynamic calculation state where each input change triggers Solve!
+// 2. non-dynamic (or hold) state where input changes are ignored until Solve! button is pressed
 function set_dynamic_calc_state() {
   let hold = document.getElementById("hold").checked;
   if (hold) {
@@ -625,12 +642,9 @@ window.calculateAndDraw = function calculateAndDraw() {
 
   function fn(x) {
     console.log(`goalseek fn(x) - try: x : ${x}`);
-    const [lvarNames, lvTable, lclearance] = calcClearanceTable(x);
-    console.log(`goalseek: lvTable[1000].Cd: ${lvTable[1000].Cd}`);
-    varNames = lvarNames;
-    vTable = lvTable;
-    clearance = lclearance;
-    return lvTable[1000].Cd;
+    [varNames, vTable, clearance] = calcClearanceTable(x);
+    console.log(`goalseek: lvTable[1000].Cd: ${vTable[1000].Cd}`);
+    return vTable[1000].Cd;
   }
   //console.log(cal)
   var fnParams = [30]; // first guess
@@ -649,6 +663,9 @@ window.calculateAndDraw = function calculateAndDraw() {
 
     console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
     console.log(`final clearance: ${clearance}`);
+    document.getElementById("avgclearance").textContent = parseFloat(
+      clearance
+    ).toFixed(1);
     let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearance); // (clearanceValue) pass in co
 
     // Create and update the line chart when "Solve" button is clicked
@@ -658,7 +675,7 @@ window.calculateAndDraw = function calculateAndDraw() {
     }));
     // chartData is an array of xs and ys:
     // [{x: 0, y: 123}, {x: 1, y: 134}..]
-    // allow charting under two conditions:
+    // pass on charting data under two conditions:
     //  1. when the stack is empty (which means web page is in "factory state")
     //  2. when hold is turned on
     if (chartDataStack.length === 0 || !is_in_dynamic_mode()) {

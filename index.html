@@ -353,7 +353,7 @@
       &nbsp;&nbsp;&nbsp;
       <button onclick="calculateAndDraw();">Solve!</button> &nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="hold" onclick="ready();" />
+      <input type="checkbox" id="hold" title="Un-check to clear the prior chart data" onclick="ready();" />
       Hold &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
       <input type="checkbox" id="plottac" onclick="ready();" checked />
 
@@ -367,18 +367,14 @@
       </select>
 
       <h3>Results</h3>
-      <label for="avgclearance"> Average Clearance (mL/min)* </label>
+      <label for="avgclearance"> Average Clearance (mL/min) </label>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input
-        type="number"
+      <label 
         id="avgclearance"
         name="avgclearance"
-        required
-        minlength="0"
-        maxlength="100"
-        value="0"
-        oninput="ready();"
-      />
+      /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <label for="srr"> Solute Reduction Ratios* </label>
       &nbsp;&nbsp;&nbsp;
@@ -387,31 +383,19 @@
         <option value="cvt2">model2</option>
       </select>
       <br />
-      <label for="timeavgconc"> Time-Averaged Conc. (mg/dL)* </label>
+      <label for="timeavgconc"> Time-Averaged Conc. (mg/dL) </label>
       &nbsp;&nbsp;&nbsp;
-      <input
-        type="number"
+      <label
         id="timeavgconc"
         name="timeavgconc"
-        required
-        minlength="0"
-        maxlength="100"
-        value="0"
-        oninput="ready();"
-      />
+      /></label>
       <br />
-      <label for="avgpeakconc"> Average Peak Conc. (mg/dL)* </label>
+      <label for="avgpeakconc"> Average Peak Conc. (mg/dL) </label>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input
-        type="number"
-        id="avgpeakconc"
-        name="avgpeakconc"
-        required
-        minlength="0"
-        maxlength="100"
-        value="0"
-        oninput="ready();"
-      />
+      <label
+      id="avgpeakconc"
+      name="avgpeakconc"
+      ></label>
 
       <br />
     </div>

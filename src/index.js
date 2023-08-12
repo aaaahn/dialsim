@@ -298,6 +298,7 @@ function map_day_to_kml(dialysis, day_num, time, clearanceValue, duration) {
   }
 }
 
+//TODO: ask dr tim
 function calc_vol_ext() {
   // =IF($AG$21,$AB$26,IF(AND(AM9,NOT(AM10)),$AB$26,AN1688+($AB$28-IF(AND(AM1688,AM9),CHOOSE(AK9,$AG$5,$AG$6,$AG$7,$AG$8,$AG$9,$AG$10,$AG$11)*$AA$22/$AA$24,0))*$AB$15))
   return 36000;
@@ -494,7 +495,12 @@ function find_local_maxima(xs) {
   return maxima;
 }
 
-// x and y chart config for single chart for the i-th element of the xydata array
+//
+/*
+ * x and y chart config for single chart for the i-th element of the xydata array
+ * @param {xydata[]} data of a single set
+ * @returns {xyset[]} data for graphing
+ */
 function buildSingleXYSet(xydata, i) {
   let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
@@ -555,7 +561,12 @@ function buildSingleXYSet(xydata, i) {
   return xyset;
 }
 
-// given an array of xy data sets, build an array of chart configs with embedded data
+//
+/*
+ * given an array of xy data sets, build an array of chart configs with embedded data
+ * @param {datasets[]} data of multiple datasets
+ * @returns {charConfig[]} data for graphing
+ */
 function buildChartConfig(datasets) {
   var xydata_array = [];
   for (let i = 0; i < datasets.length; i++) {

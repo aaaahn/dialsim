@@ -38,4 +38,6 @@ The inputs from the Web Page are collected in the Javascript code, which trigger
 The `Hold` mode allows for the graphing of multiple concentrations vs time scenarios.  Under this mode, the inputs are ignored until the `Solve!` button is pressed, and new graph is rendered, overlaying the existing set of scenario(s).  When the hold mode is disabled, all scenarios are cleared, leaving behind a graph from the most recent set of inputs.
 
 
+![](https://github.com/aaaahn/web-calculator/blob/main/dialsimdemo.gif)
+
 Created with CodeSandbox

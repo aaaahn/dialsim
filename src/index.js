@@ -29,6 +29,32 @@ window.render_disabled = function render_disabled() {
     });
 };
 
+// make this also a global function by attaching to the window object
+window.render_disabled_uf = function render_disabled_uf() {
+  console.log(
+    `called - render_disabled_uf: ${document.getElementById("uf").disabled}`
+  );
+  document.getElementById("fluidgain").addEventListener("input", function () {
+    var fluidgainValue = parseFloat(this.value);
+    console.log(`fluidgainValue: ${fluidgainValue}`);
+    var isDisabled = fluidgainValue === 0;
+
+    document.getElementById("uf").disabled = isDisabled;
+    console.log(`uf isDisabled: ${isDisabled}`);
+
+    // Applying a class to make the difference obviously visible
+    if (isDisabled) {
+      document.getElementById("uf").value = 0;
+      document.getElementById("uf").classList.add("disabled");
+      document.getElementById("uflabel").classList.add("disabled");
+    } else {
+      document.getElementById("uf").value = 7;
+      document.getElementById("uf").classList.remove("disabled");
+      document.getElementById("uflabel").classList.remove("disabled");
+    }
+  });
+};
+
 // This line ensures that the render_disabled function is called once the document's content has been fully loaded.
 document.addEventListener("DOMContentLoaded", render_disabled);
 
@@ -704,7 +730,32 @@ function is_in_dynamic_mode() {
   return dynamic_calc_state;
 }
 
+function findClearances() {
+  let sz = [7, 7];
+  let varNames = [
+    "day_of_the_week",
+    "dialysis",
+    "day",
+    "start",
+    "end",
+    "days_since",
+    "dv",
+    "eff_uf",
+    "clear_uf",
+    "clearance"
+  ];
+  let wt = new Array(sz[0]).fill(null).map(() =>
+    Object.assign(
+      {},
+      Array.from(varNames, () => 0)
+    )
+  );
+
+  return wt;
+}
+
 /*
+  VBA SolveDialSim() 
   1. Calculate clearance value via goalSeek
   2. pass that clearance value to weeklyTableCalculator (which then iterates)
   3. draw chart

@@ -113,7 +113,7 @@ function calculateClearUF(day) {
   );
 }
 
-function calcClearanceTable(newCd) {
+function calcClearanceTable(newCd, eff_uf) {
   let Qb = parseFloat(document.getElementById("bloodflow").value); // let Qb = 360;
   let Qd = parseFloat(document.getElementById("dialysateflow").value); // 500;
   console.log("dialysateflow: " + parseFloat(Qd));
@@ -127,6 +127,8 @@ function calcClearanceTable(newCd) {
   // Qr is assigned Qf
   if (!document.getElementById("dilution").disabled) {
     Qf = Qr;
+  } else {
+    Qf = eff_uf;
   }
   console.log(`Qr: ${Qr}`);
   console.log(`Qf: ${Qf}`);
@@ -862,22 +864,22 @@ function findClearances() {
 */
 var chartDataStack = [];
 window.calculateAndDraw = function calculateAndDraw() {
+  // assemble a list of eff_uf so that clearance values for each treatment day can be collected
   const ttable = document.getElementById("treatmentTable");
   const [tvarnames, treatmentTable] = findClearances();
-  populateTable(tvarnames, treatmentTable, ttable);
 
+  // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
   var varNames;
   var vTable;
   var clearance;
-
-  function fn(x) {
+  function fn(x, y) {
     console.log(`goalseek fn(x) - try: x : ${x}`);
-    [varNames, vTable, clearance] = calcClearanceTable(x);
+    [varNames, vTable, clearance] = calcClearanceTable(x, y);
     console.log(`goalseek: lvTable[1000].Cd: ${vTable[1000].Cd}`);
     return vTable[1000].Cd;
   }
   //console.log(cal)
-  var fnParams = [30]; // first guess
+  var fnParams = [30, treatmentTable[0].eff_uf]; // first guess
 
   // goal is to get Cd (result) to 0.001
   try {
@@ -888,7 +890,7 @@ window.calculateAndDraw = function calculateAndDraw() {
       maxIterations: 100,
       maxStep: 5,
       goal: 0.001,
-      independentVariableIdx: 0
+      independentVariableIdx: 0 // the index position of the independent variable x in the fnParams array.
     });
 
     console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
@@ -896,6 +898,8 @@ window.calculateAndDraw = function calculateAndDraw() {
     document.getElementById("avgclearance").textContent = parseFloat(
       clearance
     ).toFixed(1);
+    treatmentTable[0].clearance = clearance;
+    populateTable(tvarnames, treatmentTable, ttable);
     let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearance); // (clearanceValue) pass in co
 
     // Create and update the line chart when "Solve" button is clicked

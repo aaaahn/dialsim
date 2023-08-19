@@ -2,6 +2,8 @@
 
 https://webclear.netlify.app
 
+https://dialsim.com
+
 # Dialysis Simulator
 
 `calcClearanceTable()` - The `goalseek()` function iterates to find a starting Cd value minimized to 0 by the end of the dialyzer, or as x reaches 1.000. The inputs from the website run through a table that uses pseudo-calculus to model the values of several variables through the dialyzer. With an initial Cd value that reaches 0, other important values dependent on it can be used in the calculation of the clearance. Protein binding percentage is assumed to be 0%, albumin concentration is assumed to be 500 µM, and ∆P0 and ∆P1 are assumed to be 40 torr.

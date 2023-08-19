@@ -856,22 +856,11 @@ function findClearances() {
   return [varNames, wt];
 }
 
-/*
-  VBA SolveDialSim() 
-  1. Calculate clearance value via goalSeek
-  2. pass that clearance value to weeklyTableCalculator (which then iterates)
-  3. draw chart
-*/
-var chartDataStack = [];
-window.calculateAndDraw = function calculateAndDraw() {
-  // assemble a list of eff_uf so that clearance values for each treatment day can be collected
-  const ttable = document.getElementById("treatmentTable");
-  const [tvarnames, treatmentTable] = findClearances();
-
-  // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
+function applyTreatment(eff_uf) {
   var varNames;
   var vTable;
   var clearance;
+
   function fn(x, y) {
     console.log(`goalseek fn(x) - try: x : ${x}`);
     [varNames, vTable, clearance] = calcClearanceTable(x, y);
@@ -879,7 +868,7 @@ window.calculateAndDraw = function calculateAndDraw() {
     return vTable[1000].Cd;
   }
   //console.log(cal)
-  var fnParams = [30, treatmentTable[0].eff_uf]; // first guess
+  var fnParams = [30, eff_uf]; // first guess
 
   // goal is to get Cd (result) to 0.001
   try {
@@ -898,9 +887,88 @@ window.calculateAndDraw = function calculateAndDraw() {
     document.getElementById("avgclearance").textContent = parseFloat(
       clearance
     ).toFixed(1);
+  } catch (e) {
+    console.error("error", e);
+  }
+  return [varNames, vTable, clearance];
+}
+
+/*
+  VBA SolveDialSim() 
+  1. Calculate clearance value via goalSeek
+  2. pass that clearance value to weeklyTableCalculator (which then iterates)
+  3. draw chart
+*/
+var chartDataStack = [];
+window.calculateAndDraw = function calculateAndDraw() {
+  // assemble a list of eff_uf so that clearance values for each treatment day can be collected
+  const ttable = document.getElementById("treatmentTable");
+  const [tvarnames, treatmentTable] = findClearances();
+
+  // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
+  var varNames, vTable;
+  for (let i = 0; i < treatmentTable.length; i++) {
+    if (treatmentTable[i].dialysis) {
+      // is there another treatment day with the same eff_uf? re-cycle the clearance
+      for (let j = 0; j < treatmentTable.length; j++) {
+        if (
+          i !== j &&
+          treatmentTable[i].eff_uf === treatmentTable[j].eff_uf &&
+          treatmentTable[j].clearance
+        ) {
+          treatmentTable[i].clearance = treatmentTable[j].clearance;
+          console.log(`ttcd copy: i: ${i}, j: ${j}`);
+          break;
+        }
+      } // end inner cache search loop
+
+      // did the loop above manage to find a recylced clearance value?  if not, go calcualte one
+      if (!treatmentTable[i].clearance) {
+        [varNames, vTable, treatmentTable[i].clearance] = applyTreatment(
+          treatmentTable[i].eff_uf
+        );
+        console.log(`ttcd apply i: ${i}`);
+      }
+    }
+  }
+
+  /*
+  var varNames;
+  var vTable;
+  var clearance;
+  function fn(x, y) {
+    console.log(`goalseek fn(x) - try: x : ${x}`);
+    [varNames, vTable, clearance] = calcClearanceTable(x, y);
+    console.log(`goalseek: lvTable[1000].Cd: ${vTable[1000].Cd}`);
+    return vTable[1000].Cd;
+  }
+  //console.log(cal)
+  var fnParams = [30, treatmentTable[0].eff_uf]; // first guess
+ */
+  // goal is to get Cd (result) to 0.001
+  try {
+    /*
+    var result = goalSeek.default({
+      fn,
+      fnParams,
+      percentTolerance: 10,
+      maxIterations: 100,
+      maxStep: 5,
+      goal: 0.001,
+      independentVariableIdx: 0 // the index position of the independent variable x in the fnParams array.
+    });
+
+    console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
+    console.log(`final clearance: ${clearance}`);
+    document.getElementById("avgclearance").textContent = parseFloat(
+      clearance
+    ).toFixed(1);
     treatmentTable[0].clearance = clearance;
+    */
     populateTable(tvarnames, treatmentTable, ttable);
-    let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearance); // (clearanceValue) pass in co
+    let [weeklyVarNames, weeklyTable] = calcWeeklyTable(
+      treatmentTable[0].clearance
+    ); // (clearanceValue) pass in co
 
     // Create and update the line chart when "Solve" button is clicked
     const chartData = weeklyTable.map((item) => ({

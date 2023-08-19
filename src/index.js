@@ -58,17 +58,50 @@ function calculatePrePostDilution(Qf) {
   }
 }
 
+function calculatePhi(KoA, Pe) {
+  if (KoA === 0) {
+    return 0;
+  } else if (Pe === 0) {
+    return 0.5;
+  } else if (isNaN(Math.exp(Pe))) {
+    return 0;
+  } else {
+    return 1 / Pe - 1 / (Math.exp(Pe) - 1);
+  }
+}
+
+function calculateClearUF(day) {
+  // =(AE5*Interface!$E$14+IF(AA5,Interface!$E$9,0))*1000/$AB$17
+  var fluidgain = parseFloat(document.getElementById("fluidgain").value);
+  var additionaluf = parseFloat(document.getElementById("additionaluf").value);
+  let duration_in_mins = hours_to_mins(
+    parseFloat(document.getElementById("duration").value)
+  );
+  let dialysis = build_dialysis_array();
+  let days_since = 1; // TODO: fix this with a real calculation
+
+  return (
+    ((days_since * fluidgain + dialysis[day] ? additionaluf : 0) * 1000) /
+    duration_in_mins
+  );
+}
+
 function calcClearanceTable(newCd) {
   let Qb = parseFloat(document.getElementById("bloodflow").value); // let Qb = 360;
   let Qd = parseFloat(document.getElementById("dialysateflow").value); // 500;
-  // console.log("dialysateflow: " + parseFloat(Qd));
+  console.log("dialysateflow: " + parseFloat(Qd));
   let KoA = parseFloat(document.getElementById("koa").value); //  let KoA = 500;
   let sigma = parseFloat(document.getElementById("sigma").value); // 0;
   console.log(`sigma: ${sigma}`);
-  let Qf = parseFloat(document.getElementById("additionaluf").value); // 0;
-  let Qr = calculatePrePostDilution(Qf); // 0; // Ask Dr. Tim: is this Fluid Gain?
+  let Qf = parseFloat(document.getElementById("fluidgain").value); // 0;
+  let additionaluf = parseFloat(document.getElementById("additionaluf").value); // 0;
+  let Qr = calculatePrePostDilution(additionaluf); // 0;
+  // when Additional UF is non-zero, dilution is enabled
+  // Qr is assigned Qf
+  if (!document.getElementById("dilution").disabled) {
+    Qf = Qr;
+  }
   console.log(`Qr: ${Qr}`);
-  Qf = Qr;
   console.log(`Qf: ${Qf}`);
   let Hct = parseFloat(document.getElementById("hematocrit").value); // 0;
   console.log(`Hct: ${Hct}`);
@@ -83,6 +116,7 @@ function calcClearanceTable(newCd) {
   let solute1 = "Urea";
   let solute2 = "Plasma";
   let PureUF = Qd <= 0 ? true : false; // false;
+  console.log("PureUF: " + PureUF);
   let PureDialysis = Qf <= 0 ? true : false; //  = true;
   let Qpmin = 200;
   let Qdmin = 1000;
@@ -155,7 +189,7 @@ function calcClearanceTable(newCd) {
     // vTable[row].x = row * 0.001;
     vTable[row].x = row === 0 ? 0.0 : vTable[row - 1].x + 0.001;
     vTable[row].x = parseFloat(vTable[row].x.toFixed(3));
-    vTable[row].Phi = 0.5;
+    // vTable[row].Phi = 0.5;
     vTable[row].Qp =
       Qpoatinlet - Qf * (Pa * Math.pow(vTable[row].x, 2) + Pb * vTable[row].x);
 
@@ -230,6 +264,9 @@ function calcClearanceTable(newCd) {
       }
     }
 
+    vTable[row].Pe = (vTable[row].Jv * (1 - sigma)) / KoA;
+    vTable[row].Phi = calculatePhi(KoA, vTable[row].Pe);
+
     if (PureUF) {
       vTable[row].Cpm = vTable[row].Cpfw;
     } else {
@@ -246,7 +283,6 @@ function calcClearanceTable(newCd) {
         vTable[row].Cpm * vTable[row].Jv * (1 - sigma);
     }
 
-    vTable[row].Pe = (vTable[row].Jv * (1 - sigma)) / KoA;
     vTable[row].Massp = (vTable[row].Qp + Qprbc) * vTable[row].Cp;
 
     if (PureUF) {
@@ -286,6 +322,31 @@ function hours_to_mins(duration) {
   return (Math.round(duration * 10) / 10) * 60;
 }
 
+// returns a value based on the first TRUE cell it encounters.
+function days_since(dialysis) {
+  let result = 0;
+  // 1 2 3 4 5 6 7
+  // M T W T F S S
+
+  if (!dialysis[1]) {
+    result = 0;
+  } else if (dialysis[7]) {
+    result = 1;
+  } else if (dialysis[6]) {
+    result = 2;
+  } else if (dialysis[5]) {
+    result = 3;
+  } else if (dialysis[4]) {
+    result = 4;
+  } else if (dialysis[3]) {
+    result = 5;
+  } else if (dialysis[2]) {
+    result = 6;
+  }
+  console.log(result); // This will log the result to the console.
+  return result;
+}
+
 function map_day_to_kml(dialysis, day_num, time, clearanceValue, duration) {
   // todo: figure out column AI for Monday to Sunday are calculated
   //  return dialysis[day_num] * 237.1902396608; // kml_per_min;
@@ -304,9 +365,7 @@ function calc_vol_ext() {
   return 36000;
 }
 
-function calcWeeklyTable(clearanceValue) {
-  console.log(`calcWeeklyTable:clearanceValue: ${clearanceValue}`);
-
+function build_dialysis_array() {
   let Monday = document.getElementById("monday").checked; // true;
   let Tuesday = document.getElementById("tuesday").checked; //false;
   let Wednesday = document.getElementById("wednesday").checked; // true;
@@ -324,7 +383,12 @@ function calcWeeklyTable(clearanceValue) {
     Saturday, //
     Sunday // dialysis[day] --> false
   ]; // javascript arrays are zero indexed
+  return dialysis;
+}
 
+function calcWeeklyTable(clearanceValue) {
+  console.log(`calcWeeklyTable:clearanceValue: ${clearanceValue}`);
+  let dialysis = build_dialysis_array();
   let sz = [1681, 17];
   let varNames = [
     "day",

@@ -501,6 +501,7 @@ function calcWeeklyTable(clearanceValue) {
       wt[row].time = row === 0 ? 0 : wt[row - 1].time + time_increment_minutes;
       wt[row].day = 1 + (Math.floor(wt[row].time / 60 / 24 - 0.5) % 7);
       wt[row].dialysis = dialysis[wt[row].day];
+      // vol_ext and vol_int are affected by UF
       wt[row].vol_ext = calc_vol_ext();
       wt[row].vol_int = 0.0;
 
@@ -835,13 +836,19 @@ function findClearances() {
 
   let dialysisDays = wt.map((row) => row.dialysis);
   let daysSinceResults = daysSinceTrue(dialysisDays);
-
   wt.forEach((row, index) => {
     row.days_since = daysSinceResults[index];
   });
 
   wt.forEach((row, index) => {
     row.dv = calcDV(row.days_since);
+  });
+
+  let duration_in_mins = hours_to_mins(
+    parseFloat(document.getElementById("duration").value)
+  );
+  wt.forEach((row, index) => {
+    row.eff_uf = row.dv / duration_in_mins;
   });
 
   return [varNames, wt];

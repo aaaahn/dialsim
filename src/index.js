@@ -30,6 +30,7 @@ window.render_disabled = function render_disabled() {
 };
 
 // make this also a global function by attaching to the window object
+// FIX BUG - this function get triggered twice for it to work (2, 3, then 2 in fluid gain)
 window.render_disabled_uf = function render_disabled_uf() {
   console.log(
     `called - render_disabled_uf: ${document.getElementById("uf").disabled}`
@@ -348,29 +349,60 @@ function hours_to_mins(duration) {
   return (Math.round(duration * 10) / 10) * 60;
 }
 
-// returns a value based on the first TRUE cell it encounters.
-function days_since(dialysis) {
-  let result = 0;
-  // 1 2 3 4 5 6 7
-  // M T W T F S S
-
-  if (!dialysis[1]) {
-    result = 0;
-  } else if (dialysis[7]) {
-    result = 1;
-  } else if (dialysis[6]) {
-    result = 2;
-  } else if (dialysis[5]) {
-    result = 3;
-  } else if (dialysis[4]) {
-    result = 4;
-  } else if (dialysis[3]) {
-    result = 5;
-  } else if (dialysis[2]) {
-    result = 6;
+function frac_uf_to_intracellular() {
+  var selectElement = document.getElementById("modeltype");
+  var selectedValue = selectElement.value;
+  console.log(`selectElement: ${selectElement}`);
+  console.log(`selectElement.value: ${selectElement.value}`);
+  console.log(`selectElement.selectedIndex: ${selectElement.selectedIndex}`);
+  console.log(`selectElement.options: ${selectElement.options}`);
+  var selectedText = selectElement.options[selectElement.selectedIndex].text;
+  console.log(`selectedText: ${selectedText}`); // Added to log the extracted text
+  var modeltype = selectedText;
+  let volumeofdist = parseFloat(document.getElementById("volumeofdist").value);
+  let fluidgaincompartment1 = parseFloat(
+    document.getElementById("fluidgaincompartment1").value
+  );
+  let interfaceE25 = 0;
+  console.log(`--------------------------modeltype: ${modeltype}`);
+  if (modeltype === "1 Comp") {
+    console.log(`*********************************modeltype: ${modeltype}`);
+    return fluidgaincompartment1 / 100;
+  } else if (modeltype === "2 Comp Urea") {
+    return 1; // 100 / 100 is simply 1
+  } else {
+    return interfaceE25 / 100;
   }
-  console.log(result); // This will log the result to the console.
-  return result;
+}
+
+function frac_uf_to_extracellular() {
+  var selectElement = document.getElementById("modeltype");
+  var selectedText = selectElement.options[selectElement.selectedIndex].text;
+  var modeltype = selectedText; // selectElement.options[selectElement.selectedIndex].text;
+  var interfaceE26 = 0;
+  if (modeltype === "1 Comp" || modeltype === "2 Comp Urea") {
+    return 0;
+  } else {
+    return interfaceE26 / 100;
+  }
+}
+
+function calcDV(days_since) {
+  var fluidgain = parseFloat(document.getElementById("fluidgain").value);
+  let extracellular_dv_per_min_ml =
+    ((frac_uf_to_intracellular() * fluidgain) / 24 / 60) * 1000;
+  let intracellular_dv_ml =
+    ((frac_uf_to_extracellular() * fluidgain) / 24 / 60) * 1000;
+  console.log(`frac_uf_to_intracellular(): ${frac_uf_to_intracellular()}`);
+  console.log(`extracellular_dv_per_min_ml: ${extracellular_dv_per_min_ml}`);
+  console.log(`intracellular_dv_ml: ${intracellular_dv_ml}`);
+
+  if (days_since === 0) {
+    return 0;
+  }
+  return (
+    days_since * 24 * 60 * (extracellular_dv_per_min_ml + intracellular_dv_ml)
+  );
 }
 
 function map_day_to_kml(dialysis, day_num, time, clearanceValue, duration) {
@@ -730,10 +762,39 @@ function is_in_dynamic_mode() {
   return dynamic_calc_state;
 }
 
+function daysSinceTrue(weekData) {
+  let lastTrueIndex = -1;
+  let result = [];
+
+  // First, find the last true index in the array for wrap-around logic
+  for (let i = weekData.length - 1; i >= 0; i--) {
+    if (weekData[i]) {
+      lastTrueIndex = i;
+      break;
+    }
+  }
+
+  for (let i = 0; i < weekData.length; i++) {
+    if (weekData[i]) {
+      if (lastTrueIndex === -1) {
+        result.push(0); // If there's no true value before, return 0
+      } else if (i <= lastTrueIndex) {
+        result.push(i + weekData.length - lastTrueIndex);
+      } else {
+        result.push(i - lastTrueIndex);
+      }
+      lastTrueIndex = i;
+    } else {
+      result.push(0);
+    }
+  }
+
+  return result;
+}
+
 function findClearances() {
-  let sz = [7, 7];
   let varNames = [
-    "day_of_the_week",
+    "name",
     "dialysis",
     "day",
     "start",
@@ -744,6 +805,7 @@ function findClearances() {
     "clear_uf",
     "clearance"
   ];
+  let sz = [7, varNames.length];
   let wt = new Array(sz[0]).fill(null).map(() =>
     Object.assign(
       {},
@@ -751,7 +813,38 @@ function findClearances() {
     )
   );
 
-  return wt;
+  let dotw = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday"
+  ];
+  wt = dotw.map((day, index) => ({
+    name: day,
+    ...wt[index]
+  }));
+
+  wt = wt.map((row, index) => ({
+    ...row,
+    dialysis: document.getElementById(row.name).checked,
+    day: index + 1
+  }));
+
+  let dialysisDays = wt.map((row) => row.dialysis);
+  let daysSinceResults = daysSinceTrue(dialysisDays);
+
+  wt.forEach((row, index) => {
+    row.days_since = daysSinceResults[index];
+  });
+
+  wt.forEach((row, index) => {
+    row.dv = calcDV(row.days_since);
+  });
+
+  return [varNames, wt];
 }
 
 /*
@@ -762,6 +855,10 @@ function findClearances() {
 */
 var chartDataStack = [];
 window.calculateAndDraw = function calculateAndDraw() {
+  const ttable = document.getElementById("treatmentTable");
+  const [tvarnames, treatmentTable] = findClearances();
+  populateTable(tvarnames, treatmentTable, ttable);
+
   var varNames;
   var vTable;
   var clearance;

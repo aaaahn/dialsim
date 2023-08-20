@@ -3,60 +3,68 @@ import "./styles.css";
 import * as goalSeek from "goal-seek";
 
 // make this also a global function by attaching to the window object
+// this function performs the following duties:
+// when the user enters a value into web page element "Additional UF (L/t)"
+// and that value is zero
+// the two html elements are greyed out to signal the user that it's been disabled as input
+// otherwise, when the value is non-zero
+// the use entered value is copied into HTML element dilution.
 window.render_disabled = function render_disabled() {
   console.log(
     `called - render_disabled: ${document.getElementById("replace").disabled}`
   );
-  document
-    .getElementById("additionaluf")
-    .addEventListener("input", function () {
-      var additionalufValue = parseFloat(this.value);
-      var isDisabled = additionalufValue === 0;
 
-      document.getElementById("replace").disabled = isDisabled;
-      document.getElementById("dilution").disabled = isDisabled;
-      console.log(`isDisabled: ${isDisabled}`);
+  var additionalufValue = parseFloat(
+    document.getElementById("additionaluf").value
+  );
+  // should we disable the GUI elements?
+  var isDisabled = additionalufValue === 0;
 
-      // Applying a class to make the difference obviously visible
-      if (isDisabled) {
-        document.getElementById("replace").classList.add("disabled");
-        document.getElementById("dilution").classList.add("disabled");
-      } else {
-        document.getElementById("dilution").value = additionalufValue;
-        document.getElementById("replace").classList.remove("disabled");
-        document.getElementById("dilution").classList.remove("disabled");
-      }
-    });
+  document.getElementById("replace").disabled = isDisabled;
+  document.getElementById("dilution").disabled = isDisabled;
+  console.log(`isDisabled: ${isDisabled}`);
+
+  // Applying a class to make the difference obviously visible
+  if (isDisabled) {
+    document.getElementById("replace").classList.add("disabled");
+    document.getElementById("dilution").classList.add("disabled");
+  } else {
+    document.getElementById("dilution").value = additionalufValue;
+    document.getElementById("replace").classList.remove("disabled");
+    document.getElementById("dilution").classList.remove("disabled");
+  }
 };
 
 // make this also a global function by attaching to the window object
 // FIX BUG - this function get triggered twice for it to work (2, 3, then 2 in fluid gain)
+// when a non-zero value is entered into fluidgain, enable uf and copy a value, then trigger recalc().
+// unlike the above function render_disabled_uf, it enables/disables not itself but
+// html element id "uf".
 window.render_disabled_uf = function render_disabled_uf() {
   console.log(
     `called - render_disabled_uf: ${document.getElementById("uf").disabled}`
   );
-  document.getElementById("fluidgain").addEventListener("input", function () {
-    var fluidgainValue = parseFloat(this.value);
-    console.log(`fluidgainValue: ${fluidgainValue}`);
-    var isDisabled = fluidgainValue === 0;
+  var fluidgainValue = fluidgain();
+  console.log(`fluidgainValue: ${fluidgainValue}`);
+  var isDisabled = fluidgainValue === 0;
 
-    document.getElementById("uf").disabled = isDisabled;
-    console.log(`uf isDisabled: ${isDisabled}`);
-    var number_of_treatments = 3; // TODO: replace with actual calculated value
+  document.getElementById("uf").disabled = isDisabled;
+  console.log(`uf isDisabled: ${isDisabled}`);
+  var number_of_treatments = 3; // TODO: replace with actual calculated value from treatmentTable (or gui directly)
 
-    // Applying a class to make the difference obviously visible
-    if (isDisabled) {
-      document.getElementById("uf").value = 0;
-      document.getElementById("uf").classList.add("disabled");
-      document.getElementById("uflabel").classList.add("disabled");
-    } else {
-      document.getElementById("uf").value = parseFloat(
-        (fluidgainValue * 7) / number_of_treatments
-      ).toFixed(1);
-      document.getElementById("uf").classList.remove("disabled");
-      document.getElementById("uflabel").classList.remove("disabled");
-    }
-  });
+  // Applying a class to make the difference obviously visible
+  if (isDisabled) {
+    document.getElementById("uf").value = 0; // this does NOT trigger ready() by "uf"'s oninput
+    document.getElementById("uf").classList.add("disabled");
+    document.getElementById("uflabel").classList.add("disabled");
+  } else {
+    // this does NOT trigger ready() by "uf"'s oninput
+    document.getElementById("uf").value = parseFloat(
+      (fluidgainValue * 7) / number_of_treatments
+    ).toFixed(1);
+    document.getElementById("uf").classList.remove("disabled");
+    document.getElementById("uflabel").classList.remove("disabled");
+  }
 };
 
 // This line ensures that the render_disabled function is called once the document's content has been fully loaded.
@@ -100,6 +108,9 @@ function calculatePhi(KoA, Pe) {
   }
 }
 
+// TODO: to speed up the goalseek iteration, split up the function into two separate functions:
+//  1. fetch data from WebPage (DOM-access)
+//  2. pass-in all DOM sourced data as a dictionary
 function calcClearanceTable(newCd, eff_uf) {
   let Qb = parseFloat(document.getElementById("bloodflow").value); // let Qb = 360;
   let Qd = parseFloat(document.getElementById("dialysateflow").value); // 500;
@@ -107,7 +118,7 @@ function calcClearanceTable(newCd, eff_uf) {
   let KoA = parseFloat(document.getElementById("koa").value); //  let KoA = 500;
   let sigma = parseFloat(document.getElementById("sigma").value); // 0;
   console.log(`sigma: ${sigma}`);
-  let Qf = parseFloat(document.getElementById("fluidgain").value); // 0;
+  let Qf = fluidgain(); // 0;
   let additionaluf = parseFloat(document.getElementById("additionaluf").value); // 0;
   let Qr = calculatePrePostDilution(additionaluf); // 0;
   // when Additional UF is non-zero, dilution is enabled
@@ -379,8 +390,11 @@ function frac_uf_to_extracellular() {
 }
 
 function fluidgain() {
-  var fluidgain = parseFloat(document.getElementById("fluidgain").value);
-  return fluidgain;
+  var fluidgain_val = parseFloat(document.getElementById("fluidgain").value);
+  console.log(`fluidgain: ${fluidgain_val}`);
+  console.log(`uf: ${document.getElementById("uf").value}`);
+
+  return fluidgain_val;
 }
 
 function extracellular_dv_per_min_ml() {
@@ -407,12 +421,8 @@ function calcDV(days_since) {
 }
 
 function map_day_to_kml(dialysis, day_num, time, clearanceValue, duration) {
-  // todo: figure out column AI for Monday to Sunday are calculated
-  //  return dialysis[day_num] * 237.1902396608; // kml_per_min;
-  // console.log(`hours_to_mins(duration): ${hours_to_mins(duration)}`);
-
   if ((time - 720) % 1440 <= hours_to_mins(duration)) {
-    return dialysis[day_num] * clearanceValue;
+    return dialysis * clearanceValue;
   } else {
     return 0.0;
   }
@@ -432,10 +442,12 @@ function sum_of_fractions() {
   return sum === 0 ? 1 : sum;
 }
 
-function constant_dial() {
+function constant_dial(duration, number_of_treatments) {
   // TODO: pass in the number of treatments and dialysis duration
-  // return total_treament_time_mins >= 10080;
-  return false;
+  console.log(`number_of_treatments: ${number_of_treatments}`);
+
+  let total_treament_time_mins = number_of_treatments * duration * 60;
+  return total_treament_time_mins >= 10080;
 }
 
 function start_time(dialysis, day, time_before_dialysis_in_mins) {
@@ -467,6 +479,7 @@ function calc_vol_ext0(
   extracellular_dv_per_min_ml,
   sum_of_fractions
 ) {
+  /*
   console.log(`calc_vol_ext0:constant_dial_val: ${constant_dial_val}`);
   console.log(`calc_vol_ext0:prev_day_dialysis: ${prev_day_dialysis}`);
   console.log(`calc_vol_ext0:current_day_dialysis: ${current_day_dialysis}`);
@@ -482,7 +495,7 @@ function calc_vol_ext0(
     `calc_vol_ext0:extracellular_dv_per_min_ml: ${extracellular_dv_per_min_ml}`
   );
   console.log(`calc_vol_ext0:sum_of_fractions: ${sum_of_fractions}`);
-
+*/
   if (constant_dial_val) {
     return extracellular_volume * 1000;
   } else if (current_day_dialysis && !next_day_dialysis) {
@@ -521,6 +534,7 @@ function calc_vol_ext(
   extracellular_dv_per_min_ml,
   sum_of_fractions
 ) {
+  /*
   if (time === 6678) {
     console.log(`calc_vol_ext:time: ${time}`);
     console.log(`calc_vol_ext:prev_day_dialysis: ${prev_day_dialysis}`);
@@ -538,6 +552,7 @@ function calc_vol_ext(
     );
     console.log(`calc_vol_ext:sum_of_fractions: ${sum_of_fractions}`);
   }
+  */
   // Check the first condition
   if (current_day_dialysis && !next_day_dialysis) {
     return extracellular_volume * 1000;
@@ -570,27 +585,6 @@ function _calc_vol_ext() {
   return 36000;
 }
 
-function build_dialysis_array() {
-  let Monday = document.getElementById("monday").checked; // true;
-  let Tuesday = document.getElementById("tuesday").checked; //false;
-  let Wednesday = document.getElementById("wednesday").checked; // true;
-  let Thursday = document.getElementById("thursday").checked; // false;
-  let Friday = document.getElementById("friday").checked; // true;
-  let Saturday = document.getElementById("saturday").checked; // false;
-  let Sunday = document.getElementById("sunday").checked; // false;
-  let dialysis = [
-    Sunday,
-    Monday, // dialysis[1] --> true
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday, //
-    Sunday // dialysis[day] --> false
-  ]; // javascript arrays are zero indexed
-  return dialysis;
-}
-
 function calculateDay(time) {
   let value = time / 60 / 24 - 0.5;
   let modValue = value % 7;
@@ -600,9 +594,6 @@ function calculateDay(time) {
 
 // pass in eff_ef and clearance inside treatmentTable
 function calcWeeklyTable(treatmentTable) {
-  let clearanceValue = treatmentTable[0].clearance;
-  console.log(`calcWeeklyTable:clearanceValue: ${clearanceValue}`);
-  let dialysis = build_dialysis_array();
   let sz = [1681, 17];
   let varNames = [
     "day",
@@ -640,11 +631,16 @@ function calcWeeklyTable(treatmentTable) {
   var duration = parseFloat(document.getElementById("duration").value); // let duration = 3.33;
   let increment = 1;
   let last = sz[0] - 1;
+  // Filter out invalid clearance values and then calculate the average
+  const validClearances = treatmentTable
+    .map((entry) => entry.clearance)
+    .filter((clearance) => clearance && clearance !== 0);
+  let number_of_treatments = validClearances.length;
   let extracellular_volume_val = extracellular_volume();
   let frac_uf_to_intracellular_val = frac_uf_to_intracellular();
   let extracellular_dv_per_min_ml_val = extracellular_dv_per_min_ml();
   let sum_of_fractions_val = sum_of_fractions();
-  let constant_dial_val = constant_dial();
+  let constant_dial_val = constant_dial(duration, number_of_treatments);
   // do not perform any DOM operations inside the loop below.  Fetch the value one above and pass them down as
   // fixed values
 
@@ -655,9 +651,11 @@ function calcWeeklyTable(treatmentTable) {
   console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
   console.log(`RIGHT: wt[last].conc_ext: ${wt[last].conc_ext}`);
   let iteration_enabled = true;
+  let start_end_gap = 0.01;
   for (
     let iteration = 0;
-    Math.abs(wt[0].conc_ext - wt[last].conc_ext) > 0.01 && iteration_enabled;
+    Math.abs(wt[0].conc_ext - wt[last].conc_ext) > start_end_gap &&
+    iteration_enabled;
     iteration++
   ) {
     for (let row = 0; row < sz[0]; row++) {
@@ -720,10 +718,10 @@ function calcWeeklyTable(treatmentTable) {
             (wt[row - 1].conc_ext * wt[row - 1].vol_ext -
               (wt[row - 1].dialysis && wt[row].dialysis
                 ? map_day_to_kml(
-                    dialysis,
+                    wt[row].dialysis,
                     wt[row].day,
                     wt[row].time,
-                    clearanceValue,
+                    treatmentTable[wt[row].day - 1].clearance,
                     duration
                   )
                 : endog_clear) *
@@ -770,6 +768,13 @@ function calcWeeklyTable(treatmentTable) {
       )}`
     );
     console.log(`iteration: ${iteration}`);
+    if (iteration > 10) {
+      // prevent a run-away loop
+      console.log(
+        `maximum iteration reached wt[last].conc_ext: ${wt[last].conc_ext}`
+      );
+      break;
+    }
   }
 
   return wt;

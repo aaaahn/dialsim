@@ -872,9 +872,6 @@ function applyTreatment(eff_uf) {
 
     console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
     console.log(`final clearance: ${clearance}`);
-    document.getElementById("avgclearance").textContent = parseFloat(
-      clearance
-    ).toFixed(1);
   } catch (e) {
     console.error("error", e);
   }
@@ -919,6 +916,18 @@ window.calculateAndDraw = function calculateAndDraw() {
       }
     }
   }
+  // Filter out invalid clearance values and then calculate the average
+  const validClearances = treatmentTable
+    .map((entry) => entry.clearance)
+    .filter((clearance) => clearance && clearance !== 0);
+  const avg_clearance =
+    validClearances.length > 0
+      ? validClearances.reduce((sum, clearance) => sum + clearance, 0) /
+        validClearances.length
+      : 0;
+  document.getElementById("avgclearance").textContent = parseFloat(
+    avg_clearance
+  ).toFixed(1);
 
   try {
     populateTable(treatmentTable, ttable);

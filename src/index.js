@@ -97,22 +97,6 @@ function calculatePhi(KoA, Pe) {
   }
 }
 
-function calculateClearUF(day) {
-  // =(AE5*Interface!$E$14+IF(AA5,Interface!$E$9,0))*1000/$AB$17
-  var fluidgain = parseFloat(document.getElementById("fluidgain").value);
-  var additionaluf = parseFloat(document.getElementById("additionaluf").value);
-  let duration_in_mins = hours_to_mins(
-    parseFloat(document.getElementById("duration").value)
-  );
-  let dialysis = build_dialysis_array();
-  let days_since = 1; // TODO: fix this with a real calculation
-
-  return (
-    ((days_since * fluidgain + dialysis[day] ? additionaluf : 0) * 1000) /
-    duration_in_mins
-  );
-}
-
 function calcClearanceTable(newCd, eff_uf) {
   let Qb = parseFloat(document.getElementById("bloodflow").value); // let Qb = 360;
   let Qd = parseFloat(document.getElementById("dialysateflow").value); // 500;
@@ -207,12 +191,13 @@ function calcClearanceTable(newCd, eff_uf) {
     "Massp",
     "Massd"
   ];
-  let vTable = new Array(sz[0]).fill(null).map(() =>
-    Object.assign(
-      {},
-      Array.from(varNames, () => 0)
-    )
-  );
+  let vTable = new Array(sz[0]).fill(null).map(function () {
+    const obj = {};
+    for (let i = 0; i < varNames.length; i++) {
+      obj[varNames[i]] = 0;
+    }
+    return obj;
+  });
 
   for (let row = 0; row < sz[0]; row++) {
     // vTable[row].x = row * 0.001;
@@ -344,7 +329,7 @@ function calcClearanceTable(newCd, eff_uf) {
       (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) /
     Cp;
   console.log(`clearanceValue0: ${clearanceValue}`);
-  return [varNames, vTable, clearanceValue];
+  return [vTable, clearanceValue];
 }
 
 function hours_to_mins(duration) {
@@ -353,7 +338,7 @@ function hours_to_mins(duration) {
 
 function frac_uf_to_intracellular() {
   var selectElement = document.getElementById("modeltype");
-  var selectedValue = selectElement.value;
+  // var selectedValue = selectElement.value;
   console.log(`selectElement: ${selectElement}`);
   console.log(`selectElement.value: ${selectElement.value}`);
   console.log(`selectElement.selectedIndex: ${selectElement.selectedIndex}`);
@@ -361,14 +346,14 @@ function frac_uf_to_intracellular() {
   var selectedText = selectElement.options[selectElement.selectedIndex].text;
   console.log(`selectedText: ${selectedText}`); // Added to log the extracted text
   var modeltype = selectedText;
-  let volumeofdist = parseFloat(document.getElementById("volumeofdist").value);
+  // let volumeofdist = parseFloat(document.getElementById("volumeofdist").value);
   let fluidgaincompartment1 = parseFloat(
     document.getElementById("fluidgaincompartment1").value
   );
   let interfaceE25 = 0;
-  console.log(`--------------------------modeltype: ${modeltype}`);
+  // console.log(`--------------------------modeltype: ${modeltype}`);
   if (modeltype === "1 Comp") {
-    console.log(`*********************************modeltype: ${modeltype}`);
+    // console.log(`*********************************modeltype: ${modeltype}`);
     return fluidgaincompartment1 / 100;
   } else if (modeltype === "2 Comp Urea") {
     return 1; // 100 / 100 is simply 1
@@ -463,12 +448,13 @@ function calcWeeklyTable(clearanceValue) {
     "ptime",
     "cext"
   ];
-  let wt = new Array(sz[0]).fill(null).map(() =>
-    Object.assign(
-      {},
-      Array.from(varNames, () => 0)
-    )
-  );
+  let wt = new Array(sz[0]).fill(null).map(function () {
+    const obj = {};
+    for (let i = 0; i < varNames.length; i++) {
+      obj[varNames[i]] = 0;
+    }
+    return obj;
+  });
 
   var time_increment_minutes = 6;
   var endog_clear = parseFloat(
@@ -572,7 +558,7 @@ function calcWeeklyTable(clearanceValue) {
     console.log(`iteration: ${iteration}`);
   }
 
-  return [varNames, wt];
+  return wt;
 }
 
 function calculate_ptime(AX9, AG15, AB15) {
@@ -587,21 +573,27 @@ function calculate_ptime(AX9, AG15, AB15) {
   }
 }
 
-function populateTable(varNames, vTable, tableElement) {
-  if (tableElement) tableElement.innerHTML = "";
-  else return;
+function populateTable(vTable, tableElement) {
+  if (!tableElement) return;
+
+  tableElement.innerHTML = "";
+
+  // Assuming all objects in vTable have the same keys
+  const keys = Object.keys(vTable[0]);
+
   const headerRow = tableElement.insertRow();
-  for (let i = 0; i < varNames.length; i++) {
+  for (let key of keys) {
     const th = document.createElement("th");
-    th.textContent = varNames[i];
+    th.textContent = key;
     headerRow.appendChild(th);
   }
-  for (let i = 0; i < vTable.length; i++) {
+
+  for (let rowData of vTable) {
     const row = tableElement.insertRow();
 
-    for (let j = 0; j < varNames.length; j++) {
+    for (let key of keys) {
       const cell = row.insertCell();
-      cell.textContent = vTable[i][varNames[j]];
+      cell.textContent = rowData[key];
     }
   }
 }
@@ -808,15 +800,8 @@ function findClearances() {
     "clear_uf",
     "clearance"
   ];
-  let sz = [7, varNames.length];
-  let wt = new Array(sz[0]).fill(null).map(() =>
-    Object.assign(
-      {},
-      Array.from(varNames, () => 0)
-    )
-  );
 
-  let dotw = [
+  let days = [
     "monday",
     "tuesday",
     "wednesday",
@@ -825,45 +810,48 @@ function findClearances() {
     "saturday",
     "sunday"
   ];
-  wt = dotw.map((day, index) => ({
-    name: day,
-    ...wt[index]
-  }));
 
-  wt = wt.map((row, index) => ({
-    ...row,
-    dialysis: document.getElementById(row.name).checked,
-    day: index + 1
-  }));
+  let wt0 = days.map((day, index) => {
+    let obj = {};
+    varNames.forEach((key) => {
+      if (key === "name") obj[key] = day;
+      else if (key === "day") obj[key] = index + 1;
+      else obj[key] = 0;
+    });
+    return obj;
+  });
 
-  let dialysisDays = wt.map((row) => row.dialysis);
+  wt0.forEach((row) => {
+    row.dialysis = document.getElementById(row.name).checked;
+  });
+
+  let dialysisDays = wt0.map((row) => row.dialysis);
   let daysSinceResults = daysSinceTrue(dialysisDays);
-  wt.forEach((row, index) => {
+  wt0.forEach((row, index) => {
     row.days_since = daysSinceResults[index];
   });
 
-  wt.forEach((row, index) => {
+  wt0.forEach((row) => {
     row.dv = calcDV(row.days_since);
   });
 
   let duration_in_mins = hours_to_mins(
     parseFloat(document.getElementById("duration").value)
   );
-  wt.forEach((row, index) => {
+  wt0.forEach((row) => {
     row.eff_uf = row.dv / duration_in_mins;
   });
 
-  return [varNames, wt];
+  return wt0;
 }
 
 function applyTreatment(eff_uf) {
-  var varNames;
   var vTable;
   var clearance;
 
   function fn(x, y) {
     console.log(`goalseek fn(x) - try: x : ${x}`);
-    [varNames, vTable, clearance] = calcClearanceTable(x, y);
+    [vTable, clearance] = calcClearanceTable(x, y);
     console.log(`goalseek: lvTable[1000].Cd: ${vTable[1000].Cd}`);
     return vTable[1000].Cd;
   }
@@ -890,7 +878,7 @@ function applyTreatment(eff_uf) {
   } catch (e) {
     console.error("error", e);
   }
-  return [varNames, vTable, clearance];
+  return [vTable, clearance];
 }
 
 /*
@@ -903,10 +891,10 @@ var chartDataStack = [];
 window.calculateAndDraw = function calculateAndDraw() {
   // assemble a list of eff_uf so that clearance values for each treatment day can be collected
   const ttable = document.getElementById("treatmentTable");
-  const [tvarnames, treatmentTable] = findClearances();
+  const treatmentTable = findClearances();
 
   // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
-  var varNames, vTable;
+  var vTable;
   for (let i = 0; i < treatmentTable.length; i++) {
     if (treatmentTable[i].dialysis) {
       // is there another treatment day with the same eff_uf? re-cycle the clearance
@@ -924,7 +912,7 @@ window.calculateAndDraw = function calculateAndDraw() {
 
       // did the loop above manage to find a recylced clearance value?  if not, go calcualte one
       if (!treatmentTable[i].clearance) {
-        [varNames, vTable, treatmentTable[i].clearance] = applyTreatment(
+        [vTable, treatmentTable[i].clearance] = applyTreatment(
           treatmentTable[i].eff_uf
         );
         console.log(`ttcd apply i: ${i}`);
@@ -932,43 +920,9 @@ window.calculateAndDraw = function calculateAndDraw() {
     }
   }
 
-  /*
-  var varNames;
-  var vTable;
-  var clearance;
-  function fn(x, y) {
-    console.log(`goalseek fn(x) - try: x : ${x}`);
-    [varNames, vTable, clearance] = calcClearanceTable(x, y);
-    console.log(`goalseek: lvTable[1000].Cd: ${vTable[1000].Cd}`);
-    return vTable[1000].Cd;
-  }
-  //console.log(cal)
-  var fnParams = [30, treatmentTable[0].eff_uf]; // first guess
- */
-  // goal is to get Cd (result) to 0.001
   try {
-    /*
-    var result = goalSeek.default({
-      fn,
-      fnParams,
-      percentTolerance: 10,
-      maxIterations: 100,
-      maxStep: 5,
-      goal: 0.001,
-      independentVariableIdx: 0 // the index position of the independent variable x in the fnParams array.
-    });
-
-    console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
-    console.log(`final clearance: ${clearance}`);
-    document.getElementById("avgclearance").textContent = parseFloat(
-      clearance
-    ).toFixed(1);
-    treatmentTable[0].clearance = clearance;
-    */
-    populateTable(tvarnames, treatmentTable, ttable);
-    let [weeklyVarNames, weeklyTable] = calcWeeklyTable(
-      treatmentTable[0].clearance
-    ); // (clearanceValue) pass in co
+    populateTable(treatmentTable, ttable);
+    let weeklyTable = calcWeeklyTable(treatmentTable[0].clearance); // (clearanceValue) pass in co
 
     // Create and update the line chart when "Solve" button is clicked
     const chartData = weeklyTable.map((item) => ({
@@ -984,14 +938,14 @@ window.calculateAndDraw = function calculateAndDraw() {
       chartDataStack.push(chartData);
     }
     // createChart(chartData);
-    console.log(`chartDataStack.length: ${chartDataStack.length}`);
+    // console.log(`chartDataStack.length: ${chartDataStack.length}`);
     createChart(chartDataStack);
 
     const wtable = document.getElementById("weeklyTable");
-    populateTable(weeklyVarNames, weeklyTable, wtable);
+    populateTable(weeklyTable, wtable);
 
     const table = document.getElementById("resultTable");
-    populateTable(varNames, vTable, table);
+    populateTable(vTable, table);
   } catch (e) {
     console.error("error", e);
   }

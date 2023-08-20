@@ -22,7 +22,7 @@ graph TD
     subgraph Javascript
         A[Web Page] -- Solve! --> TT["treatmentTable"]
         TT -- n-treatments --> B("calcClearanceTable()")
-        B -- "(day, ClearanceValues)" --> D("calcWeeklyTable()")
+        B -- "(n, EffectiveUFs, ClearanceValues)" --> D("calcWeeklyTable()")
         D -- "bisectIteration(start, end)" -->D
         D --  "(time, conc_ext)" --> E(renderChart)
         E --> A

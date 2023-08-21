@@ -20,9 +20,10 @@ graph TD
        A
     end
     subgraph Javascript
-        A[Web Page] -- Solve! --> TT["treatmentTable"]
-        TT -- n-treatments --> B("calcClearanceTable()")
-        B -- "(n, EffectiveUFs, ClearanceValues)" --> D("calcWeeklyTable()")
+        A[Web Page] -- Solve! --> TT["findClearances() </br> treatmentTable"]
+        TT -- n-treatments --> B("calcClearanceTable()  </br> clearanceTable")
+        B -- EffectiveUFs, ClearanceValues --> TT
+        B -- "(ClearanceValues)" --> D("calcWeeklyTable() </br> weeklyTable")
         D -- "bisectIteration(start, end)" -->D
         D --  "(time, conc_ext)" --> E(renderChart)
         E --> A
@@ -32,10 +33,9 @@ graph TD
 
 
 
-
 ```
 
-The inputs from the Web Page are collected in the Javascript code, which triggers with a press of the `Solve!` button or a change in one of the inputs. Both the calcClearanceTable() and calcWeeklyTable() functions construct a table to hold and report the computations, creating the final table, Weeklytable. From this, the Chart data is populated, then rendered via HTML element canvas.
+The inputs from the Web Page are collected in the Javascript code, which triggers with a press of the `Solve!` button or a change in one of the inputs. Both the `calcClearanceTable()` and `calcWeeklyTable()` functions construct a table to hold and report the computations, creating the final table, `weeklyTable`. From this, the Chart data is populated, then rendered via HTML element canvas.
 
 The `Hold` mode allows for the graphing of multiple concentrations vs time scenarios. Under this mode, the inputs are ignored until the `Solve!` button is pressed, and new graph is rendered, overlaying the existing set of scenario(s). When the hold mode is disabled, all scenarios are cleared, leaving behind a graph from the most recent set of inputs.
 

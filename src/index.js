@@ -473,12 +473,13 @@ function calc_vol_ext0(
       prev_day_dialysis && current_day_dialysis
         ? (chooseValue * frac_uf_to_intracellular_val) / sum_of_fractions_val
         : 0;
-    console.log(`calc_vol_ext0:innerValue: ${innerValue}`);
+    /* console.log(`calc_vol_ext0:innerValue: ${innerValue}`);
     console.log(
       `calc_vol_ext0:(extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins: ${
         (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
       }`
     );
+      */
 
     return (
       prev_day_vol_ext +
@@ -531,24 +532,20 @@ function calc_vol_ext(
         ? (chooseValue * frac_uf_to_intracellular_val) / sum_of_fractions
         : 0;
     if (time === 6678) {
+      /*
       console.log(`calc_vol_ext0:innerValue: ${innerValue}`);
       console.log(
         `calc_vol_ext0:(extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins: ${
           (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
         }`
       );
+      */
     }
     return (
       prev_day_vol_ext +
       (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
     );
   }
-}
-
-//TODO: ask dr tim
-function _calc_vol_ext() {
-  // =IF($AG$21,$AB$26,IF(AND(AM9,NOT(AM10)),$AB$26,AN1688+($AB$28-IF(AND(AM1688,AM9),CHOOSE(AK9,$AG$5,$AG$6,$AG$7,$AG$8,$AG$9,$AG$10,$AG$11)*$AA$22/$AA$24,0))*$AB$15))
-  return 36000;
 }
 
 function calculateDay(time) {
@@ -635,9 +632,6 @@ function calcWeeklyTable(treatmentTable, inputData) {
     for (let row = 0; row < sz[0]; row++) {
       wt[row].time = row === 0 ? 0 : wt[row - 1].time + time_increment_minutes;
       wt[row].day = calculateDay(wt[row].time);
-      // wt[row].day = 1 + (Math.floor(wt[row].time / 60 / 24 - 0.5) % 7);
-      // wt[row].dialysis = dialysis[wt[row].day];
-      // wt[row].dialysis = treatmentTable[wt[row].day - 1].dialysis;
       wt[row].dialysis =
         treatmentTable[wt[row].day - 1].dialysis &&
         treatmentTable[wt[row].day - 1].start <= wt[row].time &&
@@ -645,7 +639,6 @@ function calcWeeklyTable(treatmentTable, inputData) {
       // vol_ext and vol_int are affected by UF
       let prev_row = row === 0 ? last - 1 : row - 1;
       let next_row = row === last ? 0 : row + 1;
-      // let eff_uf = treatmentTable[wt[row].day].eff_uf; // eff_uf[wt[row].day],
       let eff_uf = treatmentTable[wt[row].day - 1].eff_uf; // eff_uf[wt[row].day],
       wt[row].eff_uf = eff_uf;
       if (row === 0) {
@@ -817,7 +810,7 @@ function buildSingleXYSet(xydata, i) {
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
   document.getElementById("timeavgconc").textContent = parseFloat(avg).toFixed(
-    1
+    2
   );
   var maxs = find_local_maxima(y_values);
   // console.log(`maxs: ${maxs}`);
@@ -828,7 +821,7 @@ function buildSingleXYSet(xydata, i) {
   // console.log(`avg_max: ${avg_max}`);
   document.getElementById("avgpeakconc").textContent = parseFloat(
     avg_max
-  ).toFixed(1);
+  ).toFixed(2);
   // https://www.schemecolor.com/tools/color-scheme-generator/rose
   let color_wheel_conc = [
     "rgba(75, 192, 192, 1)",
@@ -872,7 +865,6 @@ function buildSingleXYSet(xydata, i) {
   return xyset;
 }
 
-//
 /*
  * given an array of xy data sets, build an array of chart configs with embedded data
  * @param {datasets[]} data of multiple datasets
@@ -1086,9 +1078,10 @@ function applyTreatment(eff_uf, inputData) {
 
 /*
   VBA SolveDialSim() 
+  0. Pull input data from Web Page, build treatmentTable
   1. Calculate clearance value via goalSeek
   2. pass that clearance value to weeklyTableCalculator (which then iterates)
-  3. draw chart
+  3. draw chart, write out 3 values to web page
 */
 var chartDataStack = [];
 window.calculateAndDraw = function calculateAndDraw() {
@@ -1100,6 +1093,7 @@ window.calculateAndDraw = function calculateAndDraw() {
   const treatmentTable = findClearances(inputData);
 
   // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
+  // apply clearanceCalculation via goalSeek
   var vTable;
   for (let i = 0; i < treatmentTable.length; i++) {
     if (treatmentTable[i].dialysis) {

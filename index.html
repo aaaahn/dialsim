@@ -134,7 +134,7 @@
           />
         </div>
         <div class="menu-item">
-          <label for="sigma"> Sigma(0 &le; s &le; 1)</label>
+          <label for="sigma" class="disabled" id="sigmalabel"> Sigma(0 &le; s &le; 1)</label>
           <input
             type="number"
             id="sigma"
@@ -145,6 +145,7 @@
             step="0.1"
             value="0"
             oninput="ready();"
+            disabled
           />
         </div>
         <div class="menu-item">
@@ -264,8 +265,8 @@
         <div class="menu-item">
           <label for="solutetype"> Solute Type* </label>
           <select name="solutetype" id="solutetype">
-            <option value="urea">Urea</option>
-            <option value="plasma">Plasma</option>
+            <option value="Urea">Urea</option>
+            <option value="Plasma">Plasma</option>
           </select>
         </div>
         <div class="menu-item">
@@ -300,7 +301,7 @@
 
         <h3>Model Parameters</h3>
         <div class="menu-item">
-          <label for="modeltype"> Model Type(%)* </label>
+          <label for="modeltype"> Model Type(%) </label>
           <select name="modeltype" id="modeltype">
             <option value="1Comp">1 Comp</option>
             <option value="2Comp">2 Comp Urea</option>
@@ -309,7 +310,7 @@
         </div>
 
         <div class="menu-item">
-          <label for="volumeofdist"> Volume of Distribution (L)* </label>
+          <label for="volumeofdist"> Volume of Distribution (L) </label>
           <input
             type="number"
             id="volumeofdist"
@@ -325,7 +326,7 @@
 
         <div class="menu-item">
           <label for="fluidgaincompartment1">
-            Fluid Gain to Compartment 1 (%)*
+            Fluid Gain to Compartment 1 (%)
           </label>
           <input
             type="number"
@@ -361,8 +362,8 @@
       Plot Intra.*
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <select name="charttype" id="charttype">
-        <option value="concvstime">Conc vs. Time</option>
-        <option value="volumevstime">Volume vs. Time*</option>
+        <option value="ConcvsTime">Conc vs. Time</option>
+        <option value="VolumevsTime">Volume vs. Time*</option>
       </select>
 
       <h3>Results</h3>
@@ -375,9 +376,9 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <label for="srr"> Solute Reduction Ratios* </label>
+      <label for="solutereductionratios"> Solute Reduction Ratios* </label>
       &nbsp;&nbsp;&nbsp;
-      <select name="srr" id="srr">
+      <select name="solutereductionratios" id="solutereductionratios">
         <option value="cvt">0.71</option>
         <option value="cvt2">model2</option>
       </select>
@@ -440,17 +441,17 @@
 
 <div>
   <details>
-    <summary>TreatmentTable</summary>
+    <summary>treatmentTable</summary>
     <table id="treatmentTable"></table>
   </details>
 </div>
     <details>
-      <summary>ClearanceCalculations</summary>
+      <summary>clearanceTable</summary>
       <table id="resultTable"></table>
     </details>
     <br /><br />
     <details>
-      <summary>WeeklyCalculations</summary>
+      <summary>weeklyTable</summary>
       <table id="weeklyTable"></table>
     </details>
   </body>

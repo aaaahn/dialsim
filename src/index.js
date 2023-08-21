@@ -71,24 +71,17 @@ window.render_disabled_uf = function render_disabled_uf() {
 document.addEventListener("DOMContentLoaded", render_disabled);
 document.addEventListener("DOMContentLoaded", render_disabled_uf);
 
-function calculatePrePostDilution(Qf) {
+function calculatePrePostDilution(inputData) {
+  let Qf = inputData["additionaluf"];
   if (Qf === 0) {
     return 0;
   }
 
-  // =IF(C6=1,Interface!E10*1000/AB17,0)
-  var selectElement = document.getElementById("replace");
-  var selectedValue = selectElement.value;
-  var selectedText = selectElement.options[selectElement.selectedIndex].text;
-  console.log("Selected value is: " + selectedValue);
-  console.log("Selected text is: " + selectedText);
-  console.log(`selectedText: ${selectedText}`);
+  var selectedText = inputData["replace"];
   if (selectedText === "Predilution") {
     // AB17 is dialysis duration in mins
-    let duration_in_mins = hours_to_mins(
-      parseFloat(document.getElementById("duration").value)
-    ); // let duration = 3.33;
-    let dilution = parseFloat(document.getElementById("dilution").value);
+    let duration_in_mins = hours_to_mins(inputData["duration"]); // let duration = 3.33;
+    let dilution = inputData["dilution"]; // parseFloat(document.getElementById("dilution").value);
     let predilution = (dilution * 1000) / duration_in_mins;
     console.log(`predilution: ${predilution}`);
     return predilution;
@@ -118,8 +111,8 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
   let KoA = inputData["koa"]; //  let KoA = 500;
   let sigma = inputData["sigma"]; // 0;
   let Qf = inputData["fluidgain"]; // 0;
-  let additionaluf = inputData["additionaluf"]; // 0;
-  let Qr = calculatePrePostDilution(additionaluf); // 0;
+  // let additionaluf = inputData["additionaluf"]; // 0;
+  let Qr = calculatePrePostDilution(inputData); // 0;
   // when Additional UF is non-zero, dilution is enabled
   // Qr is assigned Qf
   if (!document.getElementById("dilution").disabled) {
@@ -322,13 +315,6 @@ function hours_to_mins(duration) {
   return (Math.round(duration * 10) / 10) * 60;
 }
 
-function modeltype() {
-  var selectElement = document.getElementById("modeltype");
-  var selectedValue = selectElement.options[selectElement.selectedIndex].value;
-  console.log(`modeltype: ${selectedValue}`); // Added to log the extracted text
-  return selectedValue;
-}
-
 function frac_uf_to_intracellular(modeltype_val) {
   let fluidgaincompartment1 = parseFloat(
     document.getElementById("fluidgaincompartment1").value
@@ -344,7 +330,7 @@ function frac_uf_to_intracellular(modeltype_val) {
 }
 
 function frac_uf_to_extracellular(modeltype_val) {
-  console.log(`modeltype_val: ${modeltype_val}`);
+  // console.log(`modeltype_val: ${modeltype_val}`);
   var interfaceE26 = 0;
   if (modeltype_val === "1Comp" || modeltype_val === "2CompUrea") {
     return 0;
@@ -580,18 +566,14 @@ function calcWeeklyTable(treatmentTable, inputData) {
   });
 
   var time_increment_minutes = 6;
-  var endog_clear = parseFloat(
-    document.getElementById("endogenousclearance").value
-  ); // 0; // hard-coded AA37
-  // var generation = 6.613888888;
-  var generation =
-    parseFloat(document.getElementById("generationrate").value) / (24 * 60);
-  console.log(`generation: ${generation}`);
+  var endog_clear = inputData["endogenousclearance"]; // parseFloat(document.getElementById("endogenousclearance").value); // 0; // hard-coded AA37
+  var generation = inputData["generationrate"] / (24 * 60); // parseFloat(document.getElementById("generationrate").value) / (24 * 60);
+  // console.log(`generation: ${generation}`);
 
   let kc = 0;
   let extracell = 0.834522427; // this should come from an prior vTable (as argument to this function)
   let intracell = 0.0;
-  var duration = parseFloat(document.getElementById("duration").value); // let duration = 3.33;
+  var duration = inputData["duration"]; // parseFloat(document.getElementById("duration").value); // let duration = 3.33;
   let increment = 1;
   let last = sz[0] - 1;
   // Filter out invalid clearance values and then calculate the average
@@ -1049,9 +1031,7 @@ function applyTreatment(eff_uf, inputData) {
   function fn(x, y, z) {
     console.log(`goalseek fn(x) - try: x : ${x}`);
     [clearanceTable, clearance] = calcClearanceTable(x, y, z);
-    console.log(
-      `goalseek: clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`
-    );
+    // console.log(`goalseek: clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
     return clearanceTable[1000].Cd;
   }
   var fnParams = [45, eff_uf, inputData]; // first guess
@@ -1105,7 +1085,7 @@ window.calculateAndDraw = function calculateAndDraw() {
           treatmentTable[j].clearance
         ) {
           treatmentTable[i].clearance = treatmentTable[j].clearance;
-          console.log(`ttcd copy: i: ${i}, j: ${j}`);
+          // console.log(`ttcd copy: i: ${i}, j: ${j}`);
           break;
         }
       } // end inner cache search loop

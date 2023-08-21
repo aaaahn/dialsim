@@ -563,7 +563,6 @@ function calcWeeklyTable(treatmentTable, inputData) {
     "vol_int",
     "conc_ext",
     "conc_int",
-    "debug",
     "point",
     "ptime",
     "cext"
@@ -633,7 +632,6 @@ function calcWeeklyTable(treatmentTable, inputData) {
       let prev_row = row === 0 ? last - 1 : row - 1;
       let next_row = row === last ? 0 : row + 1;
       let eff_uf = treatmentTable[wt[row].day - 1].eff_uf; // eff_uf[wt[row].day],
-      wt[row].eff_uf = eff_uf;
       if (row === 0) {
         wt[row].vol_ext = calc_vol_ext0(
           constant_dial_val,

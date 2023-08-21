@@ -22,8 +22,8 @@ graph TD
     subgraph Javascript
         A[Web Page] -- Solve! --> TT["findClearances() </br> treatmentTable"]
         TT -- n-treatments --> B("calcClearanceTable()  </br> clearanceTable")
-        B -- EffectiveUFs, ClearanceValues --> TT
-        B -- "(ClearanceValues)" --> D("calcWeeklyTable() </br> weeklyTable")
+        B -. "ClearUFs, ClearanceValues"   .-> TT
+        B -- "(ClearUFs, ClearanceValues)" --> D("calcWeeklyTable() </br> weeklyTable")
         D -- "bisectIteration(start, end)" -->D
         D --  "(time, conc_ext)" --> E(renderChart)
         E --> A

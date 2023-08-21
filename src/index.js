@@ -26,6 +26,7 @@ window.render_disabled = function render_disabled() {
 
   // Applying a class to make the difference obviously visible
   if (isDisabled) {
+    document.getElementById("dilution").value = 0;
     document.getElementById("replace").classList.add("disabled");
     document.getElementById("dilution").classList.add("disabled");
   } else {
@@ -36,7 +37,6 @@ window.render_disabled = function render_disabled() {
 };
 
 // make this also a global function by attaching to the window object
-// FIX BUG - this function get triggered twice for it to work (2, 3, then 2 in fluid gain)
 // when a non-zero value is entered into fluidgain, enable uf and copy a value, then trigger recalc().
 // unlike the above function render_disabled_uf, it enables/disables not itself but
 // html element id "uf".
@@ -110,16 +110,23 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
   let Qd = inputData["dialysateflow"]; // 500;
   let KoA = inputData["koa"]; //  let KoA = 500;
   let sigma = inputData["sigma"]; // 0;
-  let Qf = inputData["fluidgain"]; // 0;
+  // TODO: fix THIS!
+  let Qf = 0; // = inputData["fluidgain"]; // 0;                    // clear_uf gets passed in and gets assigned to Qf
   // let additionaluf = inputData["additionaluf"]; // 0;
   let Qr = calculatePrePostDilution(inputData); // 0;
-  // when Additional UF is non-zero, dilution is enabled
-  // Qr is assigned Qf
-  if (!document.getElementById("dilution").disabled) {
-    Qf = Qr;
+
+  if (!inputData["dilution"]) {
+    // When dilution is disabled, Qf is zero "default"
+    Qf = 0;
   } else {
+    // When additionaluf (dilution) is enabled, Qr is copied to Qf
+    Qf = Qr;
+  }
+  // when both dilution and fluidgain have non-zero values
+  if (inputData["fluidgain"]) {
     Qf = eff_uf;
   }
+
   let Hct = inputData["hematocrit"]; // 0;
   // let f = 0.3378;
   let f = 1.0;
@@ -292,18 +299,10 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
   }
 
   ////console.table(vTable);
-  /*
   console.log(`----------------------`);
-  console.log(`Qp: ${Qp}`);
-  console.log(`Qprbc: ${Qprbc}`);
-  console.log(`theta_inblood: ${theta_inblood}`);
-  console.log(`Cp: ${Cp}`);
-  console.log("vTable[1000].Cp: " + vTable[1000].Cp);
-  console.log(`Qprbc: ${Qprbc}`);
-  console.log(`vTable[1000].Calb: ${vTable[1000].Calb}`);
-  console.log(`vTable[1000].theta: ${vTable[1000].theta}`);
+  console.log(`Qf: ${Qf}`);
+  console.log(`Qr: ${Qr}`);
   console.log(`----------------------`);
-  */
   let clearanceValue =
     ((Qp + Qprbc / (1 - theta_inblood)) * Cp -
       (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) /
@@ -358,10 +357,19 @@ function calcDV(days_since, fluidgain_val, modeltype_val) {
   let intracellular_dv_ml =
     ((frac_uf_to_extracellular(modeltype_val) * fluidgain_val) / 24 / 60) *
     1000;
+  console.log(`intracellular_dv_ml: ${intracellular_dv_ml}`);
 
   if (days_since === 0) {
     return 0;
   }
+
+  console.log(
+    `extracellular_dv_per_min_ml(fluidgain_val, modeltype_val): ${extracellular_dv_per_min_ml(
+      fluidgain_val,
+      modeltype_val
+    )}`
+  );
+
   return (
     days_since *
     24 *
@@ -857,7 +865,6 @@ function buildChartConfig(datasets) {
   for (let i = 0; i < datasets.length; i++) {
     xydata_array = xydata_array.concat(buildSingleXYSet(datasets[i], i));
   }
-  // console.log(`xydata_array: ${xydata_array}`);
   var chartConfig = {
     type: "line",
     data: {
@@ -955,6 +962,21 @@ function daysSinceTrue(weekData) {
   return result;
 }
 
+function calc_clear_uf(
+  days_since,
+  fluidgain,
+  dialysis,
+  additionaluf,
+  dialysis_duration_in_mins
+) {
+  console.log(`dialysis_duration_in_mins: ${dialysis_duration_in_mins}`);
+
+  return (
+    ((days_since * fluidgain + (dialysis ? additionaluf : 0)) * 1000) /
+    dialysis_duration_in_mins
+  );
+}
+
 function findClearances(inputData) {
   let varNames = [
     "name",
@@ -1010,6 +1032,16 @@ function findClearances(inputData) {
   let duration_in_mins = hours_to_mins(inputData["duration"]);
   wt0.forEach((row) => {
     row.eff_uf = row.dv / duration_in_mins;
+  });
+
+  wt0.forEach((row) => {
+    row.clear_uf = calc_clear_uf(
+      row.days_since,
+      inputData["fluidgain"],
+      row.dialysis,
+      inputData["additionaluf"],
+      duration_in_mins
+    );
   });
 
   let time_before_dialysis = 12 * 60;
@@ -1093,7 +1125,8 @@ window.calculateAndDraw = function calculateAndDraw() {
       // did the loop above manage to find a recylced clearance value?  if not, go calcualte one
       if (!treatmentTable[i].clearance) {
         [vTable, treatmentTable[i].clearance] = applyTreatment(
-          treatmentTable[i].eff_uf,
+          // treatmentTable[i].eff_uf,
+          treatmentTable[i].clear_uf,
           inputData
         );
         console.log(`ttcd apply i: ${i}`);

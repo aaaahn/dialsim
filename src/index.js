@@ -41,6 +41,8 @@ window.render_disabled = function render_disabled() {
 // unlike the above function render_disabled_uf, it enables/disables not itself but
 // html element id "uf".
 window.render_disabled_uf = function render_disabled_uf() {
+  const inputData = fetchInputValues();
+
   console.log(
     `called - render_disabled_uf: ${document.getElementById("uf").disabled}`
   );
@@ -50,7 +52,15 @@ window.render_disabled_uf = function render_disabled_uf() {
 
   document.getElementById("uf").disabled = isDisabled;
   console.log(`uf isDisabled: ${isDisabled}`);
-  var number_of_treatments = 3; // TODO: replace with actual calculated value from treatmentTable (or gui directly)
+  var number_of_treatments =
+    inputData["monday"] +
+    inputData["tuesday"] +
+    inputData["wednesday"] +
+    inputData["thursday"] +
+    inputData["friday"] +
+    inputData["saturday"] +
+    inputData["sunday"];
+  console.log(`number_of_treatments: ${number_of_treatments}`);
 
   // Applying a class to make the difference obviously visible
   if (isDisabled) {
@@ -102,15 +112,11 @@ function calculatePhi(KoA, Pe) {
   }
 }
 
-// TODO: to speed up the goalseek iteration, split up the function into two separate functions:
-//  1. fetch data from WebPage (DOM-access)
-//  2. pass-in all DOM sourced data as a dictionary
 function calcClearanceTable(newCd, eff_uf, inputData) {
   let Qb = inputData["bloodflow"]; // let Qb = 360;
   let Qd = inputData["dialysateflow"]; // 500;
   let KoA = inputData["koa"]; //  let KoA = 500;
   let sigma = inputData["sigma"]; // 0;
-  // TODO: fix THIS!
   let Qf = 0; // = inputData["fluidgain"]; // 0;                    // clear_uf gets passed in and gets assigned to Qf
   // let additionaluf = inputData["additionaluf"]; // 0;
   let Qr = calculatePrePostDilution(inputData); // 0;
@@ -357,18 +363,19 @@ function calcDV(days_since, fluidgain_val, modeltype_val) {
   let intracellular_dv_ml =
     ((frac_uf_to_extracellular(modeltype_val) * fluidgain_val) / 24 / 60) *
     1000;
-  console.log(`intracellular_dv_ml: ${intracellular_dv_ml}`);
+  // console.log(`intracellular_dv_ml: ${intracellular_dv_ml}`);
 
   if (days_since === 0) {
     return 0;
   }
 
+  /*
   console.log(
     `extracellular_dv_per_min_ml(fluidgain_val, modeltype_val): ${extracellular_dv_per_min_ml(
       fluidgain_val,
       modeltype_val
     )}`
-  );
+  ); */
 
   return (
     days_since *
@@ -388,11 +395,10 @@ function map_day_to_kml(dialysis, day_num, time, clearanceValue, duration) {
 }
 
 function extracellular_volume(volumeofdist, modeltype_text) {
-  // let volumeofdist = parseFloat(document.getElementById("volumeofdist").value);
-  // var modeltype_text = modeltype();
-
-  // TODO: handle both 2 Comp.. cases
-  let multiplier = modeltype_text === "2CompUrea" ? 1 / 3 : 1;
+  let multiplier =
+    modeltype_text === "2CompUrea" || modeltype_text === "2CompAdLib"
+      ? 1 / 3
+      : 1;
   return volumeofdist * multiplier;
 }
 
@@ -403,9 +409,6 @@ function sum_of_fractions(modeltype_val) {
 }
 
 function constant_dial(duration, number_of_treatments) {
-  // TODO: pass in the number of treatments and dialysis duration
-  console.log(`number_of_treatments: ${number_of_treatments}`);
-
   let total_treament_time_mins = number_of_treatments * duration * 60;
   return total_treament_time_mins >= 10080;
 }

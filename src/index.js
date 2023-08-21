@@ -711,6 +711,7 @@ function calcWeeklyTable(treatmentTable, inputData) {
         time_increment_minutes
       );
       wt[row].cext = wt[row].conc_ext * 100.0;
+      wt[row].vext = wt[row].vol_ext / 1000.0;
     } // for loop ends here
 
     // calc the end - start difference, and add 1/2 to start at a mid point again
@@ -797,6 +798,7 @@ function find_local_maxima(xs) {
  * @returns {xyset[]} data for graphing
  */
 function buildSingleXYSet(xydata, i) {
+  // publish two avgs out
   let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
@@ -809,9 +811,15 @@ function buildSingleXYSet(xydata, i) {
       return accumulator + currentValue;
     }, 0) / maxs.length;
   // console.log(`avg_max: ${avg_max}`);
-  document.getElementById("avgpeakconc").textContent = parseFloat(
-    avg_max
-  ).toFixed(2);
+  let avgpeakconc = parseFloat(avg_max).toFixed(2);
+  document.getElementById("avgpeakconc").textContent = isNaN(avgpeakconc)
+    ? parseFloat(avg).toFixed(2)
+    : avgpeakconc;
+  document.getElementById("timeavgconclabel").textContent =
+    xydata.timeavgconclabel_text;
+  document.getElementById("avgpeakconclabel").textContent =
+    xydata.avgpeakconclabel_text;
+
   // https://www.schemecolor.com/tools/color-scheme-generator/rose
   let color_wheel_conc = [
     "rgba(75, 192, 192, 1)",
@@ -835,7 +843,8 @@ function buildSingleXYSet(xydata, i) {
   ];
   var xyset = [
     {
-      label: i === 0 ? "Concentration(mg/dL)vs.Time(hours)" : "Conc" + (i + 1),
+      // label: i === 0 ? "Concentration(mg/dL)vs.Time(hours)" : "Conc" + (i + 1),
+      label: i === 0 ? xydata.legend_text : xydata.legend_text_short + (i + 1),
       data: xydata,
       borderColor: color_wheel_conc[i],
       fill: false
@@ -870,7 +879,11 @@ function buildChartConfig(datasets) {
     data: {
       datasets: xydata_array
     },
+    // https://www.chartjs.org/docs/latest/general/performance.html
     options: {
+      animation: false,
+      spanGaps: true, // enable for all datasets
+      showLine: false, // disable for all datasets
       responsive: true,
       scales: {
         x: {
@@ -1158,8 +1171,23 @@ window.calculateAndDraw = function calculateAndDraw() {
     // Create and update the line chart when "Solve" button is clicked
     const chartData = weeklyTable.map((item) => ({
       x: item.ptime,
-      y: item.cext
+      y: inputData["charttype"] === "ConcvsTime" ? item.cext : item.vext
     }));
+    chartData.legend_text =
+      inputData["charttype"] === "ConcvsTime"
+        ? "Concentration(mg/dL) vs. Time(hours)"
+        : "Volume (liters) vs. Time (hours)";
+    chartData.legend_text_short =
+      inputData["charttype"] === "ConcvsTime" ? "Conc" : "Vol";
+    chartData.timeavgconclabel_text =
+      inputData["charttype"] === "ConcvsTime"
+        ? "Time-Averaged Conc. (mg/dL)"
+        : "Time-Averaged Volume (liters)";
+    chartData.avgpeakconclabel_text =
+      inputData["charttype"] === "ConcvsTime"
+        ? "Average Peak Conc. (mg/dL)"
+        : "Average Peak Volume (liters)";
+
     // chartData is an array of xs and ys:
     // [{x: 0, y: 123}, {x: 1, y: 134}..]
     // pass on charting data under two conditions:

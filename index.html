@@ -84,7 +84,7 @@
             id="duration"
             name="duration"
             required
-            step="0.01"
+            step="0.5"
             min="0"
             max="9"
             value="3.33"
@@ -177,7 +177,7 @@
           />
         </div>
         <div class="menu-item">
-          <select name="replace" id="replace" disabled>
+          <select name="replace" id="replace" disabled onchange="ready();">
             <option value="Predilution">Predilution</option>
             <option value="Postdilution">Postdilution</option>
           </select>
@@ -361,15 +361,16 @@
       <input type="checkbox" id="plotintra" onclick="ready();" />
       Plot Intra.*
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <select name="charttype" id="charttype">
+      <select name="charttype" id="charttype" onchange="ready();">
         <option value="ConcvsTime">Conc vs. Time</option>
-        <option value="VolumevsTime">Volume vs. Time*</option>
+        <option value="VolumevsTime">Volume vs. Time</option>
       </select>
 
       <h3>Results</h3>
-      <label for="avgclearance"> Average Clearance (mL/min) </label>
+      <label> Average Clearance (mL/min) 
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <span id="avgclearance"></span>
+      </label>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -381,13 +382,13 @@
         <option value="cvt2">model2</option>
       </select>
       <br />
-      <label for="timeavgconc"> Time-Averaged Conc. (mg/dL) </label>
+      <label id="timeavgconclabel"> Time-Averaged Conc. (mg/dL) </label>
       &nbsp;&nbsp;&nbsp;
       <span
         id="timeavgconc"
       /></span>
       <br />
-      <label for="avgpeakconc"> Average Peak Conc. (mg/dL) </label>
+      <label id="avgpeakconclabel"> Average Peak Conc. (mg/dL) </label>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <span
       id="avgpeakconc"
@@ -396,18 +397,11 @@
       <br />
     </div>
     <br />
-    <br />
-    <br />
-    <br />
   </right-side>
-
   <div>
   </div>
-  <div>
-    </div>
-    <div>
-      </div>
-          <p>(L/t) Liters per treatment</p>
+
+        <p>(L/t) Liters per treatment</p>
     <p xmlns:cc="http://creativecommons.org/ns#">
       This work by
       <a rel="cc:attributionURL dct:creator" property="cc:attributionName"

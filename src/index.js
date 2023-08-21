@@ -969,7 +969,7 @@ function calc_clear_uf(
   additionaluf,
   dialysis_duration_in_mins
 ) {
-  console.log(`dialysis_duration_in_mins: ${dialysis_duration_in_mins}`);
+  // console.log(`dialysis_duration_in_mins: ${dialysis_duration_in_mins}`);
 
   return (
     ((days_since * fluidgain + (dialysis ? additionaluf : 0)) * 1000) /

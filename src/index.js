@@ -304,11 +304,12 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
     }
   }
 
-  ////console.table(vTable);
+  /*
   console.log(`----------------------`);
   console.log(`Qf: ${Qf}`);
   console.log(`Qr: ${Qr}`);
   console.log(`----------------------`);
+  */
   let clearanceValue =
     ((Qp + Qprbc / (1 - theta_inblood)) * Cp -
       (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) /
@@ -790,7 +791,6 @@ function find_local_maxima(xs) {
   return maxima;
 }
 
-//
 /*
  * x and y chart config for single chart for the i-th element of the xydata array
  * @param {xydata[]} data of a single set
@@ -804,7 +804,6 @@ function buildSingleXYSet(xydata, i) {
     2
   );
   var maxs = find_local_maxima(y_values);
-  // console.log(`maxs: ${maxs}`);
   var avg_max =
     maxs.reduce((accumulator, currentValue) => {
       return accumulator + currentValue;
@@ -978,6 +977,8 @@ function calc_clear_uf(
   );
 }
 
+// build out a convenience table.  this table is used to calcClearanceTable()
+// n number of times using UF values
 function findClearances(inputData) {
   let varNames = [
     "name",
@@ -1083,6 +1084,7 @@ function applyTreatment(eff_uf, inputData) {
 
     console.log(`final clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
     console.log(`final clearance: ${clearance}`);
+    console.log(`result: ${result}`);
   } catch (e) {
     console.error("error", e);
   }

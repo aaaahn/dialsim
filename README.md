@@ -4,7 +4,49 @@ https://webclear.netlify.app
 
 https://dialsim.com
 
-# Dialysis Simulator
+# Dialysis Simulator: A Web Application
+
+# How this program works on your local device
+
+The Dialysis Simulator is a responsive, single-page web application compatible with any device that has a web browser. You can host its code (comprising HTML, CSS, and JavaScript) on a traditional web server or even on a local storage file system.
+
+Once you've loaded the application via its [URL](https://webclear.netlify.app) or through the [Webarchive](https://en.wikipedia.org/wiki/Webarchive) file, it can operate seamlessly without needing an active internet connection.
+
+Modern browsers are more than just gateways to the internet; they're sophisticated virtual machines. They seamlessly integrate HTML, CSS, and JavaScript to display web content. As users engage with the page—whether it's clicking buttons, typing, or scrolling—JavaScript takes charge. It processes these interactions, offering real-time feedback, calculations, and chart visualizations.
+
+```mermaid
+
+graph RL
+    Browser[Web Browser  <br> JavaScript Engine] -.->|"https://webcalc.netlify.com "| WWW[(Web Server)]
+    subgraph Local Device
+        Browser
+    end
+    WWW --> |HTML & Javascript Code| Browser
+
+    subgraph Netlify Web Host
+        WWW
+    end
+
+
+```
+
+# Offline Capabilities
+
+```mermaid
+
+graph RL
+    Browser[Web Browser  <br> JavaScript Engine] -.->|"/home/tmeyer/dialsim.webarchive"| Disk[(File System)]
+    subgraph Local Device
+        Browser
+    end
+    Disk --> |HTML & Javascript Code| Browser
+
+    subgraph Local Device
+        Disk
+    end
+```
+
+# JavaScript Architecture
 
 `calcClearanceTable()` - The `goalseek()` function iterates to find a starting Cd value minimized to 0 by the end of the dialyzer, or as x reaches 1.000. The inputs from the website run through a table that uses pseudo-calculus to model the values of several variables through the dialyzer. With an initial Cd value that reaches 0, other important values dependent on it can be used in the calculation of the clearance. Protein binding percentage is assumed to be 0%, albumin concentration is assumed to be 500 µM, and ∆P0 and ∆P1 are assumed to be 40 torr.
 

@@ -12,7 +12,7 @@ The Dialysis Simulator is a responsive, single-page web application compatible w
 
 Once you've loaded the application via its [URL](https://webclear.netlify.app) or through the [Webarchive](https://en.wikipedia.org/wiki/Webarchive) file, it can operate untethered without needing an active internet connection.
 
-Modern browsers are more than just gateways to the internet; they're sophisticated virtual machines. They seamlessly integrate HTML, CSS, and JavaScript to display web content. As users engage with the page—whether it's clicking buttons, typing, or scrolling—JavaScript takes charge. It processes these interactions, offering real-time feedback, calculations, and chart visualizations.
+Browsers are more than just gateways to the internet; they seamlessly integrate HTML, CSS, and JavaScript to display web content. As users engage with the page—whether it's clicking buttons, typing, or scrolling—JavaScript takes charge. It processes these interactions, offering real-time feedback, calculations, and chart visualizations.
 
 ```mermaid
 
@@ -30,12 +30,12 @@ graph RL
 
 ```
 
-## Offline Capabilities
+## Untethered operation
 
 ```mermaid
 
 graph RL
-    Browser[Web Browser  <br> JavaScript Engine] -.->|"/home/tmeyer/dialsim.webarchive"| Disk[(File System)]
+    Browser[Web Browser  <br> JavaScript Engine] -.->|"file:///dialsim.webarchive"| Disk[(File System)]
     subgraph Local Device
         Browser
     end

@@ -1,6 +1,6 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/ebd12782-20e2-4816-816c-5534dbefdbe9/deploy-status)](https://app.netlify.com/sites/webclear/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ebd12782-20e2-4816-816c-5534dbefdbe9/deploy-status)](https://app.netlify.com/sites/dialsim/deploys)
 
-https://webclear.netlify.app
+https://dialsim.netlify.app
 
 https://dialsim.com
 
@@ -10,14 +10,14 @@ https://dialsim.com
 
 The Dialysis Simulator is a responsive, single-page web application compatible with any device that has a web browser. You can host its code (comprising HTML, CSS, and JavaScript) on a traditional web server or even on a local storage file system.
 
-Once you've loaded the application via its [URL](https://webclear.netlify.app) or through the [Webarchive](https://en.wikipedia.org/wiki/Webarchive) file, it can operate untethered without needing an active internet connection.
+Once you've loaded the application via its [URL](https://dialsim.netlify.app) or through the [Webarchive](https://en.wikipedia.org/wiki/Webarchive) file, it can operate untethered without needing an active internet connection.
 
 Browsers are more than just gateways to the internet; they seamlessly integrate HTML, CSS, and JavaScript to display web content. As users engage with the page—whether it's clicking buttons, typing, or scrolling—JavaScript takes charge. It processes these interactions, offering real-time feedback, calculations, and chart visualizations.
 
 ```mermaid
 
 graph RL
-    Browser[Web Browser  <br> JavaScript Engine] -.->|"https://webcalc.netlify.com "| WWW[(Web Server)]
+    Browser[Web Browser  <br> JavaScript Engine] -.->|"https://dialsim.netlify.com "| WWW[(Web Server)]
     subgraph Local Device
         Browser
     end

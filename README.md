@@ -8,7 +8,7 @@ https://dialsim.com
 
 ## How this program works on your local device
 
-The Dialysis Simulator is a responsive, single-page web application compatible with any device that has a web browser. You can host its code (comprising HTML, CSS, and JavaScript) on a traditional web server or even on a local storage file system.
+The Dialysis Simulator is a responsive, single-page web application compatible with any device that has a web browser. You can host its code (comprising of HTML, CSS, and JavaScript) on a traditional web server or even on a local storage file system.
 
 Once you've loaded the application via its [URL](https://dialsim.netlify.app) or through the [Webarchive](https://en.wikipedia.org/wiki/Webarchive) file, it can operate untethered without needing an active internet connection.
 

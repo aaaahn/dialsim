@@ -777,7 +777,7 @@ function calculate_ptime(AX9, AG15, AB15) {
 }
 
 function populateTable(vTable, tableElement) {
-  if (debug_mode) return;
+  if (!debug_mode) return;
   if (!tableElement) return;
 
   tableElement.innerHTML = "";

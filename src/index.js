@@ -3,53 +3,95 @@ import "./styles.css";
 import * as goalSeek from "goal-seek";
 
 // make this also a global function by attaching to the window object
+// this function performs the following duties:
+// when the user enters a value into web page element "Additional UF (L/t)"
+// and that value is zero
+// the two html elements are greyed out to signal the user that it's been disabled as input
+// otherwise, when the value is non-zero
+// the use entered value is copied into HTML element dilution.
 window.render_disabled = function render_disabled() {
   console.log(
     `called - render_disabled: ${document.getElementById("replace").disabled}`
   );
-  document
-    .getElementById("additionaluf")
-    .addEventListener("input", function () {
-      var additionalufValue = parseFloat(this.value);
-      var isDisabled = additionalufValue === 0;
 
-      document.getElementById("replace").disabled = isDisabled;
-      document.getElementById("dilution").disabled = isDisabled;
-      console.log(`isDisabled: ${isDisabled}`);
+  var additionalufValue = parseFloat(
+    document.getElementById("additionaluf").value
+  );
+  // should we disable the GUI elements?
+  var isDisabled = additionalufValue === 0;
 
-      // Applying a class to make the difference obviously visible
-      if (isDisabled) {
-        document.getElementById("replace").classList.add("disabled");
-        document.getElementById("dilution").classList.add("disabled");
-      } else {
-        document.getElementById("dilution").value = additionalufValue;
-        document.getElementById("replace").classList.remove("disabled");
-        document.getElementById("dilution").classList.remove("disabled");
-      }
-    });
+  document.getElementById("replace").disabled = isDisabled;
+  document.getElementById("dilution").disabled = isDisabled;
+  console.log(`isDisabled: ${isDisabled}`);
+
+  // Applying a class to make the difference obviously visible
+  if (isDisabled) {
+    document.getElementById("dilution").value = 0;
+    document.getElementById("replace").classList.add("disabled");
+    document.getElementById("dilution").classList.add("disabled");
+  } else {
+    document.getElementById("dilution").value = additionalufValue;
+    document.getElementById("replace").classList.remove("disabled");
+    document.getElementById("dilution").classList.remove("disabled");
+  }
+};
+
+// make this also a global function by attaching to the window object
+// when a non-zero value is entered into fluidgain, enable uf and copy a value, then trigger recalc().
+// unlike the above function render_disabled_uf, it enables/disables not itself but
+// html element id "uf".
+window.render_disabled_uf = function render_disabled_uf() {
+  const inputData = fetchInputValues();
+
+  console.log(
+    `called - render_disabled_uf: ${document.getElementById("uf").disabled}`
+  );
+  var fluidgainValue = fluidgain();
+  console.log(`fluidgainValue: ${fluidgainValue}`);
+  var isDisabled = fluidgainValue === 0;
+
+  document.getElementById("uf").disabled = isDisabled;
+  console.log(`uf isDisabled: ${isDisabled}`);
+  var number_of_treatments =
+    inputData["monday"] +
+    inputData["tuesday"] +
+    inputData["wednesday"] +
+    inputData["thursday"] +
+    inputData["friday"] +
+    inputData["saturday"] +
+    inputData["sunday"];
+  console.log(`number_of_treatments: ${number_of_treatments}`);
+
+  // Applying a class to make the difference obviously visible
+  if (isDisabled) {
+    document.getElementById("uf").value = 0; // this does NOT trigger ready() by "uf"'s oninput
+    document.getElementById("uf").classList.add("disabled");
+    document.getElementById("uflabel").classList.add("disabled");
+  } else {
+    // this does NOT trigger ready() by "uf"'s oninput
+    document.getElementById("uf").value = parseFloat(
+      (fluidgainValue * 7) / number_of_treatments
+    ).toFixed(1);
+    document.getElementById("uf").classList.remove("disabled");
+    document.getElementById("uflabel").classList.remove("disabled");
+  }
 };
 
 // This line ensures that the render_disabled function is called once the document's content has been fully loaded.
 document.addEventListener("DOMContentLoaded", render_disabled);
+document.addEventListener("DOMContentLoaded", render_disabled_uf);
 
-function calculatePrePostDilution(Qf) {
+function calculatePrePostDilution(inputData) {
+  let Qf = inputData["additionaluf"];
   if (Qf === 0) {
     return 0;
   }
 
-  // =IF(C6=1,Interface!E10*1000/AB17,0)
-  var selectElement = document.getElementById("replace");
-  var selectedValue = selectElement.value;
-  var selectedText = selectElement.options[selectElement.selectedIndex].text;
-  console.log("Selected value is: " + selectedValue);
-  console.log("Selected text is: " + selectedText);
-  console.log(`selectedText: ${selectedText}`);
+  var selectedText = inputData["replace"];
   if (selectedText === "Predilution") {
     // AB17 is dialysis duration in mins
-    let duration_in_mins = hours_to_mins(
-      parseFloat(document.getElementById("duration").value)
-    ); // let duration = 3.33;
-    let dilution = parseFloat(document.getElementById("dilution").value);
+    let duration_in_mins = hours_to_mins(inputData["duration"]); // let duration = 3.33;
+    let dilution = inputData["dilution"]; // parseFloat(document.getElementById("dilution").value);
     let predilution = (dilution * 1000) / duration_in_mins;
     console.log(`predilution: ${predilution}`);
     return predilution;
@@ -58,25 +100,44 @@ function calculatePrePostDilution(Qf) {
   }
 }
 
-function calcClearanceTable(newCd) {
-  let Qb = parseFloat(document.getElementById("bloodflow").value); // let Qb = 360;
-  let Qd = parseFloat(document.getElementById("dialysateflow").value); // 500;
-  // console.log("dialysateflow: " + parseFloat(Qd));
-  let KoA = parseFloat(document.getElementById("koa").value); //  let KoA = 500;
-  let sigma = parseFloat(document.getElementById("sigma").value); // 0;
-  console.log(`sigma: ${sigma}`);
-  let Qf = parseFloat(document.getElementById("additionaluf").value); // 0;
-  let Qr = calculatePrePostDilution(Qf); // 0; // Ask Dr. Tim: is this Fluid Gain?
-  console.log(`Qr: ${Qr}`);
-  Qf = Qr;
-  console.log(`Qf: ${Qf}`);
-  let Hct = parseFloat(document.getElementById("hematocrit").value); // 0;
-  console.log(`Hct: ${Hct}`);
+function calculatePhi(KoA, Pe) {
+  if (KoA === 0) {
+    return 0;
+  } else if (Pe === 0) {
+    return 0.5;
+  } else if (isNaN(Math.exp(Pe))) {
+    return 0;
+  } else {
+    return 1 / Pe - 1 / (Math.exp(Pe) - 1);
+  }
+}
+
+function calcClearanceTable(newCd, eff_uf, inputData) {
+  let Qb = inputData["bloodflow"]; // let Qb = 360;
+  let Qd = inputData["dialysateflow"]; // 500;
+  let KoA = inputData["koa"]; //  let KoA = 500;
+  let sigma = inputData["sigma"]; // 0;
+  let Qf = 0; // = inputData["fluidgain"]; // 0;                    // clear_uf gets passed in and gets assigned to Qf
+  // let additionaluf = inputData["additionaluf"]; // 0;
+  let Qr = calculatePrePostDilution(inputData); // 0;
+
+  if (!inputData["dilution"]) {
+    // When dilution is disabled, Qf is zero "default"
+    Qf = 0;
+  } else {
+    // When additionaluf (dilution) is enabled, Qr is copied to Qf
+    Qf = Qr;
+  }
+  // when both dilution and fluidgain have non-zero values
+  if (inputData["fluidgain"]) {
+    Qf = eff_uf;
+  }
+
+  let Hct = inputData["hematocrit"]; // 0;
   // let f = 0.3378;
   let f = 1.0;
   let Calb = 500;
   let Cp = 100;
-  console.log(`Cp: ${Cp}`);
   let DP0 = 40;
   let DP1 = 40;
   let solute = 0;
@@ -91,38 +152,23 @@ function calcClearanceTable(newCd) {
   let increment = 0.001;
   let Ka = (Cp - Cp * f) / Cp / f / (Calb - Cp + Cp * f);
   let Pa = (DP1 - DP0) / (DP1 + DP0);
-  console.log(`Pa: ${Pa}`);
   let Pb = (2 * DP0) / (DP1 + DP0);
-  console.log(`Pb: ${Pb}`);
-
   let Qp = Qb * (1 - Hct);
-  console.log(`Qp: ${Qp}`);
   let Qprbc = 0.86 * Qb * Hct;
-  console.log(`Qprbc: ${Qprbc}`);
 
   if (solute === 1) {
     Qprbc = 0.86 * Qb * Hct;
   } else {
     Qprbc = 0;
   }
-  console.log(`Qprbc: ${Qprbc}`);
 
-  // let Qpoatinlet = 360;
   let Qpoatinlet = Qp + Qr; // =L4+$F$7
-  console.log(`Qpoatinlet: ${Qpoatinlet}`);
   let theta_inblood = 0.07;
   let Calb0 = (Calb * Qp) / Qpoatinlet;
-  console.log(`Calb0: ${Calb0}`);
   let theta_atinlet = (theta_inblood * Calb0) / Calb;
-  console.log(`theta_inblood * Calb0: ${theta_inblood * Calb0}`);
-  console.log(`Calb: ${Calb}`);
-  // let theta_atinlet = 0.07;
-  console.log(`theta_atinlet: ${theta_atinlet}`);
-  // let Cp0 = 100;
   let Cp0 =
     (Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc) /
     (Qpoatinlet + Qprbc / (1 - theta_atinlet));
-  console.log(`Cp0: ${Cp0}`);
 
   let sz = [1001, 17];
   let varNames = [
@@ -144,18 +190,19 @@ function calcClearanceTable(newCd) {
     "Massp",
     "Massd"
   ];
-  let vTable = new Array(sz[0]).fill(null).map(() =>
-    Object.assign(
-      {},
-      Array.from(varNames, () => 0)
-    )
-  );
+  let vTable = new Array(sz[0]).fill(null).map(function () {
+    const obj = {};
+    for (let i = 0; i < varNames.length; i++) {
+      obj[varNames[i]] = 0;
+    }
+    return obj;
+  });
 
   for (let row = 0; row < sz[0]; row++) {
     // vTable[row].x = row * 0.001;
     vTable[row].x = row === 0 ? 0.0 : vTable[row - 1].x + 0.001;
     vTable[row].x = parseFloat(vTable[row].x.toFixed(3));
-    vTable[row].Phi = 0.5;
+    // vTable[row].Phi = 0.5;
     vTable[row].Qp =
       Qpoatinlet - Qf * (Pa * Math.pow(vTable[row].x, 2) + Pb * vTable[row].x);
 
@@ -174,7 +221,6 @@ function calcClearanceTable(newCd) {
     }
 
     vTable[row].Calb = (Calb0 * Qpoatinlet) / vTable[row].Qp;
-    // (row === 0) ? vTable[row].Calb = Calb : vTable[row].Calb = (vTable[row - 1].Calb * Qpoatinlet) / vTable[row].Qp;
 
     if (row === 0) {
       vTable[row].theta = theta_atinlet;
@@ -214,7 +260,6 @@ function calcClearanceTable(newCd) {
 
     if (row === 0) {
       vTable[row].Cd = newCd;
-      //vTable[row].Cd = 10.3345678837018;
     } else {
       if (PureUF) {
         if (PureDialysis) {
@@ -229,6 +274,9 @@ function calcClearanceTable(newCd) {
           vTable[row].Qd;
       }
     }
+
+    vTable[row].Pe = (vTable[row].Jv * (1 - sigma)) / KoA;
+    vTable[row].Phi = calculatePhi(KoA, vTable[row].Pe);
 
     if (PureUF) {
       vTable[row].Cpm = vTable[row].Cpfw;
@@ -246,7 +294,6 @@ function calcClearanceTable(newCd) {
         vTable[row].Cpm * vTable[row].Jv * (1 - sigma);
     }
 
-    vTable[row].Pe = (vTable[row].Jv * (1 - sigma)) / KoA;
     vTable[row].Massp = (vTable[row].Qp + Qprbc) * vTable[row].Cp;
 
     if (PureUF) {
@@ -257,74 +304,257 @@ function calcClearanceTable(newCd) {
     }
   }
 
-  ////console.table(vTable);
-  // let clearanceValue = 237.1902397;
-  // =ROUND(((L4+L5/(1-L9))*F13-(I1012+L5/(1-M1012))*N1012)/F13,10)let clearanceValue = ((Qp + Qprbc/(1-theta_inblood))* Cp0 - (vTable[1000].Qp + Qprbc/(1-vTable[1000].theta))*vTable[1000].Cp)/Cp0
-  // -----------  weekly calculators
-  //let clearanceValue = Math.round(((L4 + L5 / (1 - L9)) * F13 - (I1012 + L5 / (1 - M1012)) * N1012) / F13, 10);
   /*
   console.log(`----------------------`);
-  console.log(`Qp: ${Qp}`);
-  console.log(`Qprbc: ${Qprbc}`);
-  console.log(`theta_inblood: ${theta_inblood}`);
-  console.log(`Cp: ${Cp}`);
-  console.log("vTable[1000].Cp: " + vTable[1000].Cp);
-  console.log(`Qprbc: ${Qprbc}`);
-  console.log(`vTable[1000].Calb: ${vTable[1000].Calb}`);
-  console.log(`vTable[1000].theta: ${vTable[1000].theta}`);
+  console.log(`Qf: ${Qf}`);
+  console.log(`Qr: ${Qr}`);
   console.log(`----------------------`);
   */
   let clearanceValue =
     ((Qp + Qprbc / (1 - theta_inblood)) * Cp -
       (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) /
     Cp;
-  console.log(`clearanceValue0: ${clearanceValue}`);
-  return [varNames, vTable, clearanceValue];
+  return [vTable, clearanceValue];
 }
 
 function hours_to_mins(duration) {
   return (Math.round(duration * 10) / 10) * 60;
 }
 
-function map_day_to_kml(dialysis, day_num, time, clearanceValue, duration) {
-  // todo: figure out column AI for Monday to Sunday are calculated
-  //  return dialysis[day_num] * 237.1902396608; // kml_per_min;
-  // console.log(`hours_to_mins(duration): ${hours_to_mins(duration)}`);
+function frac_uf_to_intracellular(modeltype_val) {
+  let fluidgaincompartment1 = parseFloat(
+    document.getElementById("fluidgaincompartment1").value
+  );
+  let interfaceE25 = 0;
+  if (modeltype_val === "1Comp") {
+    return fluidgaincompartment1 / 100;
+  } else if (modeltype_val === "2CompUrea") {
+    return 1; // 100 / 100 is simply 1
+  } else {
+    return interfaceE25 / 100;
+  }
+}
 
+function frac_uf_to_extracellular(modeltype_val) {
+  // console.log(`modeltype_val: ${modeltype_val}`);
+  var interfaceE26 = 0;
+  if (modeltype_val === "1Comp" || modeltype_val === "2CompUrea") {
+    return 0;
+  } else {
+    return interfaceE26 / 100;
+  }
+}
+
+function fluidgain() {
+  var fluidgain_val = parseFloat(document.getElementById("fluidgain").value);
+  console.log(`fluidgain: ${fluidgain_val}`);
+  console.log(`uf: ${document.getElementById("uf").value}`);
+
+  return fluidgain_val;
+}
+
+function extracellular_dv_per_min_ml(fluidgain_val, modeltype_val) {
+  let extracellular_dv_per_min_ml_val =
+    ((frac_uf_to_intracellular(modeltype_val) * fluidgain_val) / 24 / 60) *
+    1000;
+  return extracellular_dv_per_min_ml_val;
+}
+
+function calcDV(days_since, fluidgain_val, modeltype_val) {
+  let intracellular_dv_ml =
+    ((frac_uf_to_extracellular(modeltype_val) * fluidgain_val) / 24 / 60) *
+    1000;
+  // console.log(`intracellular_dv_ml: ${intracellular_dv_ml}`);
+
+  if (days_since === 0) {
+    return 0;
+  }
+
+  /*
+  console.log(
+    `extracellular_dv_per_min_ml(fluidgain_val, modeltype_val): ${extracellular_dv_per_min_ml(
+      fluidgain_val,
+      modeltype_val
+    )}`
+  ); */
+
+  return (
+    days_since *
+    24 *
+    60 *
+    (extracellular_dv_per_min_ml(fluidgain_val, modeltype_val) +
+      intracellular_dv_ml)
+  );
+}
+
+function map_day_to_kml(dialysis, day_num, time, clearanceValue, duration) {
   if ((time - 720) % 1440 <= hours_to_mins(duration)) {
-    return dialysis[day_num] * clearanceValue;
+    return dialysis * clearanceValue;
   } else {
     return 0.0;
   }
 }
 
-//TODO: ask dr tim
-function calc_vol_ext() {
-  // =IF($AG$21,$AB$26,IF(AND(AM9,NOT(AM10)),$AB$26,AN1688+($AB$28-IF(AND(AM1688,AM9),CHOOSE(AK9,$AG$5,$AG$6,$AG$7,$AG$8,$AG$9,$AG$10,$AG$11)*$AA$22/$AA$24,0))*$AB$15))
-  return 36000;
+function extracellular_volume(volumeofdist, modeltype_text) {
+  let multiplier =
+    modeltype_text === "2CompUrea" || modeltype_text === "2CompAdLib"
+      ? 1 / 3
+      : 1;
+  return volumeofdist * multiplier;
 }
 
-function calcWeeklyTable(clearanceValue) {
-  console.log(`calcWeeklyTable:clearanceValue: ${clearanceValue}`);
+function sum_of_fractions(modeltype_val) {
+  let sum =
+    frac_uf_to_intracellular() + frac_uf_to_extracellular(modeltype_val);
+  return sum === 0 ? 1 : sum;
+}
 
-  let Monday = document.getElementById("monday").checked; // true;
-  let Tuesday = document.getElementById("tuesday").checked; //false;
-  let Wednesday = document.getElementById("wednesday").checked; // true;
-  let Thursday = document.getElementById("thursday").checked; // false;
-  let Friday = document.getElementById("friday").checked; // true;
-  let Saturday = document.getElementById("saturday").checked; // false;
-  let Sunday = document.getElementById("sunday").checked; // false;
-  let dialysis = [
-    Sunday,
-    Monday, // dialysis[1] --> true
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday, //
-    Sunday // dialysis[day] --> false
-  ]; // javascript arrays are zero indexed
+function constant_dial(duration, number_of_treatments) {
+  let total_treament_time_mins = number_of_treatments * duration * 60;
+  return total_treament_time_mins >= 10080;
+}
 
+function start_time(dialysis, day, time_before_dialysis_in_mins) {
+  if (dialysis) {
+    return (day - 1) * 24 * 60 + time_before_dialysis_in_mins;
+  } else {
+    return -1;
+  }
+}
+
+function end_time(dialysis, start_time, dialysis_duration_in_mins) {
+  if (dialysis) {
+    return (start_time + dialysis_duration_in_mins) % 10080;
+  } else {
+    return -1;
+  }
+}
+
+function calc_vol_ext0(
+  constant_dial_val,
+  prev_day_dialysis,
+  current_day_dialysis,
+  next_day_dialysis,
+  prev_day_vol_ext,
+  eff_uf,
+  time_increment_mins,
+  extracellular_volume_val,
+  frac_uf_to_intracellular_val,
+  extracellular_dv_per_min_ml_val,
+  sum_of_fractions_val
+) {
+  /*
+  console.log(`calc_vol_ext0:constant_dial_val: ${constant_dial_val}`);
+  console.log(`calc_vol_ext0:prev_day_dialysis: ${prev_day_dialysis}`);
+  console.log(`calc_vol_ext0:current_day_dialysis: ${current_day_dialysis}`);
+  console.log(`calc_vol_ext0:next_day_dialysis: ${next_day_dialysis}`);
+  console.log(`calc_vol_ext0:prev_day_vol_ext: ${prev_day_vol_ext}`);
+  console.log(`calc_vol_ext0:eff_uf: ${eff_uf}`);
+  console.log(`calc_vol_ext0:time_increment_mins: ${time_increment_mins}`);
+  console.log(`calc_vol_ext0:extracellular_volume_val: ${extracellular_volume_val}`);
+  console.log(
+    `calc_vol_ext0:frac_uf_to_intracellular: ${frac_uf_to_intracellular}`
+  );
+  console.log(
+    `calc_vol_ext0:extracellular_dv_per_min_ml_val: ${extracellular_dv_per_min_ml_val}`
+  );
+  console.log(`calc_vol_ext0:sum_of_fractions: ${sum_of_fractions}`);
+*/
+  if (constant_dial_val) {
+    return extracellular_volume_val * 1000;
+  } else if (current_day_dialysis && !next_day_dialysis) {
+    return extracellular_volume_val * 1000;
+  } else {
+    let chooseValue = eff_uf || 0;
+
+    let innerValue =
+      prev_day_dialysis && current_day_dialysis
+        ? (chooseValue * frac_uf_to_intracellular_val) / sum_of_fractions_val
+        : 0;
+    /* console.log(`calc_vol_ext0:innerValue: ${innerValue}`);
+    console.log(
+      `calc_vol_ext0:(extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins: ${
+        (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
+      }`
+    );
+      */
+
+    return (
+      prev_day_vol_ext +
+      (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
+    );
+  }
+}
+
+function calc_vol_ext(
+  time,
+  prev_day_dialysis,
+  current_day_dialysis,
+  next_day_dialysis,
+  prev_day_vol_ext,
+  eff_uf,
+  time_increment_mins,
+  extracellular_volume_val,
+  frac_uf_to_intracellular_val,
+  extracellular_dv_per_min_ml_val,
+  sum_of_fractions
+) {
+  /*
+  if (time === 6678) {
+    console.log(`calc_vol_ext:time: ${time}`);
+    console.log(`calc_vol_ext:prev_day_dialysis: ${prev_day_dialysis}`);
+    console.log(`calc_vol_ext:current_day_dialysis: ${current_day_dialysis}`);
+    console.log(`calc_vol_ext:next_day_dialysis: ${next_day_dialysis}`);
+    console.log(`calc_vol_ext:prev_day_vol_ext: ${prev_day_vol_ext}`);
+    console.log(`calc_vol_ext:eff_uf: ${eff_uf}`);
+    console.log(`calc_vol_ext:time_increment_mins: ${time_increment_mins}`);
+    console.log(`calc_vol_ext:extracellular_volume_val: ${extracellular_volume_val}`);
+    console.log(
+      `calc_vol_ext:frac_uf_to_intracellular: ${frac_uf_to_intracellular}`
+    );
+    console.log(
+      `calc_vol_ext:extracellular_dv_per_min_ml_val: ${extracellular_dv_per_min_ml_val}`
+    );
+    console.log(`calc_vol_ext:sum_of_fractions: ${sum_of_fractions}`);
+  }
+  */
+  // Check the first condition
+  if (current_day_dialysis && !next_day_dialysis) {
+    return extracellular_volume_val * 1000;
+  } else {
+    // Get the value from the eff_uf array based on the day
+    let chooseValue = eff_uf || 0;
+
+    let innerValue =
+      prev_day_dialysis && current_day_dialysis
+        ? (chooseValue * frac_uf_to_intracellular_val) / sum_of_fractions
+        : 0;
+    if (time === 6678) {
+      /*
+      console.log(`calc_vol_ext0:innerValue: ${innerValue}`);
+      console.log(
+        `calc_vol_ext0:(extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins: ${
+          (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
+        }`
+      );
+      */
+    }
+    return (
+      prev_day_vol_ext +
+      (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
+    );
+  }
+}
+
+function calculateDay(time) {
+  let value = time / 60 / 24 - 0.5;
+  let modValue = value % 7;
+  let result = 1 + Math.floor(modValue);
+  return result === 0 ? 7 : result;
+}
+
+// pass in eff_ef and clearance inside treatmentTable
+function calcWeeklyTable(treatmentTable, inputData) {
   let sz = [1681, 17];
   let varNames = [
     "day",
@@ -334,52 +564,104 @@ function calcWeeklyTable(clearanceValue) {
     "vol_int",
     "conc_ext",
     "conc_int",
-    "debug",
     "point",
     "ptime",
     "cext"
   ];
-  let wt = new Array(sz[0]).fill(null).map(() =>
-    Object.assign(
-      {},
-      Array.from(varNames, () => 0)
-    )
-  );
+  let wt = new Array(sz[0]).fill(null).map(function () {
+    const obj = {};
+    for (let i = 0; i < varNames.length; i++) {
+      obj[varNames[i]] = 0;
+    }
+    return obj;
+  });
 
   var time_increment_minutes = 6;
-  var endog_clear = parseFloat(
-    document.getElementById("endogenousclearance").value
-  ); // 0; // hard-coded AA37
-  // var generation = 6.613888888;
-  var generation =
-    parseFloat(document.getElementById("generationrate").value) / (24 * 60);
-  console.log(`generation: ${generation}`);
+  var endog_clear = inputData["endogenousclearance"]; // parseFloat(document.getElementById("endogenousclearance").value); // 0; // hard-coded AA37
+  var generation = inputData["generationrate"] / (24 * 60); // parseFloat(document.getElementById("generationrate").value) / (24 * 60);
+  // console.log(`generation: ${generation}`);
 
   let kc = 0;
   let extracell = 0.834522427; // this should come from an prior vTable (as argument to this function)
   let intracell = 0.0;
-  var duration = parseFloat(document.getElementById("duration").value); // let duration = 3.33;
-
+  var duration = inputData["duration"]; // parseFloat(document.getElementById("duration").value); // let duration = 3.33;
   let increment = 1;
   let last = sz[0] - 1;
+  // Filter out invalid clearance values and then calculate the average
+  const validClearances = treatmentTable
+    .map((entry) => entry.clearance)
+    .filter((clearance) => clearance && clearance !== 0);
+  let number_of_treatments = validClearances.length;
+  let extracellular_volume_val = extracellular_volume(
+    inputData["volumeofdist"],
+    inputData["modeltype"]
+  );
+  let frac_uf_to_intracellular_val = frac_uf_to_intracellular(
+    inputData["modeltype"]
+  );
+  let extracellular_dv_per_min_ml_val = extracellular_dv_per_min_ml(
+    inputData["fluidgain"],
+    inputData["modeltype"]
+  );
+  let sum_of_fractions_val = sum_of_fractions(inputData["modeltype"]);
+  let constant_dial_val = constant_dial(duration, number_of_treatments);
+  // do not perform any DOM operations inside the loop below.  Fetch the value one above and pass them down as
+  // fixed values
 
   // iterate the calculation until start/end
   wt[0].conc_ext = extracell; // this value has not been assigned yet, so stamp a random value to get overriden with correct calculation in the loop below
   wt[last].conc_ext = extracell + 1; // this value has not been assigned yet, so stamp a random value to get overriden with correct calculation in the loop below
-  console.log(`extracell: ${extracell}`);
+  // console.log(`extracell: ${extracell}`);
   console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
   console.log(`RIGHT: wt[last].conc_ext: ${wt[last].conc_ext}`);
   let iteration_enabled = true;
+  let start_end_gap = 0.01;
   for (
     let iteration = 0;
-    Math.abs(wt[0].conc_ext - wt[last].conc_ext) > 0.01 && iteration_enabled;
+    Math.abs(wt[0].conc_ext - wt[last].conc_ext) > start_end_gap &&
+    iteration_enabled;
     iteration++
   ) {
     for (let row = 0; row < sz[0]; row++) {
       wt[row].time = row === 0 ? 0 : wt[row - 1].time + time_increment_minutes;
-      wt[row].day = 1 + (Math.floor(wt[row].time / 60 / 24 - 0.5) % 7);
-      wt[row].dialysis = dialysis[wt[row].day];
-      wt[row].vol_ext = calc_vol_ext();
+      wt[row].day = calculateDay(wt[row].time);
+      wt[row].dialysis =
+        treatmentTable[wt[row].day - 1].dialysis &&
+        treatmentTable[wt[row].day - 1].start <= wt[row].time &&
+        wt[row].time <= treatmentTable[wt[row].day - 1].end;
+      // vol_ext and vol_int are affected by UF
+      let prev_row = row === 0 ? last - 1 : row - 1;
+      let next_row = row === last ? 0 : row + 1;
+      let eff_uf = treatmentTable[wt[row].day - 1].eff_uf; // eff_uf[wt[row].day],
+      if (row === 0) {
+        wt[row].vol_ext = calc_vol_ext0(
+          constant_dial_val,
+          wt[prev_row].dialysis,
+          wt[row].dialysis,
+          wt[next_row].dialysis,
+          wt[prev_row].vol_ext,
+          eff_uf,
+          time_increment_minutes,
+          extracellular_volume_val,
+          frac_uf_to_intracellular_val,
+          extracellular_dv_per_min_ml_val,
+          sum_of_fractions_val
+        );
+      } else {
+        wt[row].vol_ext = calc_vol_ext(
+          wt[row].time,
+          wt[prev_row].dialysis,
+          wt[row].dialysis,
+          wt[next_row].dialysis,
+          wt[prev_row].vol_ext,
+          eff_uf,
+          time_increment_minutes,
+          extracellular_volume_val,
+          frac_uf_to_intracellular_val,
+          extracellular_dv_per_min_ml_val,
+          sum_of_fractions_val
+        );
+      }
       wt[row].vol_int = 0.0;
 
       // this if block calculates cols: conc_ext and conc_int
@@ -395,10 +677,10 @@ function calcWeeklyTable(clearanceValue) {
             (wt[row - 1].conc_ext * wt[row - 1].vol_ext -
               (wt[row - 1].dialysis && wt[row].dialysis
                 ? map_day_to_kml(
-                    dialysis,
+                    wt[row].dialysis,
                     wt[row].day,
                     wt[row].time,
-                    clearanceValue,
+                    treatmentTable[wt[row].day - 1].clearance,
                     duration
                   )
                 : endog_clear) *
@@ -429,12 +711,14 @@ function calcWeeklyTable(clearanceValue) {
         time_increment_minutes
       );
       wt[row].cext = wt[row].conc_ext * 100.0;
+      wt[row].vext = wt[row].vol_ext / 1000.0;
     } // for loop ends here
 
     // calc the end - start difference, and add 1/2 to start at a mid point again
     // let extracell_mid_offset = (wt[sz[0] - 1].conc_ext - extracell_mid) / 2;
     let half_diff = (wt[last].conc_ext - wt[0].conc_ext) / 2;
     extracell = wt[0].conc_ext + half_diff;
+    /*
     console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
     console.log(`RIGHT: wt[sz[0]].conc_ext: ${wt[sz[0] - 1].conc_ext}`);
     console.log(`half_diff: ${half_diff}`);
@@ -443,11 +727,18 @@ function calcWeeklyTable(clearanceValue) {
       `Math.abs(wt[0].conc_ext - wt[last].conc_ext): ${Math.abs(
         wt[0].conc_ext - wt[last].conc_ext
       )}`
-    );
+    ); */
     console.log(`iteration: ${iteration}`);
+    if (iteration > 10) {
+      // prevent a run-away loop
+      console.log(
+        `maximum iteration reached wt[last].conc_ext: ${wt[last].conc_ext}`
+      );
+      break;
+    }
   }
 
-  return [varNames, wt];
+  return wt;
 }
 
 function calculate_ptime(AX9, AG15, AB15) {
@@ -462,21 +753,27 @@ function calculate_ptime(AX9, AG15, AB15) {
   }
 }
 
-function populateTable(varNames, vTable, tableElement) {
-  if (tableElement) tableElement.innerHTML = "";
-  else return;
+function populateTable(vTable, tableElement) {
+  if (!tableElement) return;
+
+  tableElement.innerHTML = "";
+
+  // Assuming all objects in vTable have the same keys
+  const keys = Object.keys(vTable[0]);
+
   const headerRow = tableElement.insertRow();
-  for (let i = 0; i < varNames.length; i++) {
+  for (let key of keys) {
     const th = document.createElement("th");
-    th.textContent = varNames[i];
+    th.textContent = key;
     headerRow.appendChild(th);
   }
-  for (let i = 0; i < vTable.length; i++) {
+
+  for (let rowData of vTable) {
     const row = tableElement.insertRow();
 
-    for (let j = 0; j < varNames.length; j++) {
+    for (let key of keys) {
       const cell = row.insertCell();
-      cell.textContent = vTable[i][varNames[j]];
+      cell.textContent = rowData[key];
     }
   }
 }
@@ -495,29 +792,34 @@ function find_local_maxima(xs) {
   return maxima;
 }
 
-//
 /*
  * x and y chart config for single chart for the i-th element of the xydata array
  * @param {xydata[]} data of a single set
  * @returns {xyset[]} data for graphing
  */
 function buildSingleXYSet(xydata, i) {
+  // publish two avgs out
   let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
   document.getElementById("timeavgconc").textContent = parseFloat(avg).toFixed(
-    1
+    2
   );
   var maxs = find_local_maxima(y_values);
-  // console.log(`maxs: ${maxs}`);
   var avg_max =
     maxs.reduce((accumulator, currentValue) => {
       return accumulator + currentValue;
     }, 0) / maxs.length;
   // console.log(`avg_max: ${avg_max}`);
-  document.getElementById("avgpeakconc").textContent = parseFloat(
-    avg_max
-  ).toFixed(1);
+  let avgpeakconc = parseFloat(avg_max).toFixed(2);
+  document.getElementById("avgpeakconc").textContent = isNaN(avgpeakconc)
+    ? parseFloat(avg).toFixed(2)
+    : avgpeakconc;
+  document.getElementById("timeavgconclabel").textContent =
+    xydata.timeavgconclabel_text;
+  document.getElementById("avgpeakconclabel").textContent =
+    xydata.avgpeakconclabel_text;
+
   // https://www.schemecolor.com/tools/color-scheme-generator/rose
   let color_wheel_conc = [
     "rgba(75, 192, 192, 1)",
@@ -541,7 +843,8 @@ function buildSingleXYSet(xydata, i) {
   ];
   var xyset = [
     {
-      label: i === 0 ? "Concentration(mg/dL)vs.Time(hours)" : "Conc" + (i + 1),
+      // label: i === 0 ? "Concentration(mg/dL)vs.Time(hours)" : "Conc" + (i + 1),
+      label: i === 0 ? xydata.legend_text : xydata.legend_text_short + (i + 1),
       data: xydata,
       borderColor: color_wheel_conc[i],
       fill: false
@@ -561,7 +864,6 @@ function buildSingleXYSet(xydata, i) {
   return xyset;
 }
 
-//
 /*
  * given an array of xy data sets, build an array of chart configs with embedded data
  * @param {datasets[]} data of multiple datasets
@@ -572,13 +874,16 @@ function buildChartConfig(datasets) {
   for (let i = 0; i < datasets.length; i++) {
     xydata_array = xydata_array.concat(buildSingleXYSet(datasets[i], i));
   }
-  // console.log(`xydata_array: ${xydata_array}`);
   var chartConfig = {
     type: "line",
     data: {
       datasets: xydata_array
     },
+    // https://www.chartjs.org/docs/latest/general/performance.html
     options: {
+      animation: false,
+      spanGaps: true, // enable for all datasets
+      showLine: false, // disable for all datasets
       responsive: true,
       scales: {
         x: {
@@ -640,25 +945,143 @@ function is_in_dynamic_mode() {
   return dynamic_calc_state;
 }
 
-/*
-  1. Calculate clearance value via goalSeek
-  2. pass that clearance value to weeklyTableCalculator (which then iterates)
-  3. draw chart
-*/
-var chartDataStack = [];
-window.calculateAndDraw = function calculateAndDraw() {
-  var varNames;
-  var vTable;
+function daysSinceTrue(weekData) {
+  let lastTrueIndex = -1;
+  let result = [];
+
+  // First, find the last true index in the array for wrap-around logic
+  for (let i = weekData.length - 1; i >= 0; i--) {
+    if (weekData[i]) {
+      lastTrueIndex = i;
+      break;
+    }
+  }
+
+  for (let i = 0; i < weekData.length; i++) {
+    if (weekData[i]) {
+      if (lastTrueIndex === -1) {
+        result.push(0); // If there's no true value before, return 0
+      } else if (i <= lastTrueIndex) {
+        result.push(i + weekData.length - lastTrueIndex);
+      } else {
+        result.push(i - lastTrueIndex);
+      }
+      lastTrueIndex = i;
+    } else {
+      result.push(0);
+    }
+  }
+
+  return result;
+}
+
+function calc_clear_uf(
+  days_since,
+  fluidgain,
+  dialysis,
+  additionaluf,
+  dialysis_duration_in_mins
+) {
+  // console.log(`dialysis_duration_in_mins: ${dialysis_duration_in_mins}`);
+
+  return (
+    ((days_since * fluidgain + (dialysis ? additionaluf : 0)) * 1000) /
+    dialysis_duration_in_mins
+  );
+}
+
+// build out a convenience table.  this table is used to calcClearanceTable()
+// n number of times using UF values
+function findClearances(inputData) {
+  let varNames = [
+    "name",
+    "dialysis",
+    "day",
+    "start",
+    "end",
+    "days_since",
+    "dv",
+    "eff_uf",
+    "clear_uf",
+    "clearance"
+  ];
+
+  let days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday"
+  ];
+
+  let wt0 = days.map((day, index) => {
+    let obj = {};
+    varNames.forEach((key) => {
+      if (key === "name") obj[key] = day;
+      else if (key === "day") obj[key] = index + 1;
+      else obj[key] = 0;
+    });
+    return obj;
+  });
+
+  wt0.forEach((row) => {
+    row.dialysis = inputData[row.name];
+  });
+
+  let dialysisDays = wt0.map((row) => row.dialysis);
+  let daysSinceResults = daysSinceTrue(dialysisDays);
+  wt0.forEach((row, index) => {
+    row.days_since = daysSinceResults[index];
+  });
+
+  wt0.forEach((row) => {
+    row.dv = calcDV(
+      row.days_since,
+      inputData["fluidgain"],
+      inputData["modeltype"]
+    );
+  });
+
+  let duration_in_mins = hours_to_mins(inputData["duration"]);
+  wt0.forEach((row) => {
+    row.eff_uf = row.dv / duration_in_mins;
+  });
+
+  wt0.forEach((row) => {
+    row.clear_uf = calc_clear_uf(
+      row.days_since,
+      inputData["fluidgain"],
+      row.dialysis,
+      inputData["additionaluf"],
+      duration_in_mins
+    );
+  });
+
+  let time_before_dialysis = 12 * 60;
+  wt0.forEach((row) => {
+    row.start = start_time(row.dialysis, row.day, time_before_dialysis);
+  });
+  wt0.forEach((row) => {
+    row.end = end_time(row.dialysis, row.start, duration_in_mins);
+  });
+
+  return wt0;
+}
+
+// for each treachment apply clearanceTable(eff_uf, inputData)
+function applyTreatment(eff_uf, inputData) {
+  var clearanceTable;
   var clearance;
 
-  function fn(x) {
+  function fn(x, y, z) {
     console.log(`goalseek fn(x) - try: x : ${x}`);
-    [varNames, vTable, clearance] = calcClearanceTable(x);
-    console.log(`goalseek: lvTable[1000].Cd: ${vTable[1000].Cd}`);
-    return vTable[1000].Cd;
+    [clearanceTable, clearance] = calcClearanceTable(x, y, z);
+    // console.log(`goalseek: clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
+    return clearanceTable[1000].Cd;
   }
-  //console.log(cal)
-  var fnParams = [30]; // first guess
+  var fnParams = [45, eff_uf, inputData]; // first guess
 
   // goal is to get Cd (result) to 0.001
   try {
@@ -669,21 +1092,102 @@ window.calculateAndDraw = function calculateAndDraw() {
       maxIterations: 100,
       maxStep: 5,
       goal: 0.001,
-      independentVariableIdx: 0
+      independentVariableIdx: 0 // the index position of the independent variable x in the fnParams array.
     });
 
-    console.log(`final vTable[1000].Cd: ${vTable[1000].Cd}`);
+    console.log(`final clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
     console.log(`final clearance: ${clearance}`);
-    document.getElementById("avgclearance").textContent = parseFloat(
-      clearance
-    ).toFixed(1);
-    let [weeklyVarNames, weeklyTable] = calcWeeklyTable(clearance); // (clearanceValue) pass in co
+    console.log(`result: ${result}`);
+  } catch (e) {
+    console.error("error", e);
+  }
+  return [clearanceTable, clearance];
+}
+
+/*
+  VBA SolveDialSim() 
+  0. Pull input data from Web Page, build treatmentTable
+  1. Calculate clearance value via goalSeek
+  2. pass that clearance value to weeklyTableCalculator (which then iterates)
+  3. draw chart, write out 3 values to web page
+*/
+var chartDataStack = [];
+window.calculateAndDraw = function calculateAndDraw() {
+  const inputData = fetchInputValues();
+  console.log(inputData);
+
+  // assemble a list of eff_uf so that clearance values for each treatment day can be collected
+  const ttable = document.getElementById("treatmentTable");
+  const treatmentTable = findClearances(inputData);
+
+  // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
+  // apply clearanceCalculation via goalSeek
+  var vTable;
+  for (let i = 0; i < treatmentTable.length; i++) {
+    if (treatmentTable[i].dialysis) {
+      // is there another treatment day with the same eff_uf? re-cycle the clearance
+      for (let j = 0; j < treatmentTable.length; j++) {
+        if (
+          i !== j &&
+          treatmentTable[i].eff_uf === treatmentTable[j].eff_uf &&
+          treatmentTable[j].clearance
+        ) {
+          treatmentTable[i].clearance = treatmentTable[j].clearance;
+          // console.log(`ttcd copy: i: ${i}, j: ${j}`);
+          break;
+        }
+      } // end inner cache search loop
+
+      // did the loop above manage to find a recylced clearance value?  if not, go calcualte one
+      if (!treatmentTable[i].clearance) {
+        [vTable, treatmentTable[i].clearance] = applyTreatment(
+          // treatmentTable[i].eff_uf,
+          treatmentTable[i].clear_uf,
+          inputData
+        );
+        console.log(`ttcd apply i: ${i}`);
+      }
+    }
+  }
+  // Filter out invalid clearance values and then calculate the average
+  const validClearances = treatmentTable
+    .map((entry) => entry.clearance)
+    .filter((clearance) => clearance && clearance !== 0);
+  const avg_clearance =
+    validClearances.length > 0
+      ? validClearances.reduce((sum, clearance) => sum + clearance, 0) /
+        validClearances.length
+      : 0;
+  document.getElementById("avgclearance").textContent = parseFloat(
+    avg_clearance
+  ).toFixed(1);
+  const table = document.getElementById("resultTable");
+  populateTable(vTable, table);
+
+  try {
+    populateTable(treatmentTable, ttable);
+    let weeklyTable = calcWeeklyTable(treatmentTable, inputData); // (clearanceValue) pass in co
 
     // Create and update the line chart when "Solve" button is clicked
     const chartData = weeklyTable.map((item) => ({
       x: item.ptime,
-      y: item.cext
+      y: inputData["charttype"] === "ConcvsTime" ? item.cext : item.vext
     }));
+    chartData.legend_text =
+      inputData["charttype"] === "ConcvsTime"
+        ? "Concentration(mg/dL) vs. Time(hours)"
+        : "Volume (liters) vs. Time (hours)";
+    chartData.legend_text_short =
+      inputData["charttype"] === "ConcvsTime" ? "Conc" : "Vol";
+    chartData.timeavgconclabel_text =
+      inputData["charttype"] === "ConcvsTime"
+        ? "Time-Averaged Conc. (mg/dL)"
+        : "Time-Averaged Volume (liters)";
+    chartData.avgpeakconclabel_text =
+      inputData["charttype"] === "ConcvsTime"
+        ? "Average Peak Conc. (mg/dL)"
+        : "Average Peak Volume (liters)";
+
     // chartData is an array of xs and ys:
     // [{x: 0, y: 123}, {x: 1, y: 134}..]
     // pass on charting data under two conditions:
@@ -693,18 +1197,45 @@ window.calculateAndDraw = function calculateAndDraw() {
       chartDataStack.push(chartData);
     }
     // createChart(chartData);
-    console.log(`chartDataStack.length: ${chartDataStack.length}`);
+    // console.log(`chartDataStack.length: ${chartDataStack.length}`);
     createChart(chartDataStack);
 
     const wtable = document.getElementById("weeklyTable");
-    populateTable(weeklyVarNames, weeklyTable, wtable);
-
-    const table = document.getElementById("resultTable");
-    populateTable(varNames, vTable, table);
+    populateTable(weeklyTable, wtable);
   } catch (e) {
     console.error("error", e);
   }
 };
+
+function fetchInputValues() {
+  // Select all input elements and convert NodeList to an array
+  const inputs = Array.from(document.querySelectorAll("input, select"));
+
+  // Create an object to store the input values
+  const data = {};
+
+  // Iterate over each input element and store its value in the data object
+  inputs.forEach((input) => {
+    // For checkboxes, store the checked state
+    if (input.type === "checkbox") {
+      data[input.id] = input.checked;
+    }
+    // For number input types, convert the value to a float
+    else if (input.type === "number") {
+      data[input.id] = parseFloat(input.value);
+    }
+    // For select elements, store the selected option's value
+    else if (input.tagName === "SELECT") {
+      data[input.id] = input.options[input.selectedIndex].value;
+    }
+    // For other input types, store the input value
+    else {
+      data[input.id] = input.value;
+    }
+  });
+
+  return data;
+}
 
 // AA This function gets invoked when a gui element changes
 window.ready = function ready() {

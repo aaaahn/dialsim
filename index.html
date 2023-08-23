@@ -43,7 +43,7 @@
         width: 100%; /* Full width within the flex container */
       }
       .disabled {
-        background-color: #f0f0f0; /* Light gray background */
+        /* background-color: #f0f0f0;   Light gray background */
         color: #a0a0a0; /* Gray text color */
         cursor: not-allowed; /* Change cursor to indicate disabled state */
       }
@@ -84,7 +84,7 @@
             id="duration"
             name="duration"
             required
-            step="0.01"
+            step="0.5"
             min="0"
             max="9"
             value="3.33"
@@ -134,7 +134,7 @@
           />
         </div>
         <div class="menu-item">
-          <label for="sigma"> Sigma(0 &le; s &le; 1)</label>
+          <label for="sigma" class="disabled" id="sigmalabel"> Sigma(0 &le; s &le; 1)</label>
           <input
             type="number"
             id="sigma"
@@ -145,21 +145,21 @@
             step="0.1"
             value="0"
             oninput="ready();"
+            disabled
           />
         </div>
         <div class="menu-item">
-          <label for="uf"> UF to offset Fluid Gain (L/t)* </label>
+          <label for="uf" class="disabled" id="uflabel"> UF to offset Fluid Gain (L/t) </label>
           <input
             type="number"
             id="uf"
             name="uf"
-            required
             step="1"
             min="0"
             max="999"
-            step="0.1"
             value="0"
-            oninput="ready();"
+            oninput="ready();" 
+            disabled
           />
         </div>
         <div class="menu-item">
@@ -173,13 +173,13 @@
             min="0"
             max="999"
             value="0"
-            oninput="ready();render_disabled();"
+            oninput="render_disabled();ready();" // the order matters
           />
         </div>
         <div class="menu-item">
-          <select name="replace" id="replace" disabled>
-            <option value="predilution">Predilution</option>
-            <option value="postdilution">Postdilution</option>
+          <select name="replace" id="replace" disabled onchange="ready();">
+            <option value="Predilution">Predilution</option>
+            <option value="Postdilution">Postdilution</option>
           </select>
            &nbsp; 
           <input
@@ -219,7 +219,7 @@
           />
         </div>
         <div class="menu-item">
-          <label for="fluidgain"> Fluid Gain (L/day)* </label>
+          <label for="fluidgain"> Fluid Gain (L/day) </label>
           <input
             type="number"
             id="fluidgain"
@@ -229,7 +229,7 @@
             min="0"
             max="999"
             value="0"
-            oninput="ready();"
+            oninput="render_disabled_uf(); ready();"
           />
         </div>
         <div class="menu-item">
@@ -265,8 +265,8 @@
         <div class="menu-item">
           <label for="solutetype"> Solute Type* </label>
           <select name="solutetype" id="solutetype">
-            <option value="urea">Urea</option>
-            <option value="plasma">Plasma</option>
+            <option value="Urea">Urea</option>
+            <option value="Plasma">Plasma</option>
           </select>
         </div>
         <div class="menu-item">
@@ -301,16 +301,16 @@
 
         <h3>Model Parameters</h3>
         <div class="menu-item">
-          <label for="modeltype"> Model Type(%)* </label>
+          <label for="modeltype"> Model Type(%) </label>
           <select name="modeltype" id="modeltype">
-            <option value="model1">1 Comp</option>
-            <option value="model2">2 Comp Urea</option>
-            <option value="model3">2 Comp Ad Lib</option>
+            <option value="1Comp">1 Comp</option>
+            <option value="2Comp">2 Comp Urea</option>
+            <option value="2CompAdLib">2 Comp Ad Lib</option>
           </select>
         </div>
 
         <div class="menu-item">
-          <label for="volumeofdist"> Volume of Distribution (L)* </label>
+          <label for="volumeofdist"> Volume of Distribution (L) </label>
           <input
             type="number"
             id="volumeofdist"
@@ -326,7 +326,7 @@
 
         <div class="menu-item">
           <label for="fluidgaincompartment1">
-            Fluid Gain to Compartment 1 (%)*
+            Fluid Gain to Compartment 1 (%)
           </label>
           <input
             type="number"
@@ -361,57 +361,47 @@
       <input type="checkbox" id="plotintra" onclick="ready();" />
       Plot Intra.*
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <select name="charttype" id="charttype">
-        <option value="concvstime">Conc vs. Time</option>
-        <option value="volumevstime">Volume vs. Time*</option>
+      <select name="charttype" id="charttype" onchange="ready();">
+        <option value="ConcvsTime">Conc vs. Time</option>
+        <option value="VolumevsTime">Volume vs. Time</option>
       </select>
 
       <h3>Results</h3>
-      <label for="avgclearance"> Average Clearance (mL/min) </label>
+      <label> Average Clearance (mL/min) 
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <label 
-        id="avgclearance"
-        name="avgclearance"
-      /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+      <span id="avgclearance"></span>
+      </label>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <label for="srr"> Solute Reduction Ratios* </label>
+      <label for="solutereductionratios" > Solute Reduction Ratios* </label>
       &nbsp;&nbsp;&nbsp;
-      <select name="srr" id="srr">
+      <select name="solutereductionratios" id="solutereductionratios">
         <option value="cvt">0.71</option>
         <option value="cvt2">model2</option>
       </select>
       <br />
-      <label for="timeavgconc"> Time-Averaged Conc. (mg/dL) </label>
+      <label id="timeavgconclabel"> Time-Averaged Conc. (mg/dL) </label>
       &nbsp;&nbsp;&nbsp;
-      <label
+      <span
         id="timeavgconc"
-        name="timeavgconc"
-      /></label>
+      /></span>
       <br />
-      <label for="avgpeakconc"> Average Peak Conc. (mg/dL) </label>
+      <label id="avgpeakconclabel"> Average Peak Conc. (mg/dL) </label>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <label
+      <span
       id="avgpeakconc"
-      name="avgpeakconc"
-      ></label>
+      ></span>
 
       <br />
     </div>
-    <br />
-    <br />
-    <br />
     <br />
   </right-side>
-
   <div>
   </div>
-  <div>
-    </div>
-    <div>
-      </div>
-          <p>(L/t) Liters per treatment</p>
+
+        <p>(L/t) Liters per treatment</p>
     <p xmlns:cc="http://creativecommons.org/ns#">
       This work by
       <a rel="cc:attributionURL dct:creator" property="cc:attributionName"
@@ -440,15 +430,19 @@
     </p>
 
 <div>
+  <details>
+    <summary>treatmentTable</summary>
+    <table id="treatmentTable"></table>
+  </details>
 </div>
     <details>
-      <summary>WeeklyCalculations</summary>
-      <table id="weeklyTable"></table>
+      <summary>clearanceTable</summary>
+      <table id="resultTable"></table>
     </details>
     <br /><br />
     <details>
-      <summary>ClearanceCalculations</summary>
-      <table id="resultTable"></table>
+      <summary>weeklyTable</summary>
+      <table id="weeklyTable"></table>
     </details>
   </body>
 </html>

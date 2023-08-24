@@ -69,6 +69,9 @@
       h3 {
         text-align: center; /* Center the text */
       }
+      .hidden {
+        display: none;
+      }
     </style>
   </head>
 
@@ -401,7 +404,7 @@
   <div>
   </div>
 
-        <p>(L/t) Liters per treatment</p>
+        <p><label onclick="toggle_debug_mode(); ready();">(L/t) Liters per treatment</label></p>
     <p xmlns:cc="http://creativecommons.org/ns#">
       This work by
       <a rel="cc:attributionURL dct:creator" property="cc:attributionName"
@@ -429,20 +432,24 @@
       /></a>
     </p>
 
-<div>
+<div id="tt" style="display: none;">
   <details>
     <summary>treatmentTable</summary>
     <table id="treatmentTable"></table>
   </details>
 </div>
-    <details>
+<div id="ct" style="display: none;">
+  <details>
       <summary>clearanceTable</summary>
-      <table id="resultTable"></table>
+      <table id="clearanceTable"></table>
     </details>
-    <br /><br />
+  </div>
+  <br /><br />
+  <div id="wt" style="display: none;">
     <details>
       <summary>weeklyTable</summary>
       <table id="weeklyTable"></table>
     </details>
-  </body>
+  </div>
+</body>
 </html>

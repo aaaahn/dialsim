@@ -2,6 +2,29 @@
 import "./styles.css";
 import * as goalSeek from "goal-seek";
 
+let debug_mode = false;
+window.toggle_debug_mode = function toggle_debug_mode() {
+  debug_mode = !debug_mode;
+  if (debug_mode) {
+    // we're in debug more, enable the table visibility
+    document.getElementById("tt").style.display = "block";
+    document.getElementById("ct").style.display = "block";
+    document.getElementById("wt").style.display = "block";
+    // and don't clear the
+  } else {
+    const treatmentTableElement = document.getElementById("treatmentTable");
+    treatmentTableElement.innerHTML = "";
+    const weeklyTableElement = document.getElementById("weeklyTable");
+    weeklyTableElement.innerHTML = "";
+    const clearanceTableElement = document.getElementById("clearanceTable");
+    clearanceTableElement.innerHTML = "";
+    document.getElementById("tt").style.display = "none";
+    document.getElementById("ct").style.display = "none";
+    document.getElementById("wt").style.display = "none";
+  }
+  console.log(`debug_mode: ${debug_mode}`);
+};
+
 // make this also a global function by attaching to the window object
 // this function performs the following duties:
 // when the user enters a value into web page element "Additional UF (L/t)"
@@ -754,10 +777,10 @@ function calculate_ptime(AX9, AG15, AB15) {
 }
 
 function populateTable(vTable, tableElement) {
+  if (!debug_mode) return;
   if (!tableElement) return;
 
   tableElement.innerHTML = "";
-
   // Assuming all objects in vTable have the same keys
   const keys = Object.keys(vTable[0]);
 
@@ -1161,7 +1184,7 @@ window.calculateAndDraw = function calculateAndDraw() {
   document.getElementById("avgclearance").textContent = parseFloat(
     avg_clearance
   ).toFixed(1);
-  const table = document.getElementById("resultTable");
+  const table = document.getElementById("clearanceTable");
   populateTable(vTable, table);
 
   try {

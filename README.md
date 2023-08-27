@@ -17,7 +17,7 @@ Browsers are more than just gateways to the internet; they seamlessly integrate 
 ```mermaid
 
 graph RL
-    Browser[Web Browser  <br> JavaScript Engine] -.->|"https://dialsim.netlify.com "| WWW[(Web Server)]
+    Browser[Web Browser  <br> JavaScript Engine] -.->|"https://dialsim.netlify.app "| WWW[(Web Server)]
     subgraph Local Device
         Browser
     end

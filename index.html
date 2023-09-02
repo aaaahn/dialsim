@@ -266,8 +266,8 @@
           />
         </div>
         <div class="menu-item">
-          <label for="solutetype"> Solute Type* </label>
-          <select name="solutetype" id="solutetype">
+          <label for="solutetype"> Solute Type </label>
+          <select name="solutetype" id="solutetype" onchange="ready();" >
             <option value="Urea">Urea</option>
             <option value="Plasma">Plasma</option>
           </select>
@@ -305,7 +305,7 @@
         <h3>Model Parameters</h3>
         <div class="menu-item">
           <label for="modeltype"> Model Type(%) </label>
-          <select name="modeltype" id="modeltype">
+          <select name="modeltype" id="modeltype" onchange="ready();">
             <option value="1Comp">1 Comp</option>
             <option value="2Comp">2 Comp Urea</option>
             <option value="2CompAdLib">2 Comp Ad Lib</option>

@@ -7,6 +7,7 @@
     "start": "parcel index.html --open",
     "build": "parcel build index.html",
     "test": "jest",
+    "cypress:open": "cypress open",
     "cy:open": "cypress open",
     "cy:run": "cypress run --config video=false",
     "cy:report": "cypress run report --config video=false",
@@ -23,8 +24,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.2.0",
-    "cypress": "^13.1.0",
-    "typescript": "4.4.4"
+    "cypress": "^13.1.0"
   },
   "resolutions": {
     "@babel/preset-env": "7.13.8"

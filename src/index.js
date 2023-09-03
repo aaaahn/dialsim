@@ -156,16 +156,13 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
     Qf = eff_uf;
   }
 
-  let Hct = inputData["hematocrit"]; // 0;
+  let Hct = inputData["hematocrit"] / 100; // 0;
   // let f = 0.3378;
   let f = 1.0;
   let Calb = 500;
   let Cp = 100;
   let DP0 = 40;
   let DP1 = 40;
-  let solute = 0;
-  let solute1 = "Urea";
-  let solute2 = "Plasma";
   let PureUF = Qd <= 0 ? true : false; // false;
   let PureDialysis = Qf <= 0 ? true : false; //  = true;
   let Qpmin = 200;
@@ -179,7 +176,7 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
   let Qp = Qb * (1 - Hct);
   let Qprbc = 0.86 * Qb * Hct;
 
-  if (solute === 1) {
+  if (inputData["solutetype"] === "Urea") {
     Qprbc = 0.86 * Qb * Hct;
   } else {
     Qprbc = 0;

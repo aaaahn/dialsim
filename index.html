@@ -5,11 +5,8 @@
     <meta charset="UTF-8" />
     <title>dialsim</title>
     <link rel="stylesheet" href="./src/styles.css" />
-    <script src="https://unpkg.com/chart.js"></script>
-    </script>
-    <script src="src/index.js">
-    </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="src/index.js"></script>
     <style>
       body {
         display: grid;
@@ -266,8 +263,8 @@
           />
         </div>
         <div class="menu-item">
-          <label for="solutetype"> Solute Type* </label>
-          <select name="solutetype" id="solutetype">
+          <label for="solutetype"> Solute Type </label>
+          <select name="solutetype" id="solutetype" onchange="ready();" >
             <option value="Urea">Urea</option>
             <option value="Plasma">Plasma</option>
           </select>
@@ -282,7 +279,6 @@
             step="100"
             min="0"
             max="99999"
-            width="100%"
             value="9524"
             oninput="ready();"
           />
@@ -305,7 +301,7 @@
         <h3>Model Parameters</h3>
         <div class="menu-item">
           <label for="modeltype"> Model Type(%) </label>
-          <select name="modeltype" id="modeltype">
+          <select name="modeltype" id="modeltype" onchange="ready();">
             <option value="1Comp">1 Comp</option>
             <option value="2Comp">2 Comp Urea</option>
             <option value="2CompAdLib">2 Comp Ad Lib</option>
@@ -346,8 +342,7 @@
       </menu>
     </div>
 
-    <div id="right-side">
-      <right-side>
+    <div class="right-side">
       <br /><br /><br />
       <div id="chart-container">
         <canvas id="chart"></canvas>
@@ -387,20 +382,16 @@
       <br />
       <label id="timeavgconclabel"> Time-Averaged Conc. (mg/dL) </label>
       &nbsp;&nbsp;&nbsp;
-      <span
-        id="timeavgconc"
-      /></span>
+      <span id="timeavgconc"></span>
       <br />
       <label id="avgpeakconclabel"> Average Peak Conc. (mg/dL) </label>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <span
-      id="avgpeakconc"
-      ></span>
+      <span id="avgpeakconc"></span>
 
       <br />
     </div>
     <br />
-  </right-side>
+  </div>
   <div>
   </div>
 

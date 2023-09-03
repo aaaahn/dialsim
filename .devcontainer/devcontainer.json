@@ -2,5 +2,6 @@
   "service": "dev",
   "dockerComposeFile": "docker-compose.yml",
   "forwardPorts": [8080],
-  "workspaceFolder": "/workspaces/dialsim"
+  "workspaceFolder": "/workspaces/dialsim",
+  "postCreateCommand": "npm install"
 }

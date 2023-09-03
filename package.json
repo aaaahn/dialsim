@@ -6,7 +6,13 @@
   "scripts": {
     "start": "parcel index.html --open",
     "build": "parcel build index.html",
-    "test": "jest"
+    "test": "jest",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run --config video=false",
+    "cy:report": "cypress run report --config video=false",
+    "test:e2e": "start-server-and-test develop http://localhost:8000 cy:open",
+    "test:e2e:ci": "start-server-and-test develop http://localhost:8000 cy:run",
+    "test:e2e:report": "start-server-and-test develop http://localhost:8000 cy:report"
   },
   "dependencies": {
     "chart.js": "4.3.3",

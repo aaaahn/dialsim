@@ -1,4 +1,4 @@
-FROM public.ecr.aws/bitnami/node:16 AS dev 
+FROM mcr.microsoft.com/devcontainers/universal:2-linux AS dev 
 # Change this line based on your requirements
 
 # https://docs.cypress.io/guides/continuous-integration/introduction#Dependencies

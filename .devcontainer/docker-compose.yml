@@ -26,5 +26,4 @@ services:
       XPRA_HTML: "yes"
       DISPLAY: ":14"
       XPRA_TCP_PORT: "8080"
-      XPRA_PASSWORD: MUST_BE_SOMETHING # This password can be anything you want.
-
+      XPRA_PASSWORD: "hellothere" # This password can be anything you want.

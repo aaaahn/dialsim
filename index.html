@@ -6,7 +6,7 @@
     <title>dialsim</title>
     <link rel="stylesheet" href="./src/styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="src/index.js"></script>
+    <script type="module" src="src/index.js"></script>
     <style>
       body {
         display: grid;
@@ -349,7 +349,7 @@
       </div>
       <br />
       &nbsp;&nbsp;&nbsp;
-      <button onclick="calculateAndDraw();">Solve!</button> &nbsp;&nbsp;&nbsp;
+      <button id="solve" onclick="calculateAndDraw();">Solve!</button> &nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;
       <input type="checkbox" id="hold" title="Un-check to clear the prior chart data" onclick="ready();" />
       Hold &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
@@ -395,7 +395,7 @@
   <div>
   </div>
 
-        <p><label onclick="toggle_debug_mode(); ready();">(L/t) Liters per treatment</label></p>
+        <p><label id="literspertreatment" onclick="toggle_debug_mode(); ready();">(L/t) Liters per treatment</label></p>
     <p xmlns:cc="http://creativecommons.org/ns#">
       This work by
       <a rel="cc:attributionURL dct:creator" property="cc:attributionName"

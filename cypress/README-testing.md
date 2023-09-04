@@ -1,38 +1,42 @@
 # Dialsim End-to-End Testing with Cypress
 
 ## Introduction
-Dialsim is an open-source project that aims to provide a robust and reliable solution for broad set of users. To ensure the accuracy, reliability, and consistency of the application, this project implements an automated end-to-end test suite using [Cypress](https://www.cypress.io/).
+Dialsim is an open-source solution designed for a diverse user base. To uphold the application's accuracy, reliability, and consistency, we've incorporated an automated end-to-end test suite powered by [Cypress](https://www.cypress.io/).
 
 
-## Why End-to-End Testing is Crucial for Open Source Projects
+## The Importance of End-to-End Testing in Open Source Projects
 
-Quality Assurance: Open-source projects often have contributors from around the world. An end-to-end test suite ensures that every contribution maintains the quality and doesn't introduce regressions.
+* Quality Assurance: With contributors worldwide, end-to-end testing ensures every contribution upholds the project's quality and avoids regressions.
 
-Scalability: As the project grows and evolves, the test suite ensures that new features and changes don't negatively impact existing functionality.
+* Scalability: As Dialsim evolves, testing guarantees that new features or changes don't compromise existing functionalities.
 
-Collaboration: A comprehensive test suite provides a safety net for collaborators. They can confidently make changes, knowing that if something breaks, the tests will catch it.
+* Collaboration: A robust test suite acts as a safety net, allowing collaborators to make changes confidently, knowing tests will identify any issues.
 
-Documentation: Tests, especially end-to-end tests, act as living documentation. They provide a clear understanding of how the application is supposed to work, making it easier for new contributors to understand the project.
+* Documentation: End-to-end tests serve as live documentation, offering a clear depiction of the application's expected behavior and aiding new contributors.
 
-Longevity: For an open-source project to have a long and collaborative life, it's essential to ensure that the software remains bug-free over time. An end-to-end test suite helps in catching issues before they reach the end-users.
-
-## Tests Included in the Suite
-
-Default Values Test: Ensures that solving with default parameters returns the expected clearance value.
-
-Hematocrit Test: Validates the application's response to different Hematocrit values.
-
-Additional UF Test: Checks the behavior of the application with varying UF values.
-
-Fluid Gain Test: Tests the application's reaction to different fluid gain values.
-
-Debug Mode Test: Ensures that UI elements, 'Liters per treatment' label, when clicked reveal the debugging information.
+* Longevity: To ensure Dialsim's sustained success and collaboration, it's vital to maintain a bug-free environment. End-to-end tests play a pivotal role in this by identifying potential issues before they reach users.
 
 
+## Test Suite Overview
 
-## How to Execute Cypress end-to-end tests
+* Default Values Test: Validates that default parameters yield the expected clearance value.
 
-1. Launch the dialsim web app
+* Hematocrit Test: Assesses the application's response to varied Hematocrit values.
+
+* Additional UF Test: Examines the application's behavior with different UF values.
+
+* Fluid Gain Test: Analyzes the application's response to varied fluid gain values.
+
+* Debug Mode Test: Confirms that the 'Liters per treatment' UI element reveals debugging information upon interaction.
+
+## Automated Testing with GitHub Actions
+
+Our test suite is tightly integrated with GitHub [Actions](https://github.com/aaaahn/dialsim/actions). With every code push, tests are triggered automatically. For a detailed view of the latest test results, click on the badge: &nbsp;   [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml) . &nbsp;&nbsp; This badge offers a comprehensive breakdown of each test.
+
+
+## Manual Execution of Cypress End-to-End Tests
+
+1. Start the Dialsim Web App:
 
 ```bash
 @aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npm run start
@@ -47,7 +51,7 @@ Server running at http://localhost:1234
 ✨ Built in 864ms
 ```
 
-2. Install Cypress
+2. Install Cypress:
 
 ```bash
 @aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npx cypress install
@@ -65,7 +69,7 @@ https://on.cypress.io/installing-cypress
 
 ```
 
-3. Launch and run tests from the command line
+3. Execute Tests via Command Line:
 
 ```bash
 

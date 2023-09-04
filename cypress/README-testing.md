@@ -1,10 +1,10 @@
-# Dialsim End-to-End Testing with Cypress
+# Dialsim Testing with Cypress
 
 ## Introduction
-Dialsim is an open-source solution designed for a diverse user base. To uphold the application's accuracy, reliability, and consistency, we've incorporated an automated end-to-end test suite powered by [Cypress](https://www.cypress.io/).
+Dialsim is an open-source project designed for a diverse user base. To uphold the application's accuracy, reliability, and consistency, we've incorporated an automated end-to-end test suite powered by [Cypress](https://www.cypress.io/).
 
 
-## The Importance of End-to-End Testing in Open Source Projects
+## The Importance of Testing in Open Source Projects
 
 * Quality Assurance: With contributors worldwide, end-to-end testing ensures every contribution upholds the project's quality and avoids regressions.
 
@@ -31,7 +31,7 @@ Dialsim is an open-source solution designed for a diverse user base. To uphold t
 
 ## Automated Testing with GitHub Actions
 
-Our test suite is tightly integrated with GitHub [Actions](https://github.com/aaaahn/dialsim/actions). With every code push, tests are triggered automatically. For a detailed view of the latest test results, click on the badge: &nbsp;   [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml) . &nbsp;&nbsp; This badge offers a comprehensive breakdown of each test.
+Our test suite is tightly integrated with GitHub [Actions](https://github.com/aaaahn/dialsim/actions). With every code push, tests are triggered automatically. For an overview of the most recent test outcomes, refer to the badge below: <p>  [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml) . &nbsp; This badge provides a snapshot of individual test results. <p> For a deeper dive into test health and analytics, visit Cypress Cloud by clicking on the following badge: [![dialsim](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/xz8xtb&style=plastic&logo=cypress)](https://cloud.cypress.io/projects/xz8xtb/runs).
 
 
 ## Manual Execution of Cypress End-to-End Tests

@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/ebd12782-20e2-4816-816c-5534dbefdbe9/deploy-status)](https://app.netlify.com/sites/dialsim/deploys)  &nbsp;&nbsp; [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml)  &nbsp;&nbsp;   [![Default Project](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/xz8xtb&style=flat&logo=cypress)](https://cloud.cypress.io/projects/xz8xtb/runs)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ebd12782-20e2-4816-816c-5534dbefdbe9/deploy-status)](https://app.netlify.com/sites/dialsim/deploys)  &nbsp;&nbsp; [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml)  &nbsp;&nbsp;   [![dialsim](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/xz8xtb&style=flat&logo=cypress)](https://cloud.cypress.io/projects/xz8xtb/runs)
 
 https://dialsim.netlify.app
 

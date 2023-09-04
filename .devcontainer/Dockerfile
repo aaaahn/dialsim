@@ -1,5 +1,5 @@
 # Use the default GitHub Codespaces image
-FROM mcr.microsoft.com/vscode/devcontainers/universal:2.5.1-focal
+FROM mcr.microsoft.com/vscode/devcontainers/universal:2.5.2-focal
 
 # Install Xvfb and xdg-utils
 RUN sudo apt-get update && \

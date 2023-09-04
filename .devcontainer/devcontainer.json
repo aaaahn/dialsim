@@ -2,7 +2,7 @@
   "name": "Codespace for dialsim - default github image + xvfb",
   "dockerFile": "Dockerfile",
 //  "forwardPorts": [3000],  // Forward any ports you need
-  "postCreateCommand": "npx cypress install",
+  "postCreateCommand": "npm install",
   "customizations": {
     "vscode": {
       "extensions":    [
@@ -10,5 +10,5 @@
         "ms-azuretools.vscode-docker"
       ]    
     }
-  },
+  }
 }

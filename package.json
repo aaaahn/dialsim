@@ -7,7 +7,7 @@
     "start": "npx parcel index.html --open",
     "build": "npx parcel build index.html",
     "test": "jest",
-    "cypress run": "npx cypress run"
+    "cypress:run": "npx cypress run"
   },
   "dependencies": {
     "chart.js": "4.3.3",

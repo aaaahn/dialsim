@@ -84,4 +84,4 @@ The `Hold` mode allows for the graphing of multiple concentrations vs time scena
 
 ![](https://github.com/aaaahn/web-calculator/blob/main/dialsimdemo.gif)
 
-Created with CodeSandbox
+

@@ -2,3 +2,10 @@ node_modules
 .cache/
 .parcel-cache/
 dist/
+
+# misc
+.DS_Store
+.idea
+
+cypress/videos
+cypress/screenshots

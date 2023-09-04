@@ -3,8 +3,12 @@
   "dockerFile": "Dockerfile",
 //  "forwardPorts": [3000],  // Forward any ports you need
   "postCreateCommand": "npx cypress install",
-  "customizations/vscode/extensions": [
-    "cypress-io.cypress",  // Add any VS Code extensions you want pre-installed
-    "ms-azuretools.vscode-docker"
-  ]
+  "customizations": {
+    "vscode": {
+      "extensions":    [
+        "cypress-io.cypress",  // Add any VS Code extensions you want pre-installed
+        "ms-azuretools.vscode-docker"
+      ]    
+    }
+  },
 }

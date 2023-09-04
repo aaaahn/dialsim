@@ -1,7 +1,7 @@
 # Dialsim End-to-End Testing with Cypress
 
 ## Introduction
-Dialsim is an open-source project that aims to provide a robust and reliable solution for its users. To ensure the quality, reliability, and consistency of the application, we have implemented an end-to-end test suite using [Cypress](https://www.cypress.io/).
+Dialsim is an open-source project that aims to provide a robust and reliable solution for broad set of users. To ensure the accuracy, reliability, and consistency of the application, we have implemented an end-to-end test suite using [Cypress](https://www.cypress.io/).
 
 
 ## Why End-to-End Testing is Crucial for Open Source Projects
@@ -32,20 +32,20 @@ Debug Mode Test: Ensures that UI elements, 'Liters per treatment' label, when cl
 
 ## How to Execute Cypress end-to-end tests
 
-1. launch the web app
+1. Launch the dialsim web app
 
 ```bash
 ➜  ~ cd ~/Documents/GitHub/dialsim 
 ➜  dialsim git:(cypress-testing) ✗ npm run start                
 
-> vanilla@1.0.0 start
+> dialsim@0.1.1 start
 > parcel index.html --open
 
 Server running at http://localhost:1234 
 ✨  Built in 109ms.
 ```
 
-2. install Cypress (if not already installed)
+2. Install Cypress
 
 ```bash
 ➜  dialsim git:(cypress-testing) ✗ npx cypress install
@@ -64,32 +64,33 @@ https://on.cypress.io/installing-cypress
 
 ```
 
-3. launch Cypress (Browser)
+3. Launch Cypress (Browser)
 
 ```bash
 ➜  dialsim git:(cypress-testing) ✗ npm run cypress:open
 
-> vanilla@1.0.0 cypress:open
+> dialsim@0.1.1 cypress:open
 > cypress open
 
 ```
 
-4. Alternatively launch and run tests from the command line
+4. Alternatively, launch and run tests from the command line
 
 ```bash
 
-➜  dialsim git:(cypress-testing) ✗ npx cypress run --spec cypress/e2e/spec.cy.js
+@aaaahn ➜ /workspaces/dialsim (cypress-testing) $ npx cypress run --spec cypress/e2e/spec.cy.js
 
-DevTools listening on ws://127.0.0.1:53001/devtools/browser/f45866d1-281a-4c99-9fbb-1d0042e3d6e8
+DevTools listening on ws://127.0.0.1:46703/devtools/browser/dc189530-d939-435e-8eef-85671a7fc3cf
+[49610:0904/030330.467852:ERROR:gpu_memory_buffer_support_x11.cc(44)] dri3 extension not supported.
 
-================================================================================
+====================================================================================================
 
   (Run Starting)
 
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ Cypress:        13.1.0                                                                         │
   │ Browser:        Electron 106 (headless)                                                        │
-  │ Node Version:   v20.5.1 (/opt/homebrew/Cellar/node/20.5.1/bin/node)                            │
+  │ Node Version:   v20.5.1 (/usr/local/share/nvm/versions/node/v20.5.1/bin/node)                  │
   │ Specs:          1 found (spec.cy.js)                                                           │
   │ Searched:       cypress/e2e/spec.cy.js                                                         │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
@@ -101,35 +102,36 @@ DevTools listening on ws://127.0.0.1:53001/devtools/browser/f45866d1-281a-4c99-9
 
 
   dialsim
-    ✓ solving with default values should return clearance value of 237.2 (490ms)
+    ✓ solving with default values should result in clearance value of 237.2 (623ms)
 
   dialsim
-    ✓ Hematocrit value of 30 should return average clearance value of 235.1 (432ms)
+    ✓ Hematocrit value of 30 should result in average clearance value of 235.1 (713ms)
 
   dialsim
-    ✓ additional UF value of 23 and should return average clearance value of 240.0 (410ms)
+    ✓ additional UF value of 23 and should result in average clearance value of 240.0 (736ms)
 
   dialsim
-    ✓ fluid gain of 2 should result in average clearance value of 247.7 (402ms)
+    ✓ fluid gain of 2 should result in average clearance value of 247.7 (737ms)
 
   dialsim
-    ✓ clicking on the Liters per treatment label should display debug table treatmentTable (229ms)
+    ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (492ms)
+    ✓ clicking on the Liters per treatment label twice should hide debug table treatmentTable (526ms)
 
 
-  5 passing (2s)
+  6 passing (4s)
 
 
   (Results)
 
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-  │ Tests:        5                                                                                │
-  │ Passing:      5                                                                                │
+  │ Tests:        6                                                                                │
+  │ Passing:      6                                                                                │
   │ Failing:      0                                                                                │
   │ Pending:      0                                                                                │
   │ Skipped:      0                                                                                │
   │ Screenshots:  0                                                                                │
   │ Video:        false                                                                            │
-  │ Duration:     2 seconds                                                                        │
+  │ Duration:     4 seconds                                                                        │
   │ Spec Ran:     spec.cy.js                                                                       │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
 
@@ -141,11 +143,10 @@ DevTools listening on ws://127.0.0.1:53001/devtools/browser/f45866d1-281a-4c99-9
 
        Spec                                              Tests  Passing  Failing  Pending  Skipped  
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-  │ ✔  spec.cy.js                               00:02        5        5        -        -        - │
+  │ ✔  spec.cy.js                               00:04        6        6        -        -        - │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
-    ✔  All specs passed!                        00:02        5        5        -        -        -  
+    ✔  All specs passed!                        00:04        6        6        -        -        -  
 
-➜  dialsim git:(cypress-testing) ✗ 
-
+@aaaahn ➜ /workspaces/dialsim (cypress-testing) $ 
 
 ```

@@ -4,7 +4,7 @@ describe('dialsim', () => {
     cy.visit('/');
   });
 
-  it('solving with default values should return clearance value of 237.2', () => {
+  it('solving with default input values should result in clearance value of 237.2', () => {
     // Click the button with the id "solve"
     cy.get('#solve').click();
 
@@ -20,7 +20,7 @@ describe('dialsim', () => {
     cy.visit('/');
   });
 
-  it('Hematocrit value of 30 should return average clearance value of 235.1', () => {
+  it('Hematocrit value of 30 should result in average clearance value of 235.1', () => {
     // Click the button with the id "solve"
     cy.get('#hematocrit').clear().type("30");
     cy.get('#solve').click();
@@ -35,7 +35,7 @@ describe('dialsim', () => {
     cy.visit('/');
   });
 
-  it('additional UF value of 23 and should return average clearance value of 240.0', () => {
+  it('additional UF value of 23 and should result in average clearance value of 240.0', () => {
     // Click the button with the id "solve"
     cy.get('#additionaluf').clear().type("23");
     cy.get('#solve').click();
@@ -64,12 +64,24 @@ describe('dialsim', () => {
     cy.visit('/');
   });
 
-  it('clicking on the Liters per treatment label should display debug table treatmentTable', () => {
-    // Click the button with the id "solve"
-    cy.get('#literspertreatment').click();
+  it('clicking on the Liters per treatment label should reveal debug table treatmentTable', () => {
+    // Assign an alias
+    cy.get('#literspertreatment').as('litersLabel');
+
+    // Use the alias to click on the element
+    cy.get('@litersLabel').click();
 
     cy.contains('treatmentTable');
   });
+
+  it('clicking on the Liters per treatment label twice should hide debug table treatmentTable', () => {
+    // Use the alias again to click on the element
+    cy.get('#literspertreatment').as('litersLabel');
+    cy.get('@litersLabel').click();
+    cy.get('@litersLabel').click();
+    cy.contains('treatmentTable').should('not.be.visible');
+  });
 });
+
 
 

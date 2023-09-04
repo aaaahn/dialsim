@@ -1,7 +1,19 @@
 # Use the default GitHub Codespaces image
-# https://github.com/devcontainers/images/blob/main/src/universal/history/2.5.1.md
 FROM mcr.microsoft.com/vscode/devcontainers/universal:2.5.1-focal
 
-# Install Xvfb
-RUN sudo apt-get update && sudo apt-get install -y xvfb && sudo apt-get clean
+# Install Xvfb and xdg-utils
+RUN sudo apt-get update && \
+    sudo apt-get install -y xvfb xdg-utils && \
+    sudo apt-get clean && \
+    sudo rm -rf /var/lib/apt/lists/*
+
+# Update npm to the latest version
+RUN npm install -g npm@10.0.0
+
+# Install parcel globally
+RUN npm install -g parcel@2.9.3
+
+# If you want to install the project's dependencies during the Docker build:
+#COPY package*.json ./
+#RUN npm install
 

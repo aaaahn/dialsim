@@ -2,8 +2,8 @@
   "name": "Codespace for dialsim - default github image + xvfb",
   "dockerFile": "Dockerfile",
 //  "forwardPorts": [3000],  // Forward any ports you need
-  "postCreateCommand": "echo 'Codespace is ready!'",
-  "extensions": [
+  "postCreateCommand": "npx cypress install",
+  "customizations/vscode/extensions": [
     "cypress-io.cypress",  // Add any VS Code extensions you want pre-installed
     "ms-azuretools.vscode-docker"
   ]

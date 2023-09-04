@@ -1,5 +1,5 @@
 // This work © 2023 by Timothy W Meyer, Andrew Ahn is licensed under CC BY 4.0
-import "./styles.css";
+// import "./styles.css";
 import * as goalSeek from "goal-seek";
 
 let debug_mode = false;

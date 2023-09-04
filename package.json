@@ -4,8 +4,8 @@
   "description": "JavaScript example starter project",
   "main": "index.html",
   "scripts": {
-    "start": "parcel index.html --open",
-    "build": "parcel build index.html",
+    "start": "npx parcel index.html --open",
+    "build": "npx parcel build index.html",
     "test": "jest",
     "cypress:open": "cypress open",
     "cy:open": "cypress open",

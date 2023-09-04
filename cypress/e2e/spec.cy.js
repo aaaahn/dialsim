@@ -1,5 +1,5 @@
 
-describe('dialsim', () => {
+describe('Default Value Test', () => {
   beforeEach(() => {
     cy.visit('/');
   });
@@ -15,7 +15,7 @@ describe('dialsim', () => {
 });
 
 
-describe('dialsim', () => {
+describe('Hematocrit Test', () => {
   beforeEach(() => {
     cy.visit('/');
   });
@@ -30,7 +30,7 @@ describe('dialsim', () => {
 });
 
 
-describe('dialsim', () => {
+describe('Additional UF Test', () => {
   beforeEach(() => {
     cy.visit('/');
   });
@@ -45,7 +45,7 @@ describe('dialsim', () => {
 });
 
 
-describe('dialsim', () => {
+describe('Fluid Gain Test', () => {
   beforeEach(() => {
     cy.visit('/');
   });
@@ -59,7 +59,7 @@ describe('dialsim', () => {
   });
 });
 
-describe('dialsim', () => {
+describe('Debug Mode Test', () => {
   beforeEach(() => {
     cy.visit('/');
   });

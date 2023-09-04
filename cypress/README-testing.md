@@ -1,7 +1,7 @@
 # Dialsim End-to-End Testing with Cypress
 
 ## Introduction
-Dialsim is an open-source project that aims to provide a robust and reliable solution for broad set of users. To ensure the accuracy, reliability, and consistency of the application, we have implemented an end-to-end test suite using [Cypress](https://www.cypress.io/).
+Dialsim is an open-source project that aims to provide a robust and reliable solution for broad set of users. To ensure the accuracy, reliability, and consistency of the application, this project implements an automated end-to-end test suite using [Cypress](https://www.cypress.io/).
 
 
 ## Why End-to-End Testing is Crucial for Open Source Projects
@@ -35,53 +35,49 @@ Debug Mode Test: Ensures that UI elements, 'Liters per treatment' label, when cl
 1. Launch the dialsim web app
 
 ```bash
-➜  ~ cd ~/Documents/GitHub/dialsim 
-➜  dialsim git:(cypress-testing) ✗ npm run start                
+@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npm run start
+Debugger attached.
 
 > dialsim@0.1.1 start
-> parcel index.html --open
+> npx parcel index.html --open
 
-Server running at http://localhost:1234 
-✨  Built in 109ms.
+Debugger attached.
+Debugger attached.
+Server running at http://localhost:1234
+✨ Built in 864ms
 ```
 
 2. Install Cypress
 
 ```bash
-➜  dialsim git:(cypress-testing) ✗ npx cypress install
-
+@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npx cypress install
 Installing Cypress (version: 13.1.0)
 
 ✔  Downloaded Cypress
 ✔  Unzipped Cypress
-✔  Finished Installation /Users/aahn/Library/Caches/Cypress/13.1.0
+✔  Finished Installation /home/codespace/.cache/Cypress/13.1.0
 
 You can now open Cypress by running: node_modules/.bin/cypress open
 
 https://on.cypress.io/installing-cypress
 
-➜  dialsim git:(cypress-testing) ✗
+@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ 
 
 ```
 
-3. Launch Cypress (Browser)
-
-```bash
-➜  dialsim git:(cypress-testing) ✗ npm run cypress:open
-
-> dialsim@0.1.1 cypress:open
-> cypress open
-
-```
-
-4. Alternatively, launch and run tests from the command line
+3. Launch and run tests from the command line
 
 ```bash
 
-@aaaahn ➜ /workspaces/dialsim (cypress-testing) $ npx cypress run --spec cypress/e2e/spec.cy.js
+@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npx cypress run
+It looks like this is your first time using Cypress: 13.1.0
 
-DevTools listening on ws://127.0.0.1:46703/devtools/browser/dc189530-d939-435e-8eef-85671a7fc3cf
-[49610:0904/030330.467852:ERROR:gpu_memory_buffer_support_x11.cc(44)] dri3 extension not supported.
+✔  Verified Cypress! /home/codespace/.cache/Cypress/13.1.0/Cypress
+
+Opening Cypress...
+
+DevTools listening on ws://127.0.0.1:39767/devtools/browser/498ff072-4c45-422d-877c-19d15028887b
+[7525:0904/142339.720245:ERROR:gpu_memory_buffer_support_x11.cc(44)] dri3 extension not supported.
 
 ====================================================================================================
 
@@ -92,7 +88,7 @@ DevTools listening on ws://127.0.0.1:46703/devtools/browser/dc189530-d939-435e-8
   │ Browser:        Electron 106 (headless)                                                        │
   │ Node Version:   v20.5.1 (/usr/local/share/nvm/versions/node/v20.5.1/bin/node)                  │
   │ Specs:          1 found (spec.cy.js)                                                           │
-  │ Searched:       cypress/e2e/spec.cy.js                                                         │
+  │ Searched:       cypress/e2e/**/*.cy.{js,jsx,ts,tsx}                                            │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
 
 
@@ -101,22 +97,22 @@ DevTools listening on ws://127.0.0.1:46703/devtools/browser/dc189530-d939-435e-8
   Running:  spec.cy.js                                                                      (1 of 1)
 
 
-  dialsim
-    ✓ solving with default values should result in clearance value of 237.2 (623ms)
 
-  dialsim
-    ✓ Hematocrit value of 30 should result in average clearance value of 235.1 (713ms)
+  Default Value Test
+    ✓ solving with default input values should result in clearance value of 237.2 (925ms)
 
-  dialsim
-    ✓ additional UF value of 23 and should result in average clearance value of 240.0 (736ms)
+  Hematocrit Test
+    ✓ Hematocrit value of 30 should result in average clearance value of 235.1 (737ms)
 
-  dialsim
-    ✓ fluid gain of 2 should result in average clearance value of 247.7 (737ms)
+  Additional UF Test
+    ✓ additional UF value of 23 and should result in average clearance value of 240.0 (693ms)
 
-  dialsim
-    ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (492ms)
-    ✓ clicking on the Liters per treatment label twice should hide debug table treatmentTable (526ms)
+  Fluid Gain Test
+    ✓ fluid gain of 2 should result in average clearance value of 247.7 (817ms)
 
+  Debug Mode Test
+    ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (559ms)
+    ✓ clicking on the Liters per treatment label twice should hide debug table treatmentTable (518ms)
 
   6 passing (4s)
 
@@ -147,6 +143,5 @@ DevTools listening on ws://127.0.0.1:46703/devtools/browser/dc189530-d939-435e-8
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
     ✔  All specs passed!                        00:04        6        6        -        -        -  
 
-@aaaahn ➜ /workspaces/dialsim (cypress-testing) $ 
-
+@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ 
 ```

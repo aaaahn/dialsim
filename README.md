@@ -82,6 +82,4 @@ graph TD
 
 The `Hold` mode allows for the graphing of multiple concentrations vs time scenarios. Under this mode, the inputs are ignored until the `Solve!` button is pressed, and new graph is rendered, overlaying the existing set of scenario(s). When the hold mode is disabled, all scenarios are cleared, leaving behind a graph from the most recent set of inputs.
 
-![](https://github.com/aaaahn/dialsim/tree/main/src/dialsimdemo.gif)
-
-
+![](https://github.com/aaaahn/dialsim/blob/dev-env-clean-up/src/dialsimdemo.gif)

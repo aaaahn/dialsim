@@ -48,8 +48,7 @@ graph RL
 
 ## JavaScript Architecture
 
-The inputs from the Web Page are collected in the Javascript code, which triggers with a press of the `Solve!` button or a change in one of the inputs. Both the `calcClearanceTable()` and `calcWeeklyTable()` functions construct a table to hold and report the computations, creating the final table, `weeklyTable`. From this, the Chart data is populated, then rendered via HTML element canvas.
-
+When a user interacts with the web page, either by pressing the `Solve!` button or modifying any input, the JavaScript code captures these inputs. Two primary functions, `calcClearanceTable()` and `calcWeeklyTable()`, process these inputs to produce a final table named `weeklyTable`. This table is then used to populate the chart data, which is subsequently displayed on the web page using the HTML canvas element.
 
 ```mermaid
 

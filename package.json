@@ -7,6 +7,7 @@
     "start": "npx parcel index.html --open",
     "build": "npx parcel build index.html",
     "test": "jest",
+    "cypress:install": "npx cypress install",
     "cypress:run": "npx cypress run"
   },
   "dependencies": {
@@ -17,7 +18,7 @@
   },
   "devDependencies": {
     "cypress": "^13.1.0",
-    "parcel": "^2.9.3",
-    "htmlnano": "2.0.3"
-  }  
+    "htmlnano": "2.0.3",
+    "parcel": "^2.9.3"
+  }
 }

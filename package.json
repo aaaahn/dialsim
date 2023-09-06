@@ -1,24 +1,22 @@
 {
   "name": "dialsim",
-  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "source": "index.html",
   "version": "0.1.1",
   "description": "dialsim project",
   "scripts": {
-    "start": "npx parcel index.html --open",
-    "build": "npx parcel build index.html",
-    "test": "jest",
+    "start": "npx parcel",
+    "build": "npx parcel build",
     "cypress:install": "npx cypress install",
     "cypress:run": "npx cypress run"
   },
   "dependencies": {
     "chart.js": "4.4.0",
-    "goal-seek": "^0.1.4",
-    "jest": "29.6.4",
-    "jsdom": "22.1.0"
+    "goal-seek": "^0.1.4"
   },
   "devDependencies": {
     "cypress": "^13.1.0",
     "htmlnano": "2.0.3",
     "parcel": "^2.9.3"
-  }
+  },
+  "browserslist": "> 0.5%, last 2 versions, not dead"
 }

@@ -1,5 +1,8 @@
-// This work © 2023 by Timothy W Meyer, Andrew Ahn is licensed under CC BY 4.0
-// import "./styles.css";
+/* 
+Copyright (c) 2023 Timothy W Meyer, Andrew Ahn
+This file is part of dialsim, released under the MIT License.
+See LICENSE.md for details.
+*/
 import * as goalSeek from "goal-seek";
 
 let debug_mode = false;
@@ -909,7 +912,7 @@ function buildChartConfig(datasets) {
         x: {
           type: "linear",
           position: "bottom",
-          mins: 0,
+          min: 0,
           max: 168,
           ticks: {
             stepSize: 24,

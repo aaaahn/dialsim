@@ -1,3 +1,8 @@
+/* 
+Copyright (c) 2023 Timothy W Meyer, Andrew Ahn
+This file is part of dialsim, released under the MIT License.
+See LICENSE.md for details.
+*/
 
 describe('Default Value Test', () => {
   beforeEach(() => {

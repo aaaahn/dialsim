@@ -36,7 +36,11 @@ Our test suite is tightly integrated with GitHub [Actions](https://github.com/aa
 
 ## Manual Execution of Cypress End-to-End Tests
 
-1. Start the Dialsim Web App:
+1. Launch Github Codespaces
+
+Start or resume a pre-configured, web browser-based Node development workspace for this project via these [instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace).  
+
+2. Start the Dialsim Web App:
 
 ```bash
 @aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npm run start
@@ -51,7 +55,7 @@ Server running at http://localhost:1234
 ✨ Built in 864ms
 ```
 
-2. Install Cypress:
+3. Install Cypress:
 
 ```bash
 @aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npx cypress install
@@ -69,7 +73,7 @@ https://on.cypress.io/installing-cypress
 
 ```
 
-3. Execute Tests via Command Line:
+4. Execute Tests:
 
 ```bash
 

@@ -1,5 +1,5 @@
 {
-  "name": "Codespace for dialsim - default github image + xvfb",
+  "name": "Codespace for dialsim - default github image + xvfb", // https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/setting-up-your-nodejs-project-for-codespaces
   "dockerFile": "Dockerfile",
   "postCreateCommand": "npm install",
   "customizations": {

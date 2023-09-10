@@ -38,7 +38,7 @@ Our test suite is tightly integrated with GitHub [Actions](https://docs.github.c
 
 1. Launch Github Codespaces Development Environment
 
-This project uses a pre-configured GitHub Codespaces development environment customized for Node.js coding and testing.  Open the Codespaces IDE in your browser through these [instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace).  The Codespaces environment comes preinstalled with Node.js, npm, and Visual Studio Code. This provides everything you need for development without any local setup. The cloud-based IDE allows you to instantly test and run the Node.js application right from the browser.
+This project uses a pre-configured GitHub Codespaces development environment customized for `Node.js` coding and testing.  Open the Codespaces IDE in your browser through these [instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace).  The Codespaces environment comes preinstalled with `Node.js`, `npm`, and `Visual Studio Code`. This provides everything you need for development without any local setup. The cloud-based IDE allows you to instantly test and run the `Node.js` application right from the browser.
 
 2. Start the Dialsim Web App:
 

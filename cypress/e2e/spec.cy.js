@@ -40,7 +40,7 @@ describe('Additional UF Test', () => {
     cy.visit('/');
   });
 
-  it('additional UF value of 23 and should result in average clearance value of 240.0', () => {
+  it('additional UF value of 23 should result in average clearance value of 240.0', () => {
     // Click the button with the id "solve"
     cy.get('#additionaluf').clear().type("23");
     cy.get('#solve').click();

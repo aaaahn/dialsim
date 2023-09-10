@@ -113,7 +113,7 @@ DevTools listening on ws://127.0.0.1:39767/devtools/browser/498ff072-4c45-422d-8
     ✓ Hematocrit value of 30 should result in average clearance value of 235.1 (737ms)
 
   Additional UF Test
-    ✓ additional UF value of 23 and should result in average clearance value of 240.0 (693ms)
+    ✓ additional UF value of 23 should result in average clearance value of 240.0 (693ms)
 
   Fluid Gain Test
     ✓ fluid gain of 2 should result in average clearance value of 247.7 (817ms)

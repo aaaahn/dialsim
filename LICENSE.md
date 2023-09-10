@@ -1,6 +1,6 @@
 The MIT License
 
-Copyright (c) 2023 Timothy W Meyer, Andrew Ahn
+Copyright (c) 2023 Timothy W Meyer, Tammy Sirich, Andrew Ahn
 
 Permission is hereby granted, free of charge, 
 to any person obtaining a copy of this software and 

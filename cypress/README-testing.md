@@ -1,7 +1,7 @@
 # Dialsim Testing with Cypress
 
 ## Introduction
-Dialsim is an open-source project designed for a diverse user base. To uphold the application's accuracy, reliability, and consistency, we've incorporated an automated end-to-end test suite powered by [Cypress](https://www.cypress.io/).
+Dialsim is an open-source project designed for a multidisciplinary developer community. To uphold the application's accuracy, reliability, and consistency, we've incorporated an automated end-to-end test suite powered by [Cypress](https://www.cypress.io/).
 
 
 ## The Importance of Testing in Open Source Projects
@@ -31,14 +31,14 @@ Dialsim is an open-source project designed for a diverse user base. To uphold th
 
 ## Automated Testing with GitHub Actions
 
-Our test suite is tightly integrated with GitHub [Actions](https://github.com/aaaahn/dialsim/actions). With every code push, tests are triggered automatically. For an overview of the most recent test outcomes, refer to the badge below: <p>  [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml) . &nbsp; This badge provides a snapshot of individual test results. <p> For a deeper dive into test health and analytics, visit Cypress Cloud by clicking on the following badge: [![dialsim](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/xz8xtb&style=plastic&logo=cypress)](https://cloud.cypress.io/projects/xz8xtb/runs).
+Our test suite is tightly integrated with GitHub [Actions](https://docs.github.com/en/actions/learn-github-actions). With every code push, tests are triggered automatically. For an overview of the most recent test outcomes, refer to the badge below: <center> [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml) </center> This badge provides a snapshot of individual test results.  For a deeper dive into test health and analytics, visit Cypress Cloud by clicking on the following badge: <center> [![dialsim](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/xz8xtb&style=plastic&logo=cypress)](https://cloud.cypress.io/projects/xz8xtb/runs)
+</center>
 
+## Running Cypress Tests Manually
 
-## Manual Execution of Cypress End-to-End Tests
+1. Launch Github Codespaces Development Environment
 
-1. Launch Github Codespaces
-
-Start or resume a pre-configured, web browser-based Node development workspace for this project via these [instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace).  
+This project uses a pre-configured GitHub Codespaces development environment customized for Node.js coding and testing.  Open the Codespaces IDE in your browser through these [instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace).  The Codespaces environment comes preinstalled with Node.js, npm, and Visual Studio Code. This provides everything you need for development without any local setup. The cloud-based IDE allows instantly testing and running the Node.js application right from the browser. 
 
 2. Start the Dialsim Web App:
 
@@ -153,3 +153,6 @@ DevTools listening on ws://127.0.0.1:39767/devtools/browser/498ff072-4c45-422d-8
 
 @aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ 
 ```
+
+## License
+Dialsim is available under the [MIT license](https://github.com/aaaahn/dialsim/blob/main/LICENSE.md).

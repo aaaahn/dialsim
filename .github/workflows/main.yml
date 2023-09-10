@@ -16,7 +16,7 @@ jobs:
         with:
           start: npm start
           record: true
-          command: npx nyc --reporter=lcov --reporter=text-summary cypress run
+          command: npx nyc --reporter=lcov --reporter=text-summary cypress run --record
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
           # in GitHub repo → Settings → Secrets → Actions

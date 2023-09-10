@@ -9,12 +9,12 @@ let debug_mode = false;
 window.toggle_debug_mode = function toggle_debug_mode() {
   debug_mode = !debug_mode;
   if (debug_mode) {
-    // we're in debug more, enable the table visibility
+    // in debug mode, enable table visibility
     document.getElementById("tt").style.display = "block";
     document.getElementById("ct").style.display = "block";
     document.getElementById("wt").style.display = "block";
-    // and don't clear the
   } else {
+    // not in debug mode, clear table data and disable visibility
     const treatmentTableElement = document.getElementById("treatmentTable");
     treatmentTableElement.innerHTML = "";
     const weeklyTableElement = document.getElementById("weeklyTable");
@@ -25,10 +25,9 @@ window.toggle_debug_mode = function toggle_debug_mode() {
     document.getElementById("ct").style.display = "none";
     document.getElementById("wt").style.display = "none";
   }
-  console.log(`debug_mode: ${debug_mode}`);
+  // console.log(`debug_mode: ${debug_mode}`);
 };
 
-// make this also a global function by attaching to the window object
 // this function performs the following duties:
 // when the user enters a value into web page element "Additional UF (L/t)"
 // and that value is zero
@@ -48,7 +47,7 @@ window.render_disabled = function render_disabled() {
 
   document.getElementById("replace").disabled = isDisabled;
   document.getElementById("dilution").disabled = isDisabled;
-  console.log(`isDisabled: ${isDisabled}`);
+  // console.log(`isDisabled: ${isDisabled}`);
 
   // Applying a class to make the difference obviously visible
   if (isDisabled) {
@@ -62,7 +61,6 @@ window.render_disabled = function render_disabled() {
   }
 };
 
-// make this also a global function by attaching to the window object
 // when a non-zero value is entered into fluidgain, enable uf and copy a value, then trigger recalc().
 // unlike the above function render_disabled_uf, it enables/disables not itself but
 // html element id "uf".
@@ -144,7 +142,6 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
   let KoA = inputData["koa"]; //  let KoA = 500;
   let sigma = inputData["sigma"]; // 0;
   let Qf = 0; // = inputData["fluidgain"]; // 0;                    // clear_uf gets passed in and gets assigned to Qf
-  // let additionaluf = inputData["additionaluf"]; // 0;
   let Qr = calculatePrePostDilution(inputData); // 0;
 
   if (!inputData["dilution"]) {
@@ -160,7 +157,6 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
   }
 
   let Hct = inputData["hematocrit"] / 100; // 0;
-  // let f = 0.3378;
   let f = 1.0;
   let Calb = 500;
   let Cp = 100;
@@ -168,9 +164,6 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
   let DP1 = 40;
   let PureUF = Qd <= 0 ? true : false; // false;
   let PureDialysis = Qf <= 0 ? true : false; //  = true;
-  let Qpmin = 200;
-  let Qdmin = 1000;
-  let QpQdisneg = false;
 
   let increment = 0.001;
   let Ka = (Cp - Cp * f) / Cp / f / (Calb - Cp + Cp * f);
@@ -193,7 +186,6 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
     (Cp * Qp + (Cp / (1 - theta_inblood)) * Qprbc) /
     (Qpoatinlet + Qprbc / (1 - theta_atinlet));
 
-  let sz = [1001, 17];
   let varNames = [
     "x",
     "Qp",
@@ -211,8 +203,9 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
     "Phi",
     "Pe",
     "Massp",
-    "Massd"
+    "Massd",
   ];
+  let sz = [1001, varNames.length];
   let vTable = new Array(sz[0]).fill(null).map(function () {
     const obj = {};
     for (let i = 0; i < varNames.length; i++) {
@@ -222,10 +215,8 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
   });
 
   for (let row = 0; row < sz[0]; row++) {
-    // vTable[row].x = row * 0.001;
     vTable[row].x = row === 0 ? 0.0 : vTable[row - 1].x + 0.001;
     vTable[row].x = parseFloat(vTable[row].x.toFixed(3));
-    // vTable[row].Phi = 0.5;
     vTable[row].Qp =
       Qpoatinlet - Qf * (Pa * Math.pow(vTable[row].x, 2) + Pb * vTable[row].x);
 
@@ -327,12 +318,6 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
     }
   }
 
-  /*
-  console.log(`----------------------`);
-  console.log(`Qf: ${Qf}`);
-  console.log(`Qr: ${Qr}`);
-  console.log(`----------------------`);
-  */
   let clearanceValue =
     ((Qp + Qprbc / (1 - theta_inblood)) * Cp -
       (vTable[1000].Qp + Qprbc / (1 - vTable[1000].theta)) * vTable[1000].Cp) /
@@ -392,14 +377,6 @@ function calcDV(days_since, fluidgain_val, modeltype_val) {
   if (days_since === 0) {
     return 0;
   }
-
-  /*
-  console.log(
-    `extracellular_dv_per_min_ml(fluidgain_val, modeltype_val): ${extracellular_dv_per_min_ml(
-      fluidgain_val,
-      modeltype_val
-    )}`
-  ); */
 
   return (
     days_since *
@@ -589,7 +566,7 @@ function calcWeeklyTable(treatmentTable, inputData) {
     "conc_int",
     "point",
     "ptime",
-    "cext"
+    "cext",
   ];
   let wt = new Array(sz[0]).fill(null).map(function () {
     const obj = {};
@@ -754,9 +731,7 @@ function calcWeeklyTable(treatmentTable, inputData) {
     console.log(`iteration: ${iteration}`);
     if (iteration > 10) {
       // prevent a run-away loop
-      console.log(
-        `maximum iteration reached wt[last].conc_ext: ${wt[last].conc_ext}`
-      );
+      console.log(`maximum iteration reached wt[last].conc_ext: ${wt[last].conc_ext}`);
       break;
     }
   }
@@ -825,9 +800,8 @@ function buildSingleXYSet(xydata, i) {
   let y_values = xydata.map((item) => item.y);
   let sum = y_values.reduce((previous, current) => (current += previous));
   let avg = sum / y_values.length;
-  document.getElementById("timeavgconc").textContent = parseFloat(avg).toFixed(
-    2
-  );
+  document.getElementById("timeavgconc").textContent =
+    parseFloat(avg).toFixed(2);
   var maxs = find_local_maxima(y_values);
   var avg_max =
     maxs.reduce((accumulator, currentValue) => {
@@ -852,7 +826,7 @@ function buildSingleXYSet(xydata, i) {
     "#7F826E",
     "#7C1F3A",
     "#C6466D",
-    "#FD6165"
+    "#FD6165",
   ];
   let color_wheel_avg = [
     "rgba(255, 165, 0, 1)", // Light orange color
@@ -862,7 +836,7 @@ function buildSingleXYSet(xydata, i) {
     "#AC9484",
     "#FE7C6B",
     "#007498",
-    "#FE96A0"
+    "#FE96A0",
   ];
   var xyset = [
     {
@@ -870,7 +844,7 @@ function buildSingleXYSet(xydata, i) {
       label: i === 0 ? xydata.legend_text : xydata.legend_text_short + (i + 1),
       data: xydata,
       borderColor: color_wheel_conc[i],
-      fill: false
+      fill: false,
     },
     {
       type: "line",
@@ -881,8 +855,8 @@ function buildSingleXYSet(xydata, i) {
       borderColor: color_wheel_avg[i],
       borderDash: [5, 5],
       borderWidth: 1,
-      fill: false
-    }
+      fill: false,
+    },
   ];
   return xyset;
 }
@@ -900,7 +874,7 @@ function buildChartConfig(datasets) {
   var chartConfig = {
     type: "line",
     data: {
-      datasets: xydata_array
+      datasets: xydata_array,
     },
     // https://www.chartjs.org/docs/latest/general/performance.html
     options: {
@@ -916,14 +890,14 @@ function buildChartConfig(datasets) {
           max: 168,
           ticks: {
             stepSize: 24,
-            maxTicksLimit: 10
-          }
+            maxTicksLimit: 10,
+          },
         },
         y: {
-          min: 0
-        }
-      }
-    }
+          min: 0,
+        },
+      },
+    },
   };
   return chartConfig;
 }
@@ -1026,7 +1000,7 @@ function findClearances(inputData) {
     "dv",
     "eff_uf",
     "clear_uf",
-    "clearance"
+    "clearance",
   ];
 
   let days = [
@@ -1036,7 +1010,7 @@ function findClearances(inputData) {
     "thursday",
     "friday",
     "saturday",
-    "sunday"
+    "sunday",
   ];
 
   let wt0 = days.map((day, index) => {
@@ -1115,7 +1089,7 @@ function applyTreatment(eff_uf, inputData) {
       maxIterations: 100,
       maxStep: 5,
       goal: 0.001,
-      independentVariableIdx: 0 // the index position of the independent variable x in the fnParams array.
+      independentVariableIdx: 0, // the index position of the independent variable x in the fnParams array.
     });
 
     console.log(`final clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
@@ -1181,9 +1155,8 @@ window.calculateAndDraw = function calculateAndDraw() {
       ? validClearances.reduce((sum, clearance) => sum + clearance, 0) /
         validClearances.length
       : 0;
-  document.getElementById("avgclearance").textContent = parseFloat(
-    avg_clearance
-  ).toFixed(1);
+  document.getElementById("avgclearance").textContent =
+    parseFloat(avg_clearance).toFixed(1);
   const table = document.getElementById("clearanceTable");
   populateTable(vTable, table);
 
@@ -1194,7 +1167,7 @@ window.calculateAndDraw = function calculateAndDraw() {
     // Create and update the line chart when "Solve" button is clicked
     const chartData = weeklyTable.map((item) => ({
       x: item.ptime,
-      y: inputData["charttype"] === "ConcvsTime" ? item.cext : item.vext
+      y: inputData["charttype"] === "ConcvsTime" ? item.cext : item.vext,
     }));
     chartData.legend_text =
       inputData["charttype"] === "ConcvsTime"

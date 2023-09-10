@@ -17,7 +17,7 @@
     "@cypress/code-coverage": "^3.12.0",
     "babel-plugin-istanbul": "^6.1.1",
     "cypress": "^13.1.0",
-    "htmlnano": "2.0.3",
+    "htmlnano": "2.0.4",
     "nyc": "^15.1.0",
     "parcel": "^2.9.3"
   },

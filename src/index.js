@@ -1,6 +1,6 @@
 /* 
-Copyright (c) 2023 Timothy W Meyer, Andrew Ahn
-This file is part of dialsim, released under the MIT License.
+Dialsim Copyright © 2023 Andrew Y Ahn, Timothy W Meyer, Tammy L Sirich
+This file is part of Dialsim, released under the MIT License.
 See LICENSE.md for details.
 */
 import * as goalSeek from "goal-seek";

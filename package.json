@@ -1,8 +1,8 @@
 {
-  "name": "dialsim",
+  "name": "Dialsim",
   "source": "index.html",
   "version": "0.1.1",
-  "description": "dialsim project",
+  "description": "Dialsim project",
   "scripts": {
     "start": "npx parcel",
     "build": "npx parcel build",

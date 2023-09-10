@@ -4,11 +4,11 @@ https://dialsim.netlify.app
 
 https://dialsim.com
 
-# Dialysis Simulator: A Web Application
+# Dialsim: A Web Application
 
 ## How this program works on your local device
 
-The Dialysis Simulator is a responsive, single-page web application compatible with any device that has a web browser. You can host its code (comprising of HTML, CSS, and JavaScript) on a traditional web server or even on a local storage file system.
+The Dialsim is a responsive, single-page web application compatible with any device that has a web browser. You can host its code (comprising of HTML, CSS, and JavaScript) on a traditional web server or even on a local storage file system.
 
 Once you've loaded the application via its [URL](https://dialsim.netlify.app) or through the [Webarchive](https://en.wikipedia.org/wiki/Webarchive) file, it can operate untethered without needing an active internet connection.
 
@@ -82,3 +82,6 @@ graph TD
 The `Hold` mode allows for the graphing of multiple concentrations vs time scenarios. Under this mode, the inputs are ignored until the `Solve!` button is pressed, and new graph is rendered, overlaying the existing set of scenario(s). When the hold mode is disabled, all scenarios are cleared, leaving behind a graph from the most recent set of inputs.
 
 ![](https://github.com/aaaahn/dialsim/blob/dev-env-clean-up/src/dialsimdemo.gif)
+
+## License
+Dialsim is available under the [MIT license](https://github.com/aaaahn/dialsim/blob/main/LICENSE.md).

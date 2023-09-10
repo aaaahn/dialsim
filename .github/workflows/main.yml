@@ -4,15 +4,23 @@ jobs:
   cypress-run:
 #    runs-on: ubuntu-22.04
     runs-on: macos-latest
-    steps:
+    steps:  # there are three steps in this workflow
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           start: npm start
           record: true
+          command: npx nyc --reporter=lcov --reporter=text-summary cypress run --record
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
           # in GitHub repo → Settings → Secrets → Actions
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}

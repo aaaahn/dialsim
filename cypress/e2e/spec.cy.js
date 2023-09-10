@@ -1,5 +1,5 @@
 /* 
-Copyright (c) 2023 Timothy W Meyer, Andrew Ahn
+Dialsim Copyright © 2023 Andrew Y Ahn, Timothy W Meyer, Tammy L Sirich
 This file is part of dialsim, released under the MIT License.
 See LICENSE.md for details.
 */
@@ -40,7 +40,7 @@ describe('Additional UF Test', () => {
     cy.visit('/');
   });
 
-  it('additional UF value of 23 and should result in average clearance value of 240.0', () => {
+  it('additional UF value of 23 should result in average clearance value of 240.0', () => {
     // Click the button with the id "solve"
     cy.get('#additionaluf').clear().type("23");
     cy.get('#solve').click();

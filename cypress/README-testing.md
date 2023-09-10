@@ -1,7 +1,10 @@
+[![codecov](https://codecov.io/gh/aaaahn/dialsim/graph/badge.svg?token=Y3WU4240QS)](https://codecov.io/gh/aaaahn/dialsim)
+
 # Dialsim Testing with Cypress
 
+
 ## Introduction
-Dialsim is an open-source project designed for a diverse user base. To uphold the application's accuracy, reliability, and consistency, we've incorporated an automated end-to-end test suite powered by [Cypress](https://www.cypress.io/).
+Dialsim is an open-source project designed for a multidisciplinary developer community. To uphold the application's accuracy, reliability, and consistency, we've incorporated an automated end-to-end test suite powered by [Cypress](https://www.cypress.io/).
 
 
 ## The Importance of Testing in Open Source Projects
@@ -31,12 +34,16 @@ Dialsim is an open-source project designed for a diverse user base. To uphold th
 
 ## Automated Testing with GitHub Actions
 
-Our test suite is tightly integrated with GitHub [Actions](https://github.com/aaaahn/dialsim/actions). With every code push, tests are triggered automatically. For an overview of the most recent test outcomes, refer to the badge below: <p>  [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml) . &nbsp; This badge provides a snapshot of individual test results. <p> For a deeper dive into test health and analytics, visit Cypress Cloud by clicking on the following badge: [![dialsim](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/xz8xtb&style=plastic&logo=cypress)](https://cloud.cypress.io/projects/xz8xtb/runs).
+Our test suite is tightly integrated with GitHub [Actions](https://docs.github.com/en/actions/learn-github-actions). With every code push, tests are triggered automatically. For an overview of the most recent test outcomes, refer to the badge below: <center> [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml) </center> This badge provides a snapshot of individual test results.  For a deeper dive into test health and analytics, visit Cypress Cloud by clicking on the following badge: <center> [![dialsim](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/xz8xtb&style=plastic&logo=cypress)](https://cloud.cypress.io/projects/xz8xtb/runs)
+</center>
 
+## Running Cypress Tests Manually
 
-## Manual Execution of Cypress End-to-End Tests
+1. Launch Github Codespaces Development Environment
 
-1. Start the Dialsim Web App:
+This project uses a pre-configured GitHub Codespaces development environment customized for `Node.js` coding and testing.  Open the Codespaces IDE in your browser through these [instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace).  The Codespaces environment comes preinstalled with `Node.js`, `npm`, and `Visual Studio Code`. This provides everything you need for development without any local setup. The cloud-based IDE allows you to instantly test and run the `Node.js` application right from the browser.
+
+2. Start the Dialsim Web App:
 
 ```bash
 @aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npm run start
@@ -51,7 +58,7 @@ Server running at http://localhost:1234
 ✨ Built in 864ms
 ```
 
-2. Install Cypress:
+3. Install Cypress:
 
 ```bash
 @aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npx cypress install
@@ -69,7 +76,7 @@ https://on.cypress.io/installing-cypress
 
 ```
 
-3. Execute Tests via Command Line:
+4. Execute Tests:
 
 ```bash
 
@@ -109,7 +116,7 @@ DevTools listening on ws://127.0.0.1:39767/devtools/browser/498ff072-4c45-422d-8
     ✓ Hematocrit value of 30 should result in average clearance value of 235.1 (737ms)
 
   Additional UF Test
-    ✓ additional UF value of 23 and should result in average clearance value of 240.0 (693ms)
+    ✓ additional UF value of 23 should result in average clearance value of 240.0 (693ms)
 
   Fluid Gain Test
     ✓ fluid gain of 2 should result in average clearance value of 247.7 (817ms)
@@ -149,3 +156,6 @@ DevTools listening on ws://127.0.0.1:39767/devtools/browser/498ff072-4c45-422d-8
 
 @aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ 
 ```
+
+## License
+Dialsim is available under the [MIT license](https://github.com/aaaahn/dialsim/blob/main/LICENSE.md).

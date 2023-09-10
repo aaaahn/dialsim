@@ -1,6 +1,6 @@
 The MIT License
 
-Copyright (c) 2023 Timothy W Meyer, Tammy Sirich, Andrew Ahn
+Dialsim Copyright © 2023 Andrew Y Ahn, Timothy W Meyer, Tammy L Sirich
 
 Permission is hereby granted, free of charge, 
 to any person obtaining a copy of this software and 

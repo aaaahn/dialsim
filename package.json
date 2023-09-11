@@ -12,6 +12,7 @@
   "dependencies": {
     "chart.js": "4.4.0",
     "goal-seek": "^0.1.4",
+    "lodash": "^4.17.21",
     "prettier": "^3.0.3"
   },
   "devDependencies": {

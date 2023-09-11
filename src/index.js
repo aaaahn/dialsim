@@ -1234,11 +1234,27 @@ function fetchInputValues() {
 }
 
 
+
+
+// AA This function gets invoked when a gui element changes
+window.ready = function ready() {
+  set_dynamic_calc_state();
+  console.log(`ready(): dynamic_calc_state : ${dynamic_calc_state}`);
+  if (!is_in_dynamic_mode()) {
+    // hold is enabled.  ignore input
+    return;
+  } else {
+    // hold is disabled.  process input and solve!
+    calculateAndDraw();
+  }
+};
+
+
 // Debounce time in milliseconds
-const DEBOUNCE_TIME = 300; 
+const DEBOUNCE_TIME = 250; 
 // Debounced ready function
-let debouncedReady = debounce(ready, DEBOUNCE_TIME);
-function debounce(func, wait) {
+window.debouncedReady = debouncedReady(window.ready, DEBOUNCE_TIME);
+function debouncedReady(func, wait) {
   // Maintain reference to timeout
   let timeout;
 
@@ -1256,20 +1272,6 @@ function debounce(func, wait) {
   }
 }
 // Usage
-document.addEventListener("input", debouncedReady); 
+document.addEventListener("input", window.debouncedReady); 
 // Now ready() will be called at most once 
 // every DEBOUNCE_TIME milliseconds
-
-
-// AA This function gets invoked when a gui element changes
-window.ready = function ready() {
-  set_dynamic_calc_state();
-  console.log(`ready(): dynamic_calc_state : ${dynamic_calc_state}`);
-  if (!is_in_dynamic_mode()) {
-    // hold is enabled.  ignore input
-    return;
-  } else {
-    // hold is disabled.  process input and solve!
-    calculateAndDraw();
-  }
-};

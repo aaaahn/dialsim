@@ -4,6 +4,7 @@ This file is part of Dialsim, released under the MIT License.
 See LICENSE.md for details.
 */
 import * as goalSeek from "goal-seek";
+var _ = require('lodash');
 
 let debug_mode = false;
 window.toggle_debug_mode = function toggle_debug_mode() {
@@ -1249,29 +1250,7 @@ window.ready = function ready() {
   }
 };
 
-
-// Debounce time in milliseconds
 const DEBOUNCE_TIME = 250; 
-// Debounced ready function
-window.debouncedReady = debouncedReady(window.ready, DEBOUNCE_TIME);
-function debouncedReady(func, wait) {
-  // Maintain reference to timeout
-  let timeout;
-
-  // Return a wrapped function
-  return function executedFunction(...args) {
-
-    // Clear previous timeout
-    clearTimeout(timeout);
-
-    // Start new timeout
-    timeout = setTimeout(() => {
-      func(...args);
-    }, wait);
-
-  }
-}
-// Usage
-document.addEventListener("input", window.debouncedReady); 
-// Now ready() will be called at most once 
-// every DEBOUNCE_TIME milliseconds
+window.debouncedReady = _.debounce(window.ready, DEBOUNCE_TIME);
+// Now ready() will be called at most once every DEBOUNCE_TIME milliseconds
+// https://lodash.com/docs/4.17.15#debounce

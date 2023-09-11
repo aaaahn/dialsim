@@ -1233,6 +1233,34 @@ function fetchInputValues() {
   return data;
 }
 
+
+// Debounce time in milliseconds
+const DEBOUNCE_TIME = 300; 
+// Debounced ready function
+let debouncedReady = debounce(ready, DEBOUNCE_TIME);
+function debounce(func, wait) {
+  // Maintain reference to timeout
+  let timeout;
+
+  // Return a wrapped function
+  return function executedFunction(...args) {
+
+    // Clear previous timeout
+    clearTimeout(timeout);
+
+    // Start new timeout
+    timeout = setTimeout(() => {
+      func(...args);
+    }, wait);
+
+  }
+}
+// Usage
+document.addEventListener("input", debouncedReady); 
+// Now ready() will be called at most once 
+// every DEBOUNCE_TIME milliseconds
+
+
 // AA This function gets invoked when a gui element changes
 window.ready = function ready() {
   set_dynamic_calc_state();

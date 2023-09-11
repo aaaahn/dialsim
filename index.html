@@ -22,6 +22,8 @@ See LICENSE.md for details.
         grid-column: 1;
         display: grid;
         gap: 10px;
+        margin-right: 25px; /* Add this line */
+        margin-left: -25px; /* Add this line to reduce the left margin by 25 pixels */
       }
       .menu-item {
         grid-column: span 4;
@@ -48,7 +50,7 @@ See LICENSE.md for details.
         color: #a0a0a0; /* Gray text color */
         cursor: not-allowed; /* Change cursor to indicate disabled state */
       }
-      #right-side {
+      .right-side {
         gap: 10px;
       }
       #chart-container {
@@ -92,7 +94,7 @@ See LICENSE.md for details.
             min="0"
             max="9"
             value="3.33"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
         <div class="menu-item">
@@ -106,7 +108,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="360"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
         <div class="menu-item">
@@ -120,7 +122,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="500"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
         <div class="menu-item">
@@ -134,7 +136,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="500"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
         <div class="menu-item">
@@ -148,7 +150,7 @@ See LICENSE.md for details.
             required
             step="0.1"
             value="0"
-            oninput="ready();"
+            oninput="debouncedReady();"
             disabled
           />
         </div>
@@ -162,7 +164,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="ready();" 
+            oninput="debouncedReady();" 
             disabled
           />
         </div>
@@ -177,11 +179,11 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="render_disabled();ready();" // the order matters
+            oninput="render_disabled();debouncedReady();" // the order matters
           />
         </div>
         <div class="menu-item">
-          <select name="replace" id="replace" disabled onchange="ready();">
+          <select name="replace" id="replace" disabled onchange="debouncedReady();">
             <option value="Predilution">Predilution</option>
             <option value="Postdilution">Postdilution</option>
           </select>
@@ -194,18 +196,18 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="ready();"
+            oninput="debouncedReady();"
             disabled
           />
         </div>
-        <input type="checkbox" id="monday" onclick="ready();" checked />Mon
-        <input type="checkbox" id="tuesday" onclick="ready();" />Tue
-        <input type="checkbox" id="wednesday" onclick="ready();" checked />Wed
-        <input type="checkbox" id="thursday" onclick="ready();" />Thu
-        <input type="checkbox" id="friday" onclick="ready();" checked />Fri
+        <input type="checkbox" id="monday" onclick="debouncedReady();" checked />Mon
+        <input type="checkbox" id="tuesday" onclick="debouncedReady();" />Tue
+        <input type="checkbox" id="wednesday" onclick="debouncedReady();" checked />Wed
+        <input type="checkbox" id="thursday" onclick="debouncedReady();" />Thu
+        <input type="checkbox" id="friday" onclick="debouncedReady();" checked />Fri
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="checkbox" id="saturday" onclick="ready();" />Sat
-        <input type="checkbox" id="sunday" onclick="ready();" />Sun
+        <input type="checkbox" id="saturday" onclick="debouncedReady();" />Sat
+        <input type="checkbox" id="sunday" onclick="debouncedReady();" />Sun
 
         <h3>Patient Parameters</h3>
         <div class="menu-item">
@@ -219,7 +221,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
         <div class="menu-item">
@@ -233,7 +235,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="render_disabled_uf(); ready();"
+            oninput="render_disabled_uf(); debouncedReady();"
           />
         </div>
         <div class="menu-item">
@@ -249,7 +251,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
         <div class="menu-item">
@@ -263,12 +265,12 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
         <div class="menu-item">
           <label for="solutetype"> Solute Type </label>
-          <select name="solutetype" id="solutetype" onchange="ready();" >
+          <select name="solutetype" id="solutetype" onchange="debouncedReady();" >
             <option value="Urea">Urea</option>
             <option value="Plasma">Plasma</option>
           </select>
@@ -284,7 +286,7 @@ See LICENSE.md for details.
             min="0"
             max="99999"
             value="9524"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
         <div class="menu-item">
@@ -298,14 +300,14 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
 
         <h3>Model Parameters</h3>
         <div class="menu-item">
           <label for="modeltype"> Model Type(%) </label>
-          <select name="modeltype" id="modeltype" onchange="ready();">
+          <select name="modeltype" id="modeltype" onchange="debouncedReady();">
             <option value="1Comp">1 Comp</option>
             <option value="2Comp">2 Comp Urea</option>
             <option value="2CompAdLib">2 Comp Ad Lib</option>
@@ -323,7 +325,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="36"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
 
@@ -340,7 +342,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="100"
-            oninput="ready();"
+            oninput="debouncedReady();"
           />
         </div>
       </menu>
@@ -355,15 +357,15 @@ See LICENSE.md for details.
       &nbsp;&nbsp;&nbsp;
       <button id="solve" onclick="calculateAndDraw();">Solve!</button> &nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="hold" title="Un-check to clear the prior chart data" onclick="ready();" />
+      <input type="checkbox" id="hold" title="Un-check to clear the prior chart data" onclick="debouncedReady();" />
       Hold &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="plottac" onclick="ready();" checked />
+      <input type="checkbox" id="plottac" onclick="debouncedReady();" checked />
 
       Plot TAC* &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="plotintra" onclick="ready();" />
+      <input type="checkbox" id="plotintra" onclick="debouncedReady();" />
       Plot Intra.*
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <select name="charttype" id="charttype" onchange="ready();">
+      <select name="charttype" id="charttype" onchange="debouncedReady();">
         <option value="ConcvsTime">Conc vs. Time</option>
         <option value="VolumevsTime">Volume vs. Time</option>
       </select>
@@ -399,7 +401,7 @@ See LICENSE.md for details.
   <div>
   </div>
 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <label id="literspertreatment" onclick="toggle_debug_mode(); ready();">(L/t) Liters per treatment</label>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <label id="literspertreatment" onclick="toggle_debug_mode(); debouncedReady();">(L/t) Liters per treatment</label>
   <p></p>
   <a href="https://github.com/aaaahn/dialsim/blob/main/LICENSE.md">License</a>
 <div id="tt" style="display: none;">

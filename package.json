@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "chart.js": "4.4.0",
-    "goal-seek": "^0.1.4"
+    "goal-seek": "^0.1.4",
+    "prettier": "^3.0.3"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.0",

@@ -321,9 +321,9 @@ See LICENSE.md for details.
             id="volumeofdist"
             name="volumeofdist"
             required
-            step="1"
+            step="10"
             min="0"
-            max="999"
+            max="100"
             value="36"
             oninput="debouncedReady();"
           />
@@ -393,27 +393,26 @@ See LICENSE.md for details.
       <label id="avgpeakconclabel"> Average Peak Conc. (mg/dL) </label>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <span id="avgpeakconc"></span>
-
       <br />
     </div>
     <br />
   </div>
-  <div>
-  </div>
-
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <label id="literspertreatment" onclick="toggle_debug_mode(); debouncedReady();">(L/t) Liters per treatment</label>
+  <div></div>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  <label id="literspertreatment" onclick="toggle_debug_mode(); debouncedReady();">(L/t) Liters per treatment</label>
   <p></p>
   <a href="https://github.com/aaaahn/dialsim/blob/main/LICENSE.md">License</a>
-<div id="tt" style="display: none;">
-  <details>
-    <summary>treatmentTable</summary>
-    <table id="treatmentTable"></table>
-  </details>
-</div>
-<div id="ct" style="display: none;">
-  <details>
-      <summary>clearanceTable</summary>
-      <table id="clearanceTable"></table>
+
+  <div id="tt" style="display: none;">
+    <details>
+      <summary>treatmentTable</summary>
+      <table id="treatmentTable"></table>
+    </details>
+  </div>
+  <div id="ct" style="display: none;">
+    <details>
+        <summary>clearanceTable</summary>
+        <table id="clearanceTable"></table>
     </details>
   </div>
   <br /><br />

@@ -24,6 +24,8 @@ Dialsim is an open-source project designed for a multidisciplinary developer com
 
 * Default Values Test: Validates that default parameters yield the expected clearance value.
 
+* Duration Test: Assesses the application's response to varied Duration values.
+
 * Hematocrit Test: Assesses the application's response to varied Hematocrit values.
 
 * Additional UF Test: Examines the application's behavior with different UF values.
@@ -46,7 +48,7 @@ This project uses a pre-configured GitHub Codespaces development environment cus
 2. Start the Dialsim Web App:
 
 ```bash
-@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npm run start
+@aaaahn ➜ /workspaces/dialsim (main) $ npm run start
 Debugger attached.
 
 > dialsim@0.1.1 start
@@ -61,7 +63,7 @@ Server running at http://localhost:1234
 3. Install Cypress:
 
 ```bash
-@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npx cypress install
+@aaaahn ➜ /workspaces/dialsim (main) $ npx cypress install
 Installing Cypress (version: 13.1.0)
 
 ✔  Downloaded Cypress
@@ -72,23 +74,23 @@ You can now open Cypress by running: node_modules/.bin/cypress open
 
 https://on.cypress.io/installing-cypress
 
-@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ 
+@aaaahn ➜ /workspaces/dialsim (main) $ 
 
 ```
 
 4. Execute Tests:
 
 ```bash
+@aaaahn ➜ /workspaces/dialsim (main) $ npx cypress run
+Debugger attached.
+Debugger attached.
+[51413:0912/010640.339470:ERROR:node_bindings.cc(279)] Most NODE_OPTIONs are not supported in packaged apps. See documentation for more details.
+[51413:0912/010640.339527:ERROR:node_bindings.cc(279)] Most NODE_OPTIONs are not supported in packaged apps. See documentation for more details.
+[51413:0912/010640.339534:ERROR:node_bindings.cc(279)] Most NODE_OPTIONs are not supported in packaged apps. See documentation for more details.
 
-@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ npx cypress run
-It looks like this is your first time using Cypress: 13.1.0
-
-✔  Verified Cypress! /home/codespace/.cache/Cypress/13.1.0/Cypress
-
-Opening Cypress...
-
-DevTools listening on ws://127.0.0.1:39767/devtools/browser/498ff072-4c45-422d-877c-19d15028887b
-[7525:0904/142339.720245:ERROR:gpu_memory_buffer_support_x11.cc(44)] dri3 extension not supported.
+DevTools listening on ws://127.0.0.1:33259/devtools/browser/00f66d24-4646-4920-8ef6-f1fe7158c68f
+[51568:0912/010640.832988:ERROR:gpu_memory_buffer_support_x11.cc(44)] dri3 extension not supported.
+Debugger attached.
 
 ====================================================================================================
 
@@ -97,7 +99,7 @@ DevTools listening on ws://127.0.0.1:39767/devtools/browser/498ff072-4c45-422d-8
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ Cypress:        13.1.0                                                                         │
   │ Browser:        Electron 106 (headless)                                                        │
-  │ Node Version:   v20.5.1 (/usr/local/share/nvm/versions/node/v20.5.1/bin/node)                  │
+  │ Node Version:   v20.6.0 (/usr/local/share/nvm/versions/node/v20.6.0/bin/node)                  │
   │ Specs:          1 found (spec.cy.js)                                                           │
   │ Searched:       cypress/e2e/**/*.cy.{js,jsx,ts,tsx}                                            │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
@@ -108,37 +110,51 @@ DevTools listening on ws://127.0.0.1:39767/devtools/browser/498ff072-4c45-422d-8
   Running:  spec.cy.js                                                                      (1 of 1)
 
 
+  Default Values Test
+    ✓ solving with default input values should result in avg clearance value of 237.2 and avg concentrate value of 53.06 (749ms)
 
-  Default Value Test
-    ✓ solving with default input values should result in clearance value of 237.2 (925ms)
+  Duration Test
+    ✓ solving with duration of 3 hours should result in time avg concentrate of 57.19 (892ms)
+    ✓ solving with duration of 3.5 hours should result in time avg concentrate of 50.96 (886ms)
+    ✓ solving with duration of 4 hours should result in time avg concentrate of 46.29 (845ms)
 
   Hematocrit Test
-    ✓ Hematocrit value of 30 should result in average clearance value of 235.1 (737ms)
+    ✓ Hematocrit value of 30 should result in average clearance value of 235.1 and time avg concentrate value of 53.48 (576ms)
 
   Additional UF Test
-    ✓ additional UF value of 23 should result in average clearance value of 240.0 (693ms)
+    ✓ additional UF value of 23 should result in average clearance value of 240.0 and time avg concentrate value of 52.63 (683ms)
+    ✓ additional UF value of 30 should result in average clearance value of 241.3 and time avg concentrate value of 52.43 (689ms)
 
   Fluid Gain Test
-    ✓ fluid gain of 2 should result in average clearance value of 247.7 (817ms)
+    ✓ fluid gain of 2 should result in average clearance value of 247.7 and time avg concentrate value of 51.43 (819ms)
+    ✓ fluid gain of 3 should result in average clearance value of 253.0 and time avg concentrate value of 50.56 (758ms)
+    ✓ fluid gain of 4 should result in average clearance value of 258.2 and time avg concentrate value of 49.64 (701ms)
+
+  Volume of Distribution Test
+    ✓ volume of distribution of 20 should result in time averaged concentrate value of 65.98 (693ms)
+    ✓ volume of distribution of 30 should result in time averaged concentrate value of 55.76 (547ms)
+    ✓ volume of distribution of 40 should result in time averaged concentrate value of 52.27 (590ms)
+    ✓ volume of distribution of 50 should result in time averaged concentrate value of 50.42 (647ms)
 
   Debug Mode Test
-    ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (559ms)
-    ✓ clicking on the Liters per treatment label twice should hide debug table treatmentTable (518ms)
+    ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (194ms)
+    ✓ clicking on the Liters per treatment label twice should hide debug table treatmentTable (285ms)
 
-  6 passing (4s)
+
+  16 passing (11s)
 
 
   (Results)
 
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-  │ Tests:        6                                                                                │
-  │ Passing:      6                                                                                │
+  │ Tests:        16                                                                               │
+  │ Passing:      16                                                                               │
   │ Failing:      0                                                                                │
   │ Pending:      0                                                                                │
   │ Skipped:      0                                                                                │
   │ Screenshots:  0                                                                                │
   │ Video:        false                                                                            │
-  │ Duration:     4 seconds                                                                        │
+  │ Duration:     11 seconds                                                                       │
   │ Spec Ran:     spec.cy.js                                                                       │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
 
@@ -150,11 +166,14 @@ DevTools listening on ws://127.0.0.1:39767/devtools/browser/498ff072-4c45-422d-8
 
        Spec                                              Tests  Passing  Failing  Pending  Skipped  
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-  │ ✔  spec.cy.js                               00:04        6        6        -        -        - │
+  │ ✔  spec.cy.js                               00:11       16       16        -        -        - │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
-    ✔  All specs passed!                        00:04        6        6        -        -        -  
+    ✔  All specs passed!                        00:11       16       16        -        -        -  
 
-@aaaahn ➜ /workspaces/dialsim (more_cypress_changes) $ 
+Waiting for the debugger to disconnect...
+Waiting for the debugger to disconnect...
+@aaaahn ➜ /workspaces/dialsim (main) $ 
+ 
 ```
 
 ## License

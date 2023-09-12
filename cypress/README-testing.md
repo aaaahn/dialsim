@@ -47,7 +47,7 @@ This project uses a pre-configured GitHub Codespaces development environment cus
 
 2. Start the Dialsim Web App:
 
-```bash
+```
 @aaaahn ➜ /workspaces/dialsim (main) $ npm run start
 Debugger attached.
 
@@ -62,7 +62,7 @@ Server running at http://localhost:1234
 
 3. Install Cypress:
 
-```bash
+```
 @aaaahn ➜ /workspaces/dialsim (main) $ npx cypress install
 Installing Cypress (version: 13.1.0)
 
@@ -80,7 +80,7 @@ https://on.cypress.io/installing-cypress
 
 4. Execute Tests:
 
-```bash
+```
 @aaaahn ➜ /workspaces/dialsim (main) $ npx cypress run
 
 DevTools listening on ws://127.0.0.1:43535/devtools/browser/e2ba0a95-61cd-4013-906e-98d93388cfa7

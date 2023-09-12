@@ -200,14 +200,14 @@ See LICENSE.md for details.
             disabled
           />
         </div>
-        <input type="checkbox" id="monday" onclick="debouncedReady();" checked />Mon
-        <input type="checkbox" id="tuesday" onclick="debouncedReady();" />Tue
-        <input type="checkbox" id="wednesday" onclick="debouncedReady();" checked />Wed
-        <input type="checkbox" id="thursday" onclick="debouncedReady();" />Thu
-        <input type="checkbox" id="friday" onclick="debouncedReady();" checked />Fri
+        <input type="checkbox" id="monday" onclick="ready();" checked />Mon
+        <input type="checkbox" id="tuesday" onclick="ready();" />Tue
+        <input type="checkbox" id="wednesday" onclick="ready();" checked />Wed
+        <input type="checkbox" id="thursday" onclick="ready();" />Thu
+        <input type="checkbox" id="friday" onclick="ready();" checked />Fri
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="checkbox" id="saturday" onclick="debouncedReady();" />Sat
-        <input type="checkbox" id="sunday" onclick="debouncedReady();" />Sun
+        <input type="checkbox" id="saturday" onclick="ready();" />Sat
+        <input type="checkbox" id="sunday" onclick="ready();" />Sun
 
         <h3>Patient Parameters</h3>
         <div class="menu-item">
@@ -357,15 +357,15 @@ See LICENSE.md for details.
       &nbsp;&nbsp;&nbsp;
       <button id="solve" onclick="calculateAndDraw();">Solve!</button> &nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="hold" title="Un-check to clear the prior chart data" onclick="debouncedReady();" />
+      <input type="checkbox" id="hold" title="Un-check to clear the prior chart data" onclick="ready();" />
       Hold &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="plottac" onclick="debouncedReady();" checked />
+      <input type="checkbox" id="plottac" onclick="ready();" checked />
 
-      Plot TAC* &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="plotintra" onclick="debouncedReady();" />
+      Plot TAC &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      <input type="checkbox" id="plotintra" onclick="ready();" />
       Plot Intra.*
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <select name="charttype" id="charttype" onchange="debouncedReady();">
+      <select name="charttype" id="charttype" onchange="ready();">
         <option value="ConcvsTime">Conc vs. Time</option>
         <option value="VolumevsTime">Volume vs. Time</option>
       </select>

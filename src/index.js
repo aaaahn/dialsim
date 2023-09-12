@@ -841,24 +841,25 @@ function buildSingleXYSet(xydata, i) {
   ];
   var xyset = [
     {
-      // label: i === 0 ? "Concentration(mg/dL)vs.Time(hours)" : "Conc" + (i + 1),
       label: i === 0 ? xydata.legend_text : xydata.legend_text_short + (i + 1),
       data: xydata,
       borderColor: color_wheel_conc[i],
       fill: false,
-    },
-    {
-      type: "line",
-      label: i === 0 ? "Avg" : "Avg" + (i + 1),
-      data: xydata.map((item) =>
-        item.x % 3 === 0 ? { x: item.x, y: avg } : {}
-      ),
-      borderColor: color_wheel_avg[i],
-      borderDash: [5, 5],
-      borderWidth: 1,
-      fill: false,
-    },
-  ];
+    }];
+    if (xydata.plottac) {
+      xyset.push(
+        {
+        type: "line",
+        label: i === 0 ? "TAC" : "TAC" + (i + 1),
+        data: xydata.map((item) =>
+          item.x % 3 === 0 ? { x: item.x, y: avg } : {}
+        ),
+        borderColor: color_wheel_avg[i],
+        borderDash: [5, 5],
+        borderWidth: 1,
+        fill: false,
+      })
+    }
   return xyset;
 }
 
@@ -1184,6 +1185,7 @@ window.calculateAndDraw = function calculateAndDraw() {
       inputData["charttype"] === "ConcvsTime"
         ? "Average Peak Conc. (mg/dL)"
         : "Average Peak Volume (liters)";
+    chartData.plottac = inputData["plottac"];
 
     // chartData is an array of xs and ys:
     // [{x: 0, y: 123}, {x: 1, y: 134}..]

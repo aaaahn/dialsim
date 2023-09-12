@@ -9,7 +9,7 @@ Dialsim is an open-source project designed for a multidisciplinary developer com
 
 ## The Importance of Testing in Open Source Projects
 
-* Quality Assurance: With contributors worldwide, end-to-end testing ensures every contribution upholds the project's quality and avoids regressions.
+* Quality Assurance: With potential contributors worldwide, end-to-end testing ensures every contribution upholds the project's quality and avoids regressions.
 
 * Scalability: As Dialsim evolves, testing guarantees that new features or changes don't compromise existing functionalities.
 
@@ -43,7 +43,7 @@ Our test suite is tightly integrated with GitHub [Actions](https://docs.github.c
 
 1. Launch Github Codespaces Development Environment
 
-This project uses a pre-configured GitHub Codespaces development environment customized for `Node.js` coding and testing.  Open the Codespaces IDE in your browser through these [instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace).  The Codespaces environment comes preinstalled with `Node.js`, `npm`, and `Visual Studio Code`. This provides everything you need for development without any local setup. The cloud-based IDE allows you to instantly test and run the `Node.js` application right from the browser.
+This project uses a pre-configured GitHub Codespaces development environment customized for `Node.js` coding and testing.  Open the Codespaces in your browser through these [instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace).  The Codespaces environment comes preinstalled with `Node.js`, `npm`, and `Visual Studio Code`. This provides everything you need for development without any local setup. The cloud-based IDE allows you to instantly test and run the `Node.js` application right from the browser.
 
 2. Start the Dialsim Web App:
 
@@ -82,15 +82,8 @@ https://on.cypress.io/installing-cypress
 
 ```bash
 @aaaahn ➜ /workspaces/dialsim (main) $ npx cypress run
-Debugger attached.
-Debugger attached.
-[51413:0912/010640.339470:ERROR:node_bindings.cc(279)] Most NODE_OPTIONs are not supported in packaged apps. See documentation for more details.
-[51413:0912/010640.339527:ERROR:node_bindings.cc(279)] Most NODE_OPTIONs are not supported in packaged apps. See documentation for more details.
-[51413:0912/010640.339534:ERROR:node_bindings.cc(279)] Most NODE_OPTIONs are not supported in packaged apps. See documentation for more details.
 
-DevTools listening on ws://127.0.0.1:33259/devtools/browser/00f66d24-4646-4920-8ef6-f1fe7158c68f
-[51568:0912/010640.832988:ERROR:gpu_memory_buffer_support_x11.cc(44)] dri3 extension not supported.
-Debugger attached.
+DevTools listening on ws://127.0.0.1:43535/devtools/browser/e2ba0a95-61cd-4013-906e-98d93388cfa7
 
 ====================================================================================================
 
@@ -111,34 +104,34 @@ Debugger attached.
 
 
   Default Values Test
-    ✓ solving with default input values should result in avg clearance value of 237.2 and avg concentrate value of 53.06 (749ms)
+    ✓ solving with default inputs should result in avg clearance of 237.2 and avg concentrate of 53.06 (618ms)
 
   Duration Test
-    ✓ solving with duration of 3 hours should result in time avg concentrate of 57.19 (892ms)
-    ✓ solving with duration of 3.5 hours should result in time avg concentrate of 50.96 (886ms)
-    ✓ solving with duration of 4 hours should result in time avg concentrate of 46.29 (845ms)
+    ✓ solving with duration of 3.0 hours should result in time avg concentrate of 57.19 (875ms)
+    ✓ solving with duration of 3.5 hours should result in time avg concentrate of 50.96 (841ms)
+    ✓ solving with duration of 4.0 hours should result in time avg concentrate of 46.29 (854ms)
 
   Hematocrit Test
-    ✓ Hematocrit value of 30 should result in average clearance value of 235.1 and time avg concentrate value of 53.48 (576ms)
+    ✓ hematocrit of 30 should result in average clearance of 235.1 and time avg concentrate of 53.48 (532ms)
 
   Additional UF Test
-    ✓ additional UF value of 23 should result in average clearance value of 240.0 and time avg concentrate value of 52.63 (683ms)
-    ✓ additional UF value of 30 should result in average clearance value of 241.3 and time avg concentrate value of 52.43 (689ms)
+    ✓ additional UF of 23 should result in avg clearance of 240.0 and time avg concentrate of 52.63 (659ms)
+    ✓ additional UF of 30 should result in avg clearance of 241.3 and time avg concentrate of 52.43 (784ms)
 
   Fluid Gain Test
-    ✓ fluid gain of 2 should result in average clearance value of 247.7 and time avg concentrate value of 51.43 (819ms)
-    ✓ fluid gain of 3 should result in average clearance value of 253.0 and time avg concentrate value of 50.56 (758ms)
-    ✓ fluid gain of 4 should result in average clearance value of 258.2 and time avg concentrate value of 49.64 (701ms)
+    ✓ fluid gain of 2 should result in avg clearance of 247.7 and time avg concentrate of 51.43 (706ms)
+    ✓ fluid gain of 3 should result in avg clearance of 253.0 and time avg concentrate of 50.56 (705ms)
+    ✓ fluid gain of 4 should result in avg clearance of 258.2 and time avg concentrate of 49.64 (706ms)
 
   Volume of Distribution Test
-    ✓ volume of distribution of 20 should result in time averaged concentrate value of 65.98 (693ms)
-    ✓ volume of distribution of 30 should result in time averaged concentrate value of 55.76 (547ms)
-    ✓ volume of distribution of 40 should result in time averaged concentrate value of 52.27 (590ms)
-    ✓ volume of distribution of 50 should result in time averaged concentrate value of 50.42 (647ms)
+    ✓ volume of distribution of 20 should result in time averaged concentrate value of 65.98 (640ms)
+    ✓ volume of distribution of 30 should result in time averaged concentrate value of 55.76 (648ms)
+    ✓ volume of distribution of 40 should result in time averaged concentrate value of 52.27 (649ms)
+    ✓ volume of distribution of 50 should result in time averaged concentrate value of 50.42 (630ms)
 
   Debug Mode Test
-    ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (194ms)
-    ✓ clicking on the Liters per treatment label twice should hide debug table treatmentTable (285ms)
+    ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (224ms)
+    ✓ clicking on the Liters per treatment label twice should hide debug table treatmentTable (278ms)
 
 
   16 passing (11s)
@@ -170,10 +163,7 @@ Debugger attached.
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
     ✔  All specs passed!                        00:11       16       16        -        -        -  
 
-Waiting for the debugger to disconnect...
-Waiting for the debugger to disconnect...
 @aaaahn ➜ /workspaces/dialsim (main) $ 
- 
 ```
 
 ## License

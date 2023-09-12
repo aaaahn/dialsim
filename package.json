@@ -7,7 +7,8 @@
     "start": "npx parcel",
     "build": "npx parcel build",
     "cypress:install": "npx cypress install",
-    "cypress:run": "npx nyc --reporter=lcov --reporter=text-summary cypress run"
+    "cypress:run": "npx cypress run",
+    "cypress:runconverage": "npx nyc --reporter=lcov --reporter=text-summary cypress run"
   },
   "dependencies": {
     "chart.js": "4.4.0",

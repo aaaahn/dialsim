@@ -22,7 +22,7 @@ Dialsim is an open-source project designed for a multidisciplinary developer com
 
 ## Test Suite Overview
 
-* Default Values Test: Validates that default parameters yield the expected clearance value.
+* Default Values Test: Validates that default parameters yield the expected average clearance and time-averaged concentrate values.
 
 * Duration Test: Assesses the application's response to varied Duration values.
 

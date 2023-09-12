@@ -128,15 +128,15 @@ describe('Volume of Distribution Test', () => {
     cy.visit('/');
   });
 
-  it('volume of distribution of 20 should result in time averaged concentrate value of 65.98', () => {
-    // Click the button with the id "solve"
-    cy.get('#volumeofdist').clear().type("20");  237.2, 66.01, 117.35
+  it('volume of distribution of 20 should result in time avg concentrate value of 65.98', () => {
+    // Click the button with the id "solve" 237.2, 66.01, 117.35
+    cy.get('#volumeofdist').clear().type("20");  
     cy.get('#solve').click();
 
     cy.get('#timeavgconc').should('have.text', '65.98');
   });
 
-  it('volume of distribution of 30 should result in time averaged concentrate value of 55.76', () => {
+  it('volume of distribution of 30 should result in time avg concentrate value of 55.76', () => {
     // Click the button with the id "solve" 237.2, 55.84, 90.05
     cy.get('#volumeofdist').clear().type("30");
     cy.get('#solve').click();
@@ -144,7 +144,7 @@ describe('Volume of Distribution Test', () => {
     cy.get('#timeavgconc').should('have.text', '55.76');
   });
 
-  it('volume of distribution of 40 should result in time averaged concentrate value of 52.27', () => {
+  it('volume of distribution of 40 should result in time avg concentrate value of 52.27', () => {
     // Click the button with the id "solve" 237.2, 52.04, 77.72
     cy.get('#volumeofdist').clear().type("40");
     cy.get('#solve').click();
@@ -152,7 +152,7 @@ describe('Volume of Distribution Test', () => {
     cy.get('#timeavgconc').should('have.text', '52.27');
   });
 
-  it('volume of distribution of 50 should result in time averaged concentrate value of 50.42', () => {
+  it('volume of distribution of 50 should result in time avg concentrate value of 50.42', () => {
     // Click the button with the id "solve" 237.2, 50.26, 70.86
     cy.get('#volumeofdist').clear().type("50");
     cy.get('#solve').click();
@@ -172,10 +172,7 @@ describe('Debug Mode Test', () => {
   it('clicking on the Liters per treatment label should reveal debug table treatmentTable', () => {
     // Assign an alias
     cy.get('#literspertreatment').as('litersLabel');
-
-    // Use the alias to click on the element
     cy.get('@litersLabel').click();
-
     cy.contains('treatmentTable');
   });
 

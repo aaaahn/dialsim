@@ -41,11 +41,12 @@ Our test suite is tightly integrated with GitHub [Actions](https://docs.github.c
 
 ## Running Cypress Tests Manually
 
-1. Launch Github Codespaces Development Environment
+1. Launch Codespaces
 
-This project uses a pre-configured GitHub Codespaces development environment customized for `Node.js` coding and testing.  Open the Codespaces in your browser through these [instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace).  The Codespaces environment comes preinstalled with `Node.js`, `npm`, and `Visual Studio Code`. This provides everything you need for development without any local setup. The cloud-based IDE allows you to instantly test and run the `Node.js` application right from the browser.
+This project is set up with a GitHub Codespaces environment tailored for `Node.js` development. To access it, simply [follow these instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/) to open Codespaces in your browser. The environment is already equipped with `Node.js`, `npm`, and `Visual Studio Code`, eliminating the need for local setup. With this cloud-based IDE, you can immediately run and test the Dialsim application directly in your browser.
 
-2. Start the Dialsim Web App:
+
+2. Start the Dialsim Web App
 
 ```
 @aaaahn ➜ /workspaces/dialsim (main) $ npm run start
@@ -60,7 +61,7 @@ Server running at http://localhost:1234
 ✨ Built in 864ms
 ```
 
-3. Install Cypress:
+3. Install Cypress
 
 ```
 @aaaahn ➜ /workspaces/dialsim (main) $ npx cypress install
@@ -75,10 +76,9 @@ You can now open Cypress by running: node_modules/.bin/cypress open
 https://on.cypress.io/installing-cypress
 
 @aaaahn ➜ /workspaces/dialsim (main) $ 
-
 ```
 
-4. Execute Tests:
+4. Execute Tests
 
 ```
 @aaaahn ➜ /workspaces/dialsim (main) $ npx cypress run
@@ -124,10 +124,10 @@ DevTools listening on ws://127.0.0.1:43535/devtools/browser/e2ba0a95-61cd-4013-9
     ✓ fluid gain of 4 should result in avg clearance of 258.2 and time avg concentrate of 49.64 (706ms)
 
   Volume of Distribution Test
-    ✓ volume of distribution of 20 should result in time averaged concentrate value of 65.98 (640ms)
-    ✓ volume of distribution of 30 should result in time averaged concentrate value of 55.76 (648ms)
-    ✓ volume of distribution of 40 should result in time averaged concentrate value of 52.27 (649ms)
-    ✓ volume of distribution of 50 should result in time averaged concentrate value of 50.42 (630ms)
+    ✓ volume of distribution of 20 should result in time avg concentrate value of 65.98 (640ms)
+    ✓ volume of distribution of 30 should result in time avg concentrate value of 55.76 (648ms)
+    ✓ volume of distribution of 40 should result in time avg concentrate value of 52.27 (649ms)
+    ✓ volume of distribution of 50 should result in time avg concentrate value of 50.42 (630ms)
 
   Debug Mode Test
     ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (224ms)

@@ -8,7 +8,7 @@
     "build": "npx parcel build",
     "cypress:install": "npx cypress install",
     "cypress:run": "npx cypress run",
-    "cypress:runconverage": "npx nyc --reporter=lcov --reporter=text-summary cypress run"
+    "cypress:runwithcoverage": "npx nyc --reporter=lcov --reporter=text-summary cypress run"
   },
   "dependencies": {
     "chart.js": "4.4.0",
@@ -17,10 +17,9 @@
     "prettier": "^3.0.3"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.12.0",
+    "@cypress/code-coverage": "^3.12.1",
     "babel-plugin-istanbul": "^6.1.1",
     "cypress": "^13.1.0",
-    "htmlnano": "2.0.3",
     "nyc": "^15.1.0",
     "parcel": "^2.9.3"
   },

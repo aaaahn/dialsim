@@ -746,11 +746,12 @@ function calcWeeklyTable(treatmentTable, inputData) {
   });
   let srr_i = 0;
   let srr_j = 0;
-  treatmentTable.forEach((row) => {
-    if (row.dialysis) {
-      document.getElementById("srr"+srr_i++).textContent = row.srr;
+  
+  treatmentTable.forEach(row => {
+    if (row.srr) {
+      document.getElementById(`srr${srr_i++}`).textContent = row.srr; 
     } else {
-      document.getElementById("srr"+(srr_i+srr_j++)).textContent = "";
+      document.getElementById(`srr${srr_i + srr_j++}`).textContent = '';
     }
   });
 

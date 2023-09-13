@@ -371,32 +371,67 @@ See LICENSE.md for details.
       </select>
 
       <h3>Results</h3>
-      <label> Average Clearance (mL/min) 
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <span id="avgclearance"></span>
-      </label>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <label for="solutereductionratios" > Solute Reduction Ratios* </label>
-      &nbsp;&nbsp;&nbsp;
-      <select name="solutereductionratios" id="solutereductionratios">
-        <option value="cvt">0.71</option>
-        <option value="cvt2">model2</option>
-      </select>
-      <br />
-      <label id="timeavgconclabel"> Time-Averaged Conc. (mg/dL) </label>
-      &nbsp;&nbsp;&nbsp;
-      <span id="timeavgconc"></span>
-      <br />
-      <label id="avgpeakconclabel"> Average Peak Conc. (mg/dL) </label>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <span id="avgpeakconc"></span>
-      <br />
+
+      <div id="menu2">
+        <menu>
+          <div class="menu-item">
+            <div>
+              <label> Average Clearance (mL/min) </label> &nbsp;&nbsp;
+              <span id="avgclearance"></span>
+            </div>
+            <div>
+              <label style="text-align: left;"> &nbsp; </label>
+            </div>
+            <div>
+              <label style="text-align: left;"> Solute Reduction Ratios &nbsp;&nbsp; </label>
+            </div>
+            <div>
+              <span id="ssr1"></span></label>
+            </div>
+          </div>
+          <div class="menu-item">
+            <div>
+              <label id="timeavgconclabel"> Time-Averaged Conc. (mg/dL) </label>
+              <span id="timeavgconc"></span>
+            </div>
+            <div>
+              <label style="text-align: left;"> Solute Reduction Ratios &nbsp;<span id="ssr2"></span></label>
+            </div>
+          </div>
+          <div class="menu-item">
+            <div>
+            <label id="avgpeakconclabel"> Average Peak Conc. (mg/dL) </label>  &nbsp;&nbsp;
+            <span id="avgpeakconc"></span>
+            </div>
+            <div>
+              <label style="text-align: left;"> Solute Reduction Ratios &nbsp; 
+                <span id="ssr3"></span>
+              </label>
+            </div>
+          </div>
+          <div class="menu-item">
+            <div>
+            </div>
+            <div>
+              <label style="text-align: left;"> Solute Reduction Ratios &nbsp; 
+                <span id="ssr4"></span>
+              </label>
+            </div>
+          </div>
+          <div class="menu-item">
+            <div>
+            </div>
+            <div>
+              <label style="text-align: left;"> Solute Reduction Ratios &nbsp; 
+                <span id="ssr5"></span>
+              </label>
+            </div>
+          </div>
     </div>
     <br />
   </div>
+</menu>
+
   <div></div>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
   <label id="literspertreatment" onclick="toggle_debug_mode(); debouncedReady();">(L/t) Liters per treatment</label>

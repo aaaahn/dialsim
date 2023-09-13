@@ -353,26 +353,49 @@ See LICENSE.md for details.
       <div id="chart-container">
         <canvas id="chart"></canvas>
       </div>
-      <br />
-      &nbsp;&nbsp;&nbsp;
-      <button id="solve" onclick="calculateAndDraw();">Solve!</button> &nbsp;&nbsp;&nbsp;
-      &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="hold" title="Un-check to clear the prior chart data" onclick="ready();" />
-      Hold &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="plottac" onclick="ready();" checked />
+      <div id="menu2">
+        <menu>
+          <div class="menu-item">
 
-      Plot TAC &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" id="plotintra" onclick="ready();" />
-      Plot Intra.*
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <select name="charttype" id="charttype" onchange="ready();">
-        <option value="ConcvsTime">Conc vs. Time</option>
-        <option value="VolumevsTime">Volume vs. Time</option>
-      </select>
+          <div>
+          <button id="solve" onclick="calculateAndDraw();">Solve!</button> 
+          </div>
+          
+          <div>
+          <label>
+            <input type="checkbox" id="hold" title="Un-check to clear the prior chart data" onclick="ready();" />
+            Hold
+          </label> 
+          </div>
+
+          <div>
+            <label>
+              <input type="checkbox" id="plottac" onclick="ready();" checked />
+              Plot TAC
+            </label>
+          </div>
+
+          <div>
+            <label>
+              <input type="checkbox" id="plotintra" onclick="ready();" />
+              Plot Intra.*
+            </label>
+          </div>
+
+          <div>
+            <select name="charttype" id="charttype" onchange="ready();">
+              <option value="ConcvsTime">Conc vs. Time</option>
+              <option value="VolumevsTime">Volume vs. Time</option>
+            </select>
+          </div> 
+
+          </div>
+        </menu>
+      </div>
 
       <h3>Results</h3>
 
-      <div id="menu2">
+      <div id="menu3">
         <menu>
           <div class="menu-item">
             <div>

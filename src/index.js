@@ -554,6 +554,7 @@ function calculateDay(time) {
   return result === 0 ? 7 : result;
 }
 
+
 // pass in eff_ef and clearance inside treatmentTable
 function calcWeeklyTable(treatmentTable, inputData) {
   let sz = [1681, 17];
@@ -736,6 +737,26 @@ function calcWeeklyTable(treatmentTable, inputData) {
       break;
     }
   }
+
+  // calculate pre, post, SRR
+  treatmentTable.forEach((row) => {
+    row.pre = row.dialysis ? wt[row.start / 6].conc_ext : 0;
+    row.post = row.dialysis ? wt[row.end / 6].conc_ext : 0;
+    row.srr =  row.dialysis ? parseFloat( (row.pre - row.post) / row.pre).toFixed(2) : 0.0;
+  });
+  let srr_i = 0;
+  let srr_j = 0;
+  treatmentTable.forEach((row) => {
+    if (row.dialysis) {
+      document.getElementById("srr"+srr_i++).textContent = row.srr;
+    } else {
+      document.getElementById("srr"+(srr_i+srr_j++)).textContent = "";
+    }
+  });
+
+  const ttable = document.getElementById("treatmentTable");
+  populateTable(treatmentTable, ttable);
+
 
   return wt;
 }
@@ -1116,7 +1137,7 @@ window.calculateAndDraw = function calculateAndDraw() {
   console.log(inputData);
 
   // assemble a list of eff_uf so that clearance values for each treatment day can be collected
-  const ttable = document.getElementById("treatmentTable");
+  // const ttable = document.getElementById("treatmentTable");
   const treatmentTable = findClearances(inputData);
 
   // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
@@ -1163,7 +1184,7 @@ window.calculateAndDraw = function calculateAndDraw() {
   populateTable(vTable, table);
 
   try {
-    populateTable(treatmentTable, ttable);
+    // populateTable(treatmentTable, ttable);
     let weeklyTable = calcWeeklyTable(treatmentTable, inputData); // (clearanceValue) pass in co
 
     // Create and update the line chart when "Solve" button is clicked

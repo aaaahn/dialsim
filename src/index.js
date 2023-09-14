@@ -761,6 +761,7 @@ function calcWeeklyTable(treatmentTable, inputData) {
     document.getElementById(`srr${index}`).textContent = value;  
   });
 
+  populateTable(treatmentTable, "treatmentTable");
 
   return wt;
 }
@@ -777,8 +778,9 @@ function calculate_ptime(AX9, AG15, AB15) {
   }
 }
 
-function populateTable(vTable, tableElement) {
+function populateTable(vTable, tableElementName) {
   if (!debug_mode) return;
+  const tableElement = document.getElementById(tableElementName);
   if (!tableElement) return;
 
   tableElement.innerHTML = "";
@@ -1184,8 +1186,7 @@ window.calculateAndDraw = function calculateAndDraw() {
       : 0;
   document.getElementById("avgclearance").textContent =
     parseFloat(avg_clearance).toFixed(1);
-  const table = document.getElementById("clearanceTable");
-  populateTable(vTable, table);
+  populateTable(vTable, "clearanceTable");
 
   try {
     // populateTable(treatmentTable, ttable);
@@ -1224,8 +1225,7 @@ window.calculateAndDraw = function calculateAndDraw() {
     // console.log(`chartDataStack.length: ${chartDataStack.length}`);
     createChart(chartDataStack);
 
-    const wtable = document.getElementById("weeklyTable");
-    populateTable(weeklyTable, wtable);
+    populateTable(weeklyTable, "weeklyTable");
   } catch (e) {
     console.error("error", e);
   }

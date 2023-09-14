@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", render_disabled);
 document.addEventListener("DOMContentLoaded", render_disabled_uf);
 
 function calculatePrePostDilution(inputData) {
-  let Qf = inputData["additionaluf"];
+let Qf = inputData["additionaluf"];
   if (Qf === 0) {
     return 0;
   }
@@ -744,19 +744,22 @@ function calcWeeklyTable(treatmentTable, inputData) {
     row.post = row.dialysis ? wt[row.end / 6].conc_ext : 0;
     row.srr =  row.dialysis ? parseFloat( (row.pre - row.post) / row.pre).toFixed(2) : 0.0;
   });
-  let srr_i = 0;
-  let srr_j = 0;
-  
-  treatmentTable.forEach(row => {
-    if (row.srr) {
-      document.getElementById(`srr${srr_i++}`).textContent = row.srr; 
-    } else {
-      document.getElementById(`srr${srr_i + srr_j++}`).textContent = '';
+
+
+  let srr = [];
+  treatmentTable.forEach((row) => {
+    if (row.dialysis) {
+      srr.push(row.srr);
     }
   });
-
-  const ttable = document.getElementById("treatmentTable");
-  populateTable(treatmentTable, ttable);
+  treatmentTable.forEach((row) => {
+    if (!row.dialysis) {
+      srr.push("");
+    }
+  });
+  srr.forEach((value, index) => { 
+    document.getElementById(`srr${index}`).textContent = value;  
+  });
 
 
   return wt;

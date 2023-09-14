@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", render_disabled);
 document.addEventListener("DOMContentLoaded", render_disabled_uf);
 
 function calculatePrePostDilution(inputData) {
-  let Qf = inputData["additionaluf"];
+let Qf = inputData["additionaluf"];
   if (Qf === 0) {
     return 0;
   }
@@ -554,6 +554,7 @@ function calculateDay(time) {
   return result === 0 ? 7 : result;
 }
 
+
 // pass in eff_ef and clearance inside treatmentTable
 function calcWeeklyTable(treatmentTable, inputData) {
   let sz = [1681, 17];
@@ -737,6 +738,31 @@ function calcWeeklyTable(treatmentTable, inputData) {
     }
   }
 
+  // calculate pre, post, SRR
+  treatmentTable.forEach((row) => {
+    row.pre = row.dialysis ? wt[row.start / 6].conc_ext : 0;
+    row.post = row.dialysis ? wt[row.end / 6].conc_ext : 0;
+    row.srr =  row.dialysis ? parseFloat( (row.pre - row.post) / row.pre).toFixed(2) : 0.0;
+  });
+
+
+  let srr = [];
+  treatmentTable.forEach((row) => {
+    if (row.dialysis) {
+      srr.push(row.srr);
+    }
+  });
+  treatmentTable.forEach((row) => {
+    if (!row.dialysis) {
+      srr.push("");
+    }
+  });
+  srr.forEach((value, index) => { 
+    document.getElementById(`srr${index}`).textContent = value;  
+  });
+
+  populateTable(treatmentTable, "treatmentTable");
+
   return wt;
 }
 
@@ -752,8 +778,9 @@ function calculate_ptime(AX9, AG15, AB15) {
   }
 }
 
-function populateTable(vTable, tableElement) {
+function populateTable(vTable, tableElementName) {
   if (!debug_mode) return;
+  const tableElement = document.getElementById(tableElementName);
   if (!tableElement) return;
 
   tableElement.innerHTML = "";
@@ -1116,7 +1143,7 @@ window.calculateAndDraw = function calculateAndDraw() {
   console.log(inputData);
 
   // assemble a list of eff_uf so that clearance values for each treatment day can be collected
-  const ttable = document.getElementById("treatmentTable");
+  // const ttable = document.getElementById("treatmentTable");
   const treatmentTable = findClearances(inputData);
 
   // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
@@ -1159,11 +1186,10 @@ window.calculateAndDraw = function calculateAndDraw() {
       : 0;
   document.getElementById("avgclearance").textContent =
     parseFloat(avg_clearance).toFixed(1);
-  const table = document.getElementById("clearanceTable");
-  populateTable(vTable, table);
+  populateTable(vTable, "clearanceTable");
 
   try {
-    populateTable(treatmentTable, ttable);
+    // populateTable(treatmentTable, ttable);
     let weeklyTable = calcWeeklyTable(treatmentTable, inputData); // (clearanceValue) pass in co
 
     // Create and update the line chart when "Solve" button is clicked
@@ -1199,8 +1225,7 @@ window.calculateAndDraw = function calculateAndDraw() {
     // console.log(`chartDataStack.length: ${chartDataStack.length}`);
     createChart(chartDataStack);
 
-    const wtable = document.getElementById("weeklyTable");
-    populateTable(weeklyTable, wtable);
+    populateTable(weeklyTable, "weeklyTable");
   } catch (e) {
     console.error("error", e);
   }

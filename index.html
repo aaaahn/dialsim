@@ -307,10 +307,10 @@ See LICENSE.md for details.
         <h3>Model Parameters</h3>
         <div class="menu-item">
           <label for="modeltype"> Model Type(%) </label>
-          <select name="modeltype" id="modeltype" onchange="debouncedReady();">
+          <select name="modeltype" id="modeltype" onchange="render_model_type(); debouncedReady();">
             <option value="1Comp">1 Comp</option>
-            <option value="2CompUrea">2 Comp Urea*</option>
-            <option value="2CompAdLib">2 Comp Ad Lib*</option>
+            <option value="2CompUrea">2 Comp Urea</option>
+            <option value="2CompAdLib">2 Comp Ad Lib</option>
           </select>
         </div>
 
@@ -330,7 +330,36 @@ See LICENSE.md for details.
         </div>
 
         <div class="menu-item">
-          <label for="fluidgaincompartment1">
+          <label  id="label-volumeofdistcomp2l"> Volume of Distribution: Comp 2 (L) </label>
+          <input
+            type="number"
+            id="volumeofdistcomp2l"
+            name="volumeofdistcomp2l"
+            required
+            step="10"
+            min="0"
+            max="100"
+            value="28"
+            oninput="debouncedReady();"
+          />
+        </div>
+
+        <div class="menu-item" >
+          <label id="label-intercompartmentalkc"> Intercompartmental KC (mL/min) </label>
+          <input
+            type="number"
+            id="intercompartmentalkc"
+            name="intercompartmentalkc"
+            step="100"
+            min="0"
+            max="2000"
+            value="800"
+            oninput="debouncedReady();"
+          />
+        </div>
+
+        <div class="menu-item">
+          <label  id="label-fluidgaincompartment1">
             Fluid Gain to Compartment 1 (%)
           </label>
           <input
@@ -345,6 +374,24 @@ See LICENSE.md for details.
             oninput="debouncedReady();"
           />
         </div>
+
+        <div class="menu-item">
+          <label id="label-fluidgaincompartment2">
+            Fluid Gain to Compartment 2 (%)
+          </label>
+          <input
+            type="number"
+            id="fluidgaincompartment2"
+            name="fluidgaincompartment2"
+            required
+            step="10"
+            min="0"
+            max="100"
+            value="0"
+            oninput="debouncedReady();"
+          />
+        </div>
+
       </menu>
     </div>
 

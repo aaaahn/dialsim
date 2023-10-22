@@ -102,9 +102,47 @@ window.render_disabled_uf = function render_disabled_uf() {
   }
 };
 
+// when modeltype is changed, enable/disable the appropriate html elements
+window.render_model_type = function render_model_type() {
+  const inputData = fetchInputValues();
+  let modeltype = inputData["modeltype"];
+
+  // Applying a class to make the difference obviously visible
+  if (modeltype === "1Comp") {
+    document.getElementById("volumeofdist").value = 42;
+    document.getElementById("fluidgaincompartment1").value = 100;
+    document.getElementById("label-volumeofdistcomp2l").style.display = "none";
+    document.getElementById("volumeofdistcomp2l").style.display = "none";
+    document.getElementById("label-intercompartmentalkc").style.display = "none";
+    document.getElementById("intercompartmentalkc").style.display = "none";
+    document.getElementById("label-fluidgaincompartment2").style.display = "none";
+    document.getElementById("fluidgaincompartment2").style.display = "none";
+  } else if (modeltype === "2CompUrea") {
+    document.getElementById("volumeofdist").value = 14;
+    document.getElementById("label-intercompartmentalkc").style.display = "none";
+    document.getElementById("intercompartmentalkc").style.display = "none";
+    document.getElementById("label-fluidgaincompartment1").style.display = "none";
+    document.getElementById("fluidgaincompartment1").style.display = "none";
+  } else { // 2CompAdLib
+    document.getElementById("volumeofdist").value = 14;
+    document.getElementById("volumeofdistcomp2l").value = 28;
+    document.getElementById("label-volumeofdistcomp2l").style.display = "block";
+    document.getElementById("volumeofdistcomp2l").style.display = "block";
+    document.getElementById("label-intercompartmentalkc").style.display = "block";
+    document.getElementById("intercompartmentalkc").style.display = "block";
+    document.getElementById("label-fluidgaincompartment1").style.display = "block";
+    document.getElementById("fluidgaincompartment1").style.display = "block";
+    document.getElementById("label-fluidgaincompartment2").style.display = "block";
+    document.getElementById("fluidgaincompartment2").style.display = "block";
+  }
+};
+
+
+
 // This line ensures that the render_disabled function is called once the document's content has been fully loaded.
 document.addEventListener("DOMContentLoaded", render_disabled);
 document.addEventListener("DOMContentLoaded", render_disabled_uf);
+document.addEventListener("DOMContentLoaded", render_model_type);
 
 function calculatePrePostDilution(inputData) {
 let Qf = inputData["additionaluf"];
@@ -362,6 +400,21 @@ function fluidgain() {
   return fluidgain_val;
 }
 
+// =IF(C15=1,0,IF(C15=2,Interface!E22*(1-AA31),Interface!E23))
+function intracellular_volume(modeltype_val, vol_of_dist_comp1_l, vol_of_dist_comp2_l) {
+  let vext_vtotal_for_urea = 1/3;
+  // 1 Comp
+  if (modeltype_val === 1) {
+    return 0;
+    // 2 Comp Urea
+  } else if (modeltype_val === 2) {
+      return vol_of_dist_comp1_l * (1 - vext_vtotal_for_urea);
+  } else {
+      // 2 Comp Ad Lib
+      return vol_of_dist_comp2_l;
+  }
+}
+
 function extracellular_dv_per_min_ml(fluidgain_val, modeltype_val) {
   let extracellular_dv_per_min_ml_val =
     ((frac_uf_to_intracellular(modeltype_val) * fluidgain_val) / 24 / 60) *
@@ -547,6 +600,17 @@ function calc_vol_ext(
   }
 }
 
+// =IF(AND(AM11,NOT(AM12)),$AB$27,AO10+($AB$29-IF(AND(AM10,AM11),CHOOSE(AK11,$AG$5,$AG$6,$AG$7,$AG$8,$AG$9,$AG$10,$AG$11)*$AA$23/$AA$24,0))*$AB$15)
+function calc_vol_int(prev_day_dialysis, current_day_dialysis, next_day_dialysis, day, intracellular_volume_ml_val, intracellular_dv_ml_val, prev_day_vol_int, eff_uf_m, eff_uf_t, eff_uf_w, eff_uf_th, eff_uf_f, eff_uf_s, eff_uf_su, frac_uf_to_extracelluar, sum_of_fractions, time_increment_mins) {
+  if (current_day_dialysis && !next_day_dialysis) {
+      return intracellular_volume_ml_val;
+  } else {
+      return prev_day_vol_int + (intracellular_dv_ml_val - (prev_day_dialysis && current_day_dialysis ? ([eff_uf_m, eff_uf_t, eff_uf_w, eff_uf_th, eff_uf_f, eff_uf_s, eff_uf_su][day] * frac_uf_to_extracelluar / sum_of_fractions) : 0)) * time_increment_mins;
+  }
+}
+
+
+
 function calculateDay(time) {
   let value = time / 60 / 24 - 0.5;
   let modValue = value % 7;
@@ -598,6 +662,9 @@ function calcWeeklyTable(treatmentTable, inputData) {
     inputData["volumeofdist"],
     inputData["modeltype"]
   );
+  let modeltype_val = inputData["modeltype"];
+  let vol_of_dist_comp1_l = inputData["volumeofdistcomp1l"];
+  let vol_of_dist_comp2_l = inputData["volumeofdistcomp2l"];
   let frac_uf_to_intracellular_val = frac_uf_to_intracellular(
     inputData["modeltype"]
   );
@@ -664,7 +731,16 @@ function calcWeeklyTable(treatmentTable, inputData) {
           sum_of_fractions_val
         );
       }
-      wt[row].vol_int = 0.0;
+      // wt[row].vol_int = 0.0;
+      wt[row].vol_int = calc_vol_int(
+        wt[prev_row].dialysis,
+        wt[row].dialysis,
+        wt[next_row].dialysis,
+        wt[row].day,
+        modeltype_val, vol_of_dist_comp1_l, vol_of_dist_comp2_l,   // assign these above
+
+
+        );
 
       // this if block calculates cols: conc_ext and conc_int
       if (row === 0) {

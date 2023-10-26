@@ -115,10 +115,12 @@ window.render_model_type = function render_model_type() {
     document.getElementById("volumeofdistcomp2l").style.display = "none";
     document.getElementById("label-intercompartmentalkc").style.display = "none";
     document.getElementById("intercompartmentalkc").style.display = "none";
-    document.getElementById("label-fluidgaincompartment2").style.display = "none";
+    document.getElementById("label-fluidgaincompartment1").style.display = "block"; // show
+    document.getElementById("fluidgaincompartment1").style.display = "block";
+    document.getElementById("label-fluidgaincompartment2").style.display = "none"; // hide
     document.getElementById("fluidgaincompartment2").style.display = "none";
   } else if (modeltype === "2CompUrea") {
-    document.getElementById("volumeofdist").value = 14;
+    document.getElementById("volumeofdist").value = 42;
     document.getElementById("label-intercompartmentalkc").style.display = "none";
     document.getElementById("intercompartmentalkc").style.display = "none";
     document.getElementById("label-fluidgaincompartment1").style.display = "none";
@@ -443,7 +445,7 @@ function calcDV(days_since, fluidgain_val, modeltype_val, fluidgaincompartment2_
   );
 }
 
-function map_day_to_kml(dialysis, day_num, time, clearanceValue, duration) {
+function map_day_to_kml(dialysis, time, clearanceValue, duration) {
   if ((time - 720) % 1440 <= hours_to_mins(duration)) {
     return dialysis * clearanceValue;
   } else {
@@ -500,6 +502,7 @@ function calc_vol_ext0(
   extracellular_dv_per_min_ml_val,
   sum_of_fractions_val
 ) {
+  /*
   console.log(`calc_vol_ext0:constant_dial_val: ${constant_dial_val}`);
   console.log(`calc_vol_ext0:prev_day_dialysis: ${prev_day_dialysis}`);
   console.log(`calc_vol_ext0:current_day_dialysis: ${current_day_dialysis}`);
@@ -508,13 +511,10 @@ function calc_vol_ext0(
   console.log(`calc_vol_ext0:eff_uf: ${eff_uf}`);
   console.log(`calc_vol_ext0:time_increment_mins: ${time_increment_mins}`);
   console.log(`calc_vol_ext0:extracellular_volume_val: ${extracellular_volume_val}`);
-  console.log(
-    `calc_vol_ext0:frac_uf_to_intracellular_val: ${frac_uf_to_intracellular_val}`
-  );
-  console.log(
-    `calc_vol_ext0:extracellular_dv_per_min_ml_val: ${extracellular_dv_per_min_ml_val}`
-  );
+  console.log(`calc_vol_ext0:frac_uf_to_intracellular_val: ${frac_uf_to_intracellular_val}`);
+  console.log(`calc_vol_ext0:extracellular_dv_per_min_ml_val: ${extracellular_dv_per_min_ml_val}`);
   console.log(`calc_vol_ext0:sum_of_fractions_val: ${sum_of_fractions_val}`);
+  */
   if (constant_dial_val) {
     return extracellular_volume_val * 1000;
   } else if (current_day_dialysis && !next_day_dialysis) {
@@ -526,13 +526,10 @@ function calc_vol_ext0(
       prev_day_dialysis && current_day_dialysis
         ? (chooseValue * frac_uf_to_intracellular_val) / sum_of_fractions_val
         : 0;
+        /*
     console.log(`calc_vol_ext0:innerValue: ${innerValue}`);
-    console.log(
-      `calc_vol_ext0:(extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins: ${
-        (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
-      }`
-    );
-
+    console.log(`calc_vol_ext0:(extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins: ${(extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins}`);
+*/
     return (
       prev_day_vol_ext +
       (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
@@ -604,6 +601,7 @@ function calc_vol_ext(
 // 1 =                 IF(AND(AM10,NOT(AM11)),$AB$27,AO9.  +($AB$29-IF(AND(AM9,   AM10),CHOOSE(AK10,$AG$5,$AG$6,$AG$7,$AG$8,$AG$9,$AG$10,$AG$11)*$AA$23/$AA$24,0))*$AB$15)
 // 2 =                 IF(AND(AM11,NOT(AM12)),$AB$27,AO10  +($AB$29-IF(AND(AM10,  AM11),CHOOSE(AK11,$AG$5,$AG$6,$AG$7,$AG$8,$AG$9,$AG$10,$AG$11)*$AA$23/$AA$24,0))*$AB$15)
 function calc_vol_int(time, prev_day_dialysis, current_day_dialysis, next_day_dialysis, day, intracellular_volume_ml_val, intracellular_dv_ml_val, prev_day_vol_int, eff_uf_m, eff_uf_t, eff_uf_w, eff_uf_th, eff_uf_f, eff_uf_s, eff_uf_su, frac_uf_to_extracelluar, sum_of_fractions, time_increment_mins) {
+/*
   if (time === 810 || time === 10080) {
     console.log(`===================================================================`);
     console.log(`calc_vol_int:time: ${time}`);
@@ -611,11 +609,12 @@ function calc_vol_int(time, prev_day_dialysis, current_day_dialysis, next_day_di
     console.log(`calc_vol_int:current_day_dialysis: ${current_day_dialysis}`);
     console.log(`calc_vol_int:next_day_dialysis: ${next_day_dialysis}`);
   }
+  */
 if (current_day_dialysis && !next_day_dialysis) { // flips from true -> false
       return intracellular_volume_ml_val;           // 28 * 1000
   } else {
-    let eff_uf_val = [eff_uf_m, eff_uf_t, eff_uf_w, eff_uf_th, eff_uf_f, eff_uf_s, eff_uf_su][day];
-    if (time === 810 || time === 10080) {
+      let eff_uf_val = [eff_uf_m, eff_uf_t, eff_uf_w, eff_uf_th, eff_uf_f, eff_uf_s, eff_uf_su][day];
+/*      if (time === 810 || time === 10080) {
       console.log(`calc_vol_int:prev_day_vol_int: ${prev_day_vol_int}`);
       console.log(`calc_vol_int:intracellular_dv_ml_val: ${intracellular_dv_ml_val}`);
       console.log(`calc_vol_int:prev_day_dialysis: ${prev_day_dialysis}`);
@@ -625,7 +624,7 @@ if (current_day_dialysis && !next_day_dialysis) { // flips from true -> false
       console.log(`calc_vol_int:sum_of_fractions: ${sum_of_fractions}`);
       console.log(`calc_vol_int:time_increment_mins: ${time_increment_mins}`);
 
-    }
+    } */
       return prev_day_vol_int + (intracellular_dv_ml_val - (prev_day_dialysis && current_day_dialysis ? (eff_uf_val * frac_uf_to_extracelluar / sum_of_fractions) : 0)) * time_increment_mins;
   }
 }
@@ -637,6 +636,17 @@ function calculateDay(time) {
   let modValue = value % 7;
   let result = 1 + Math.floor(modValue);
   return result === 0 ? 7 : result;
+}
+
+// =IF(C15=1,0,IF(C15=2,AA32*(Interface!E22/42)^(2/3),Interface!E24))
+function calc_kc_ml_min(model_type_val, kc_for_urea, volumeofdist, intercompartmentalkc) {
+    if (model_type_val === "1Comp") {
+        return 0;
+    } else if (model_type_val === "2CompUrea") {
+        return kc_for_urea * Math.pow(volumeofdist / 42, 2/3);
+    } else {
+        return intercompartmentalkc;
+    }
 }
 
 
@@ -666,11 +676,13 @@ function calcWeeklyTable(treatmentTable, inputData) {
   var time_increment_minutes = 6;
   var endog_clear = inputData["endogenousclearance"]; // parseFloat(document.getElementById("endogenousclearance").value); // 0; // hard-coded AA37
   var generation = inputData["generationrate"] / (24 * 60); // parseFloat(document.getElementById("generationrate").value) / (24 * 60);
-  // console.log(`generation: ${generation}`);
+  console.log(`generation: ${generation}`);
 
   let kc = 0;
+  let kc_ml_min = calc_kc_ml_min(inputData["modeltype"], 800, inputData["volumeofdist"], inputData["intercompartmentalkc"]);
+  console.log(`kc_ml_min: ${kc_ml_min}`);
   let extracell = 0.834522427; // this should come from an prior vTable (as argument to this function)
-  let intracell = 0.0;
+  let intracell = 0.817858394;
   var duration = inputData["duration"]; // parseFloat(document.getElementById("duration").value); // let duration = 3.33;
   let increment = 1;
   let last = sz[0] - 1;
@@ -695,7 +707,7 @@ function calcWeeklyTable(treatmentTable, inputData) {
   let sum_of_fractions_val = sum_of_fractions(inputData["modeltype"], inputData['fluidgaincompartment1'], inputData['fluidgaincompartment2']);
   let constant_dial_val = constant_dial(duration, number_of_treatments);
   console.log(`constant_dial_val: ${constant_dial_val}`);
-  let intracellular_volume_val = intracellular_volume( modeltype_val, vol_of_dist_comp1_l, vol_of_dist_comp2_l);
+  let intracellular_volume_val = intracellular_volume( modeltype_val, inputData['volumeofdist'], vol_of_dist_comp2_l);
   console.log(`intracellular_volume_val: ${intracellular_volume_val}`);
   let frac_uf_to_extracellular_val = frac_uf_to_extracellular(modeltype_val, fluidgaincompartment2_val);
   console.log(`frac_uf_to_extracellular_val: ${frac_uf_to_extracellular_val}`);
@@ -713,13 +725,10 @@ function calcWeeklyTable(treatmentTable, inputData) {
   console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
   console.log(`RIGHT: wt[last].conc_ext: ${wt[last].conc_ext}`);
   let iteration_enabled = true;
-  let start_end_gap = 0.01;
-  for (
-    let iteration = 0;
-    Math.abs(wt[0].conc_ext - wt[last].conc_ext) > start_end_gap &&
-    iteration_enabled;
-    iteration++
-  ) {
+  // let start_end_gap = 0.01;
+  let start_end_gap = 0.0008;
+  for (let iteration = 0; Math.abs(wt[0].conc_ext - wt[last].conc_ext) > start_end_gap && iteration_enabled; iteration++) {
+    let result = 0;
     for (let row = 0; row < sz[0]; row++) {
       wt[row].time = row === 0 ? 0 : wt[row - 1].time + time_increment_minutes;
       wt[row].day = calculateDay(wt[row].time);
@@ -744,7 +753,7 @@ function calcWeeklyTable(treatmentTable, inputData) {
           wt[prev_row].dialysis,
           wt[row].dialysis,
           wt[next_row].dialysis,
-          wt[prev_row].vol_ext,
+          extracellular_volume_val * 1000, // wt[prev_row].vol_ext,
           eff_uf,
           time_increment_minutes,
           extracellular_volume_val,
@@ -780,7 +789,7 @@ function calcWeeklyTable(treatmentTable, inputData) {
             wt[row].day - 1,
             intracellular_volume_val * 1000,
             intracellular_dv_ml_val,
-            wt[prev_row].vol_int,
+            intracellular_volume_val * 1000, // wt[prev_row].vol_int,
             treatmentTable[0].eff_uf,
             treatmentTable[1].eff_uf,
             treatmentTable[2].eff_uf,
@@ -823,35 +832,35 @@ function calcWeeklyTable(treatmentTable, inputData) {
         if (wt[row - 1].vol_ext <= 0) {
           wt[row].conc_ext = 0.0;
         } else {
+          // FIX conc_ext and conc_in should auto fix!!
+          // =IF(AN9<=0,0,(AP9*AN9-(IF(AND(AM9,AM10),CHOOSE(AK10,$AI$5,$AI$6,$AI$7,$AI$8,$AI$9,$AI$10,$AI$11),$AA$37))*AP9*$AB$15+$AA$34*(AQ9-AP9)*$AB$15+$AA$33*$AB$15)/AN9)
+          
           wt[row].conc_ext =
-            (wt[row - 1].conc_ext * wt[row - 1].vol_ext -
-              (wt[row - 1].dialysis && wt[row].dialysis
-                ? map_day_to_kml(
-                    wt[row].dialysis,
-                    wt[row].day,
-                    wt[row].time,
-                    treatmentTable[wt[row].day - 1].clearance,
-                    duration
-                  )
+            (wt[row - 1].conc_ext * wt[row - 1].vol_ext - (wt[row - 1].dialysis && wt[row].dialysis
+                ? map_day_to_kml(wt[row].dialysis, wt[row].time, treatmentTable[wt[row].day - 1].clearance, duration)
                 : endog_clear) *
-                wt[row - 1].conc_ext *
-                time_increment_minutes +
-              kc *
-                (wt[row - 1].conc_int - wt[row - 1].conc_ext) *
-                time_increment_minutes +
-              generation * time_increment_minutes) /
-            wt[row - 1].vol_ext;
+                wt[row - 1].conc_ext * time_increment_minutes + kc_ml_min * (wt[row - 1].conc_int - wt[row - 1].conc_ext) * time_increment_minutes + generation * time_increment_minutes) / wt[row - 1].vol_ext;
           wt[row].debug = 0.0;
-        }
-        // is vol_int less than zero?
-        if (wt[row - 1].vol_int <= 0) {
-          wt[row].conc_int = 0.0;
-        } else {
-          wt[row].conc_int =
-            wt[row - 1].conc_int * wt[row - 1].vol_int -
-            ((wt[row - 1].conc_int - wt[row - 1].conc_ext) *
-              time_increment_minutes) /
-              wt[row - 1].vol_int;
+          
+         /*
+          // =IF(AN9 <=0,0,(AP9 * AN9-(IF(AND(AM9, AM10),CHOOSE(AK10,$AI$5,$AI$6,$AI$7,$AI$8,$AI$9,$AI$10,$AI$11),$AA$37))*AP9 *$AB$15+$AA$34*(AQ9 -AP9) *$AB$15+$AA$33*$AB$15)/AN9)
+          // =IF(AN10<=0,0,(AP10*AN10-(IF(AND(AM10,AM11),CHOOSE(AK11,$AI$5,$AI$6,$AI$7,$AI$8,$AI$9,$AI$10,$AI$11),$AA$37))*AP10*$AB$15+$AA$34*(AQ10-AP10)*$AB$15+$AA$33*$AB$15)/AN10)
+          if (wt[row-1].dialysis && wt[row].dialysis) {
+            result += (treatmentTable[wt[row].day - 1].clearance || 0) * wt[row - 1].conc_ext * time_increment_minutes;
+          }
+          result += (kc_ml_min * (wt[row - 1].conc_int - wt[row - 1].conc_ext) + generation) * time_increment_minutes;
+          console.log(`result: ${result}`); 
+          wt[row].conc_ext = (wt[row - 1].conc_ext * wt[row - 1].vol_ext - result) / wt[row - 1].vol_ext;
+          console.log(`wt[row].conc_ext: ${wt[row].conc_ext}`);
+          */
+          // is vol_int less than zero?
+          if (wt[row - 1].vol_int <= 0) {
+            wt[row].conc_int = 0.0;
+          } else {
+            // ( AQ9 * AO9 - $AA$34 * (AQ9-AP9) * $AB$15) / AO9
+            wt[row].conc_int =
+              (wt[row - 1].conc_int * wt[row - 1].vol_int - kc_ml_min * ((wt[row - 1].conc_int - wt[row - 1].conc_ext) * time_increment_minutes)) / wt[row - 1].vol_int;
+          }
         }
       }
       wt[row].point = row;
@@ -862,13 +871,12 @@ function calcWeeklyTable(treatmentTable, inputData) {
       );
       wt[row].cext = wt[row].conc_ext * 100.0;
       wt[row].vext = wt[row].vol_ext / 1000.0;
-    } // for loop ends here
+    } // inner (row 0 to 10080) for loop ends here
 
     // calc the end - start difference, and add 1/2 to start at a mid point again
     // let extracell_mid_offset = (wt[sz[0] - 1].conc_ext - extracell_mid) / 2;
     let half_diff = (wt[last].conc_ext - wt[0].conc_ext) / 2;
     extracell = wt[0].conc_ext + half_diff;
-    /*
     console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
     console.log(`RIGHT: wt[sz[0]].conc_ext: ${wt[sz[0] - 1].conc_ext}`);
     console.log(`half_diff: ${half_diff}`);
@@ -877,14 +885,15 @@ function calcWeeklyTable(treatmentTable, inputData) {
       `Math.abs(wt[0].conc_ext - wt[last].conc_ext): ${Math.abs(
         wt[0].conc_ext - wt[last].conc_ext
       )}`
-    ); */
+    ); 
     console.log(`iteration: ${iteration}`);
-    if (iteration > 10) {
+    let max_iteration_limit = 100;
+    if (iteration > max_iteration_limit) {
       // prevent a run-away loop
       console.log(`maximum iteration reached wt[last].conc_ext: ${wt[last].conc_ext}`);
       break;
     }
-  }
+  } // outer (iteration) for loop ends here
 
   // calculate pre, post, SRR
   treatmentTable.forEach((row) => {
@@ -1267,7 +1276,7 @@ function applyTreatment(eff_uf, inputData) {
       percentTolerance: 10,
       maxIterations: 100,
       maxStep: 5,
-      goal: 0.001,
+      goal: 0.000000001,
       independentVariableIdx: 0, // the index position of the independent variable x in the fnParams array.
     });
 

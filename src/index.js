@@ -36,9 +36,7 @@ window.toggle_debug_mode = function toggle_debug_mode() {
 // otherwise, when the value is non-zero
 // the use entered value is copied into HTML element dilution.
 window.render_disabled = function render_disabled() {
-  console.log(
-    `called - render_disabled: ${document.getElementById("replace").disabled}`
-  );
+  // console.log(`called - render_disabled: ${document.getElementById("replace").disabled}`);
 
   var additionalufValue = parseFloat(
     document.getElementById("additionaluf").value
@@ -68,15 +66,13 @@ window.render_disabled = function render_disabled() {
 window.render_disabled_uf = function render_disabled_uf() {
   const inputData = fetchInputValues();
 
-  console.log(
-    `called - render_disabled_uf: ${document.getElementById("uf").disabled}`
-  );
+  // console.log(`called - render_disabled_uf: ${document.getElementById("uf").disabled}`);
   var fluidgainValue = fluidgain();  // TODO: replace this with inputData["fluidgain"], retire function fluidgain()
   console.log(`fluidgainValue: ${fluidgainValue}`);
   var isDisabled = fluidgainValue === 0;
 
   document.getElementById("uf").disabled = isDisabled;
-  console.log(`uf isDisabled: ${isDisabled}`);
+  // console.log(`uf isDisabled: ${isDisabled}`);
   var number_of_treatments =
     inputData["monday"] +
     inputData["tuesday"] +
@@ -85,7 +81,7 @@ window.render_disabled_uf = function render_disabled_uf() {
     inputData["friday"] +
     inputData["saturday"] +
     inputData["sunday"];
-  console.log(`number_of_treatments: ${number_of_treatments}`);
+  // console.log(`number_of_treatments: ${number_of_treatments}`);
 
   // Applying a class to make the difference obviously visible
   if (isDisabled) {
@@ -158,7 +154,7 @@ let Qf = inputData["additionaluf"];
     let duration_in_mins = hours_to_mins(inputData["duration"]); // let duration = 3.33;
     let dilution = inputData["dilution"]; // parseFloat(document.getElementById("dilution").value);
     let predilution = (dilution * 1000) / duration_in_mins;
-    console.log(`predilution: ${predilution}`);
+    // console.log(`predilution: ${predilution}`);
     return predilution;
   } else {
     return 0;
@@ -456,9 +452,10 @@ function map_day_to_kml(dialysis, time, clearanceValue, duration) {
 // =Interface!E22 * IF( C15=2, 1/3 , 1)
 function extracellular_volume(volumeofdist, modeltype_text) {
   let multiplier = modeltype_text === "2CompUrea" ? 1 / 3 : 1;
+  /*
   console.log(`extracellular_volume:volumeofdist ${volumeofdist}`);
   console.log(`extracellular_volume:modeltype_text ${modeltype_text}`);
-  console.log(`extracellular_volume:volumeofdist * multiplier ${volumeofdist * multiplier}`);
+  console.log(`extracellular_volume:volumeofdist * multiplier ${volumeofdist * multiplier}`); */
   return volumeofdist * multiplier;
 }
 
@@ -676,11 +673,10 @@ function calcWeeklyTable(treatmentTable, inputData) {
   var time_increment_minutes = 6;
   var endog_clear = inputData["endogenousclearance"]; // parseFloat(document.getElementById("endogenousclearance").value); // 0; // hard-coded AA37
   var generation = inputData["generationrate"] / (24 * 60); // parseFloat(document.getElementById("generationrate").value) / (24 * 60);
-  console.log(`generation: ${generation}`);
+  // console.log(`generation: ${generation}`);
 
-  let kc = 0;
   let kc_ml_min = calc_kc_ml_min(inputData["modeltype"], 800, inputData["volumeofdist"], inputData["intercompartmentalkc"]);
-  console.log(`kc_ml_min: ${kc_ml_min}`);
+  // console.log(`kc_ml_min: ${kc_ml_min}`);
   let extracell = 0.834522427; // this should come from an prior vTable (as argument to this function)
   let intracell = 0.817858394;
   var duration = inputData["duration"]; // parseFloat(document.getElementById("duration").value); // let duration = 3.33;
@@ -692,7 +688,7 @@ function calcWeeklyTable(treatmentTable, inputData) {
     .filter((clearance) => clearance && clearance !== 0);
   let number_of_treatments = validClearances.length;
   let extracellular_volume_val = extracellular_volume(inputData["volumeofdist"], inputData["modeltype"]);
-  console.log(`extracellular_volume_val: ${extracellular_volume_val}`);
+  // console.log(`extracellular_volume_val: ${extracellular_volume_val}`);
   let modeltype_val = inputData["modeltype"];
   let vol_of_dist_comp1_l = inputData["volumeofdistcomp1l"];
   let vol_of_dist_comp2_l = inputData["volumeofdistcomp2l"];
@@ -706,13 +702,13 @@ function calcWeeklyTable(treatmentTable, inputData) {
   let fluidgaincompartment2_val = inputData["fluidgaincompartment2"]
   let sum_of_fractions_val = sum_of_fractions(inputData["modeltype"], inputData['fluidgaincompartment1'], inputData['fluidgaincompartment2']);
   let constant_dial_val = constant_dial(duration, number_of_treatments);
-  console.log(`constant_dial_val: ${constant_dial_val}`);
+  // console.log(`constant_dial_val: ${constant_dial_val}`);
   let intracellular_volume_val = intracellular_volume( modeltype_val, inputData['volumeofdist'], vol_of_dist_comp2_l);
-  console.log(`intracellular_volume_val: ${intracellular_volume_val}`);
+  // console.log(`intracellular_volume_val: ${intracellular_volume_val}`);
   let frac_uf_to_extracellular_val = frac_uf_to_extracellular(modeltype_val, fluidgaincompartment2_val);
-  console.log(`frac_uf_to_extracellular_val: ${frac_uf_to_extracellular_val}`);
+  /* console.log(`frac_uf_to_extracellular_val: ${frac_uf_to_extracellular_val}`);
   console.log(`intracellular_volume_val: ${intracellular_volume_val}`);
-  console.log(`sum_of_fractions_val: ${sum_of_fractions_val}`);
+  console.log(`sum_of_fractions_val: ${sum_of_fractions_val}`); */
   let intracellular_dv_ml_val = intracellular_dv_ml(fluidgain_val, modeltype_val, fluidgaincompartment2_val);
   
   // do not perform any DOM operations inside the loop below.  Fetch the value one above and pass them down as
@@ -722,8 +718,8 @@ function calcWeeklyTable(treatmentTable, inputData) {
   wt[0].conc_ext = extracell; // this value has not been assigned yet, so stamp a random value to get overriden with correct calculation in the loop below
   wt[last].conc_ext = extracell + 1; // this value has not been assigned yet, so stamp a random value to get overriden with correct calculation in the loop below
   // console.log(`extracell: ${extracell}`);
-  console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
-  console.log(`RIGHT: wt[last].conc_ext: ${wt[last].conc_ext}`);
+  // console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
+  // console.log(`RIGHT: wt[last].conc_ext: ${wt[last].conc_ext}`);
   let iteration_enabled = true;
   // let start_end_gap = 0.01;
   let start_end_gap = 0.0008;
@@ -877,15 +873,12 @@ function calcWeeklyTable(treatmentTable, inputData) {
     // let extracell_mid_offset = (wt[sz[0] - 1].conc_ext - extracell_mid) / 2;
     let half_diff = (wt[last].conc_ext - wt[0].conc_ext) / 2;
     extracell = wt[0].conc_ext + half_diff;
+    /*
     console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
     console.log(`RIGHT: wt[sz[0]].conc_ext: ${wt[sz[0] - 1].conc_ext}`);
     console.log(`half_diff: ${half_diff}`);
     console.log(`updated extracell: ${extracell}`);
-    console.log(
-      `Math.abs(wt[0].conc_ext - wt[last].conc_ext): ${Math.abs(
-        wt[0].conc_ext - wt[last].conc_ext
-      )}`
-    ); 
+    console.log(`Math.abs(wt[0].conc_ext - wt[last].conc_ext): ${Math.abs(wt[0].conc_ext - wt[last].conc_ext)}`); */
     console.log(`iteration: ${iteration}`);
     let max_iteration_limit = 100;
     if (iteration > max_iteration_limit) {
@@ -1279,10 +1272,10 @@ function applyTreatment(eff_uf, inputData) {
       goal: 0.000000001,
       independentVariableIdx: 0, // the index position of the independent variable x in the fnParams array.
     });
-
+/*
     console.log(`final clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
     console.log(`final clearance: ${clearance}`);
-    console.log(`result: ${result}`);
+    console.log(`result: ${result}`); */
   } catch (e) {
     console.error("error", e);
   }
@@ -1330,7 +1323,7 @@ window.calculateAndDraw = function calculateAndDraw() {
           treatmentTable[i].clear_uf,
           inputData
         );
-        console.log(`ttcd apply i: ${i}`);
+        // console.log(`ttcd apply i: ${i}`);
       }
     }
   }
@@ -1426,7 +1419,7 @@ function fetchInputValues() {
 // AA This function gets invoked when a gui element changes
 window.ready = function ready() {
   set_dynamic_calc_state();
-  console.log(`ready(): dynamic_calc_state : ${dynamic_calc_state}`);
+  // console.log(`ready(): dynamic_calc_state : ${dynamic_calc_state}`);
   if (!is_in_dynamic_mode()) {
     // hold is enabled.  ignore input
     return;

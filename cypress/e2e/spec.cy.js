@@ -9,11 +9,11 @@ describe('Default Values Test', () => {
     cy.visit('/');
   });
 
-  it('solving with default inputs should result in avg clearance of 237.2 and avg concentrate of 53.06', () => {
+  it('solving with default inputs should result in avg clearance of 237.2 and avg concentrate of 51.62', () => {
     // Click the button with the id "solve"
     cy.get('#solve').click();
     cy.get('#avgclearance').should('have.text', '237.2');
-    cy.get('#timeavgconc').should('have.text', '53.06');
+    cy.get('#timeavgconc').should('have.text', '51.62');  // 51.57
   });
 });
 
@@ -23,25 +23,25 @@ describe('Duration Test', () => {
     cy.visit('/');
   });
 
-  it('solving with duration of 3.0 hours should result in time avg concentrate of 57.19', () => {
-    // Click the button with the id "solve". 237.2, 57.33, 86.01
+  it('solving with duration of 3.0 hours should result in time avg concentrate of 55.89', () => {
+    // Click the button with the id "solve".
     cy.get('#solve').click();
     cy.get('#duration').clear().type("3");
-    cy.get('#timeavgconc').should('have.text', '57.19');
+    cy.get('#timeavgconc').should('have.text', '55.86');  // 55.86
   });
 
-  it('solving with duration of 3.5 hours should result in time avg concentrate of 50.96', () => {
-    // Click the button with the id "solve"   237.2, 50.87, 79.30
+  it('solving with duration of 3.5 hours should result in time avg concentrate of 49.21', () => {
+    // Click the button with the id "solve"
     cy.get('#solve').click();
     cy.get('#duration').clear().type("3.5");
-    cy.get('#timeavgconc').should('have.text', '50.96');
+    cy.get('#timeavgconc').should('have.text', '49.20');  // 49.17
   });
 
-  it('solving with duration of 4.0 hours should result in time avg concentrate of 46.29', () => {
-    // Click the button with the id "solve". 237.2, 46.16, 74.37
+  it('solving with duration of 4.0 hours should result in time avg concentrate of 44.30', () => {
+    // Click the button with the id "solve"
     cy.get('#solve').click();
     cy.get('#duration').clear().type("4");
-    cy.get('#timeavgconc').should('have.text', '46.29');
+    cy.get('#timeavgconc').should('have.text', '44.30');  // 44.27
   });
 });
 
@@ -51,13 +51,13 @@ describe('Hematocrit Test', () => {
     cy.visit('/');
   });
 
-  it('hematocrit of 30 should result in average clearance of 235.1 and time avg concentrate of 53.48', () => {
+  it('hematocrit of 30 should result in average clearance of 235.1 and time avg concentrate of 52.00', () => {
     // Click the button with the id "solve"
     cy.get('#hematocrit').clear().type("30");
     cy.get('#solve').click();
 
     cy.get('#avgclearance').should('have.text', '235.1');
-    cy.get('#timeavgconc').should('have.text', '53.48');
+    cy.get('#timeavgconc').should('have.text', '52.00');  // 51.95
   });
 });
 
@@ -67,22 +67,20 @@ describe('Additional UF Test', () => {
     cy.visit('/');
   });
 
-  it('additional UF of 23 should result in avg clearance of 240.0 and time avg concentrate of 52.63', () => {
-    // Click the button with the id "solve" 240.0, 52.73, 81.25
+  it('additional UF of 23 should result in avg clearance of 240.0 and time avg concentrate of 51.13', () => {
     cy.get('#additionaluf').clear().type("23");
     cy.get('#solve').click();
 
-    cy.get('#avgclearance').should('have.text', '240.0');
-    cy.get('#timeavgconc').should('have.text', '52.63');
+    cy.get('#avgclearance').should('have.text', '240.0'); 
+    cy.get('#timeavgconc').should('have.text', '51.13');  // 51.08
   });
 
-  it('additional UF of 30 should result in avg clearance of 241.3 and time avg concentrate of 52.43', () => {
-    // Click the button with the id "solve" 241.3, 52.51, 81.03
+  it('additional UF of 30 should result in avg clearance of 241.3 and time avg concentrate of 50.90', () => {
     cy.get('#additionaluf').clear().type("30");
     cy.get('#solve').click();
 
     cy.get('#avgclearance').should('have.text', '241.3');
-    cy.get('#timeavgconc').should('have.text', '52.43');
+    cy.get('#timeavgconc').should('have.text', '50.90');  // 50.85
   });
 
 });
@@ -93,71 +91,67 @@ describe('Fluid Gain Test', () => {
     cy.visit('/');
   });
 
-  it('fluid gain of 2 should result in avg clearance of 247.7 and time avg concentrate of 51.43', () => {
+  it('fluid gain of 2 should result in avg clearance of 247.7 and time avg concentrate of 49.74', () => {
     // Click the button with the id "solve"
     cy.get('#fluidgain').clear().type("2");
     cy.get('#solve').click();
 
     cy.get('#avgclearance').should('have.text', '247.7');
-    cy.get('#timeavgconc').should('have.text', '51.43');
+    cy.get('#timeavgconc').should('have.text', '49.74');   // 49.70
   });
 
-  it('fluid gain of 3 should result in avg clearance of 253.0 and time avg concentrate of 50.56', () => {
+  it('fluid gain of 3 should result in avg clearance of 253.0 and time avg concentrate of 48.86', () => {
     // Click the button with the id "solve"
     cy.get('#fluidgain').clear().type("3");
     cy.get('#solve').click();
 
     cy.get('#avgclearance').should('have.text', '253.0');
-    cy.get('#timeavgconc').should('have.text', '50.56');
+    cy.get('#timeavgconc').should('have.text', '48.86');  // 48.81
   });
 
-  it('fluid gain of 4 should result in avg clearance of 258.2 and time avg concentrate of 49.64', () => {
+  it('fluid gain of 4 should result in avg clearance of 258.2 and time avg concentrate of 48.01', () => {
     // Click the button with the id "solve"
     cy.get('#fluidgain').clear().type("4");
     cy.get('#solve').click();
 
     cy.get('#avgclearance').should('have.text', '258.2');
-    cy.get('#timeavgconc').should('have.text', '49.64');
+    cy.get('#timeavgconc').should('have.text', '48.01');   // 47.96
   });
 
 
 });
 
-describe('Volume of Distribution Test', () => {
+describe('Volume of Distribution Test, Model Type 1Comp', () => {
   beforeEach(() => {
     cy.visit('/');
   });
 
-  it('volume of distribution of 20 should result in time avg concentrate value of 65.98', () => {
-    // Click the button with the id "solve" 237.2, 66.01, 117.35
+  it('under model 1comp, vod of 20 should result in time avg concentrate value of 66.04', () => {
     cy.get('#volumeofdist').clear().type("20");  
     cy.get('#solve').click();
 
-    cy.get('#timeavgconc').should('have.text', '65.98');
+    cy.get('#timeavgconc').should('have.text', '66.04');  // 66.01
   });
 
-  it('volume of distribution of 30 should result in time avg concentrate value of 55.76', () => {
-    // Click the button with the id "solve" 237.2, 55.84, 90.05
+  it('under model 1comp, vod of 30 should result in time avg concentrate value of 55.85', () => {
     cy.get('#volumeofdist').clear().type("30");
     cy.get('#solve').click();
 
-    cy.get('#timeavgconc').should('have.text', '55.76');
+    cy.get('#timeavgconc').should('have.text', '55.85');  // 55.84
   });
 
-  it('volume of distribution of 40 should result in time avg concentrate value of 52.27', () => {
-    // Click the button with the id "solve" 237.2, 52.04, 77.72
+  it('under model 1comp, vod of 40 should result in time avg concentrate value of 52.08', () => {
     cy.get('#volumeofdist').clear().type("40");
     cy.get('#solve').click();
 
-    cy.get('#timeavgconc').should('have.text', '52.27');
+    cy.get('#timeavgconc').should('have.text', '52.08');  // 52.04
   });
 
-  it('volume of distribution of 50 should result in time avg concentrate value of 50.42', () => {
-    // Click the button with the id "solve" 237.2, 50.26, 70.86
+  it('under model 1comp, vod of 50 should result in time avg concentrate value of 50.30', () => {
     cy.get('#volumeofdist').clear().type("50");
     cy.get('#solve').click();
 
-    cy.get('#timeavgconc').should('have.text', '50.42');
+    cy.get('#timeavgconc').should('have.text', '50.30'); // 50.26
   });
 
 

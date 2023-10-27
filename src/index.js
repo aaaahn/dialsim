@@ -193,6 +193,7 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
     Qf = eff_uf;
   }
 
+  console.log(`Qf: ${Qf}`);
   let Hct = inputData["hematocrit"] / 100; // 0;
   let f = 1.0;
   let Calb = 500;
@@ -205,7 +206,9 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
   let increment = 0.001;
   let Ka = (Cp - Cp * f) / Cp / f / (Calb - Cp + Cp * f);
   let Pa = (DP1 - DP0) / (DP1 + DP0);
+  console.log(`Pa: ${Pa}`);
   let Pb = (2 * DP0) / (DP1 + DP0);
+  console.log(`Pb: ${Pb}`);
   let Qp = Qb * (1 - Hct);
   let Qprbc = 0.86 * Qb * Hct;
 
@@ -215,6 +218,8 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
     Qprbc = 0;
   }
 
+  console.log(`Qp: ${Qp}`);
+  console.log(`Qr: ${Qr}`);
   let Qpoatinlet = Qp + Qr; // =L4+$F$7
   let theta_inblood = 0.07;
   let Calb0 = (Calb * Qp) / Qpoatinlet;
@@ -251,6 +256,7 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
     return obj;
   });
 
+  console.log(`Qpoatinlet: ${Qpoatinlet}`)
   for (let row = 0; row < sz[0]; row++) {
     vTable[row].x = row === 0 ? 0.0 : vTable[row - 1].x + 0.001;
     vTable[row].x = parseFloat(vTable[row].x.toFixed(3));
@@ -499,7 +505,6 @@ function calc_vol_ext0(
   extracellular_dv_per_min_ml_val,
   sum_of_fractions_val
 ) {
-  /*
   console.log(`calc_vol_ext0:constant_dial_val: ${constant_dial_val}`);
   console.log(`calc_vol_ext0:prev_day_dialysis: ${prev_day_dialysis}`);
   console.log(`calc_vol_ext0:current_day_dialysis: ${current_day_dialysis}`);
@@ -511,26 +516,17 @@ function calc_vol_ext0(
   console.log(`calc_vol_ext0:frac_uf_to_intracellular_val: ${frac_uf_to_intracellular_val}`);
   console.log(`calc_vol_ext0:extracellular_dv_per_min_ml_val: ${extracellular_dv_per_min_ml_val}`);
   console.log(`calc_vol_ext0:sum_of_fractions_val: ${sum_of_fractions_val}`);
-  */
   if (constant_dial_val) {
     return extracellular_volume_val * 1000;
   } else if (current_day_dialysis && !next_day_dialysis) {
     return extracellular_volume_val * 1000;
   } else {
     let chooseValue = eff_uf || 0;
-
-    let innerValue =
-      prev_day_dialysis && current_day_dialysis
-        ? (chooseValue * frac_uf_to_intracellular_val) / sum_of_fractions_val
-        : 0;
-        /*
+    console.log(`calc_vol_ext0:chooseValue: ${chooseValue}`);
+    let innerValue = prev_day_dialysis && current_day_dialysis ? (chooseValue * frac_uf_to_intracellular_val) / sum_of_fractions_val : 0;
     console.log(`calc_vol_ext0:innerValue: ${innerValue}`);
     console.log(`calc_vol_ext0:(extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins: ${(extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins}`);
-*/
-    return (
-      prev_day_vol_ext +
-      (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins
-    );
+    return (prev_day_vol_ext + (extracellular_dv_per_min_ml_val - innerValue) * time_increment_mins);
   }
 }
 
@@ -688,17 +684,19 @@ function calcWeeklyTable(treatmentTable, inputData) {
     .filter((clearance) => clearance && clearance !== 0);
   let number_of_treatments = validClearances.length;
   let extracellular_volume_val = extracellular_volume(inputData["volumeofdist"], inputData["modeltype"]);
-  // console.log(`extracellular_volume_val: ${extracellular_volume_val}`);
+  console.log(`extracellular_volume_val: ${extracellular_volume_val}`);
   let modeltype_val = inputData["modeltype"];
   let vol_of_dist_comp1_l = inputData["volumeofdistcomp1l"];
   let vol_of_dist_comp2_l = inputData["volumeofdistcomp2l"];
   let frac_uf_to_intracellular_val = frac_uf_to_intracellular(inputData["modeltype"], inputData["fluidgaincompartment1"]);
   let fluidgain_val = inputData["fluidgain"];
+  console.log(`fluidgain_val: ${fluidgain_val}`)
   let extracellular_dv_per_min_ml_val = extracellular_dv_per_min_ml(
     fluidgain_val,
     inputData["modeltype"],
     inputData["fluidgaincompartment1"]
   );
+  console.log(`extracellular_dv_per_min_ml_val: ${extracellular_dv_per_min_ml_val}`)
   let fluidgaincompartment2_val = inputData["fluidgaincompartment2"]
   let sum_of_fractions_val = sum_of_fractions(inputData["modeltype"], inputData['fluidgaincompartment1'], inputData['fluidgaincompartment2']);
   let constant_dial_val = constant_dial(duration, number_of_treatments);
@@ -724,7 +722,6 @@ function calcWeeklyTable(treatmentTable, inputData) {
   // let start_end_gap = 0.01;
   let start_end_gap = 0.0008;
   for (let iteration = 0; Math.abs(wt[0].conc_ext - wt[last].conc_ext) > start_end_gap && iteration_enabled; iteration++) {
-    let result = 0;
     for (let row = 0; row < sz[0]; row++) {
       wt[row].time = row === 0 ? 0 : wt[row - 1].time + time_increment_minutes;
       wt[row].day = calculateDay(wt[row].time);
@@ -749,7 +746,8 @@ function calcWeeklyTable(treatmentTable, inputData) {
           wt[prev_row].dialysis,
           wt[row].dialysis,
           wt[next_row].dialysis,
-          extracellular_volume_val * 1000, // wt[prev_row].vol_ext,
+          // TODO: 1. set wt[prev_row].vol_ext 2. increase iteration of the loop to a large number and see if this converges
+          wt[prev_row].vol_ext, // extracellular_volume_val * 1000, // 46725,  // wt[prev_row].vol_ext. TODO: fix "Fluid Gain (L/day) = 2 problem"
           eff_uf,
           time_increment_minutes,
           extracellular_volume_val,

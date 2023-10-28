@@ -106,6 +106,7 @@ window.render_model_type = function render_model_type() {
 
   // Applying a class to make the difference obviously visible
   if (modeltype === "1Comp") {
+    document.getElementById("label-volumeofdist").textContent = "Volume of Distribution (L)";
     document.getElementById("volumeofdist").value = 42;
     document.getElementById("fluidgaincompartment1").value = 100;
     document.getElementById("label-volumeofdistcomp2l").style.display = "none";
@@ -117,12 +118,14 @@ window.render_model_type = function render_model_type() {
     document.getElementById("label-fluidgaincompartment2").style.display = "none"; // hide
     document.getElementById("fluidgaincompartment2").style.display = "none";
   } else if (modeltype === "2CompUrea") {
+    document.getElementById("label-volumeofdist").textContent = "Volume of Distribution (L)";
     document.getElementById("volumeofdist").value = 42;
     document.getElementById("label-intercompartmentalkc").style.display = "none";
     document.getElementById("intercompartmentalkc").style.display = "none";
     document.getElementById("label-fluidgaincompartment1").style.display = "none";
     document.getElementById("fluidgaincompartment1").style.display = "none";
   } else { // 2CompAdLib
+    document.getElementById("label-volumeofdist").textContent = "Volume of Distribution: Comp 1 (L)";
     document.getElementById("volumeofdist").value = 14;
     document.getElementById("volumeofdistcomp2l").value = 28;
     document.getElementById("label-volumeofdistcomp2l").style.display = "block";
@@ -154,8 +157,6 @@ window.render_solute_type = function render_solute_type() {
     document.getElementById("proteinbinding").classList.remove("disabled");
   }
 };
-
-
 
 // This line ensures that the render_disabled function is called once the document's content has been fully loaded.
 document.addEventListener("DOMContentLoaded", render_disabled);
@@ -616,10 +617,10 @@ function calcWeeklyTable(treatmentTable, inputData) {
   var time_increment_minutes = 6;
   var endog_clear = inputData["endogenousclearance"]; // parseFloat(document.getElementById("endogenousclearance").value); // 0; // hard-coded AA37
   var generation = inputData["generationrate"] / (24 * 60); // parseFloat(document.getElementById("generationrate").value) / (24 * 60);
-  // console.log(`generation: ${generation}`);
+  console.log(`generation: ${generation}`);
 
   let kc_ml_min = calc_kc_ml_min(inputData["modeltype"], 800, inputData["volumeofdist"], inputData["intercompartmentalkc"]);
-  // console.log(`kc_ml_min: ${kc_ml_min}`);
+  console.log(`kc_ml_min: ${kc_ml_min}`);
   let extracell = 0.834522427; // this should come from an prior vTable (as argument to this function)
   let intracell = 0.817858394;
   var duration = inputData["duration"]; // parseFloat(document.getElementById("duration").value); // let duration = 3.33;
@@ -754,13 +755,15 @@ function calcWeeklyTable(treatmentTable, inputData) {
           wt[row].conc_ext = (wt[row - 1].conc_ext * wt[row - 1].vol_ext - result) / wt[row - 1].vol_ext;
           console.log(`wt[row].conc_ext: ${wt[row].conc_ext}`);
           */
+
+          // conc_int =IF(AO9<=0,0,(AQ9*AO9-$AA$34*(AQ9-AP9)*$AB$15)/AO9)
           // is vol_int less than zero?
           if (wt[row - 1].vol_int <= 0) {
             wt[row].conc_int = 0.0;
           } else {
             // ( AQ9 * AO9 - $AA$34 * (AQ9-AP9) * $AB$15) / AO9
             wt[row].conc_int =
-              (wt[row - 1].conc_int * wt[row - 1].vol_int - kc_ml_min * ((wt[row - 1].conc_int - wt[row - 1].conc_ext) * time_increment_minutes)) / wt[row - 1].vol_int;
+              (wt[row - 1].conc_int * wt[row - 1].vol_int - kc_ml_min * (wt[row - 1].conc_int - wt[row - 1].conc_ext) * time_increment_minutes) / wt[row - 1].vol_int;
           }
         }
       }
@@ -778,6 +781,8 @@ function calcWeeklyTable(treatmentTable, inputData) {
     // let extracell_mid_offset = (wt[sz[0] - 1].conc_ext - extracell_mid) / 2;
     let half_diff = (wt[last].conc_ext - wt[0].conc_ext) / 2;
     extracell = wt[0].conc_ext + half_diff;
+    let half_diff2 = (wt[last].conc_int - wt[0].conc_int) / 2;
+    intracell = wt[0].conc_int + half_diff2;
     /*
     console.log(`LEFT:  wt[0].conc_ext: ${wt[0].conc_ext}`);
     console.log(`RIGHT: wt[sz[0]].conc_ext: ${wt[sz[0] - 1].conc_ext}`);

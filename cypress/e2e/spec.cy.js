@@ -142,29 +142,138 @@ describe('Volume of Distribution Test, Model Type 1Comp', () => {
 
     cy.get('#timeavgconc').should('have.text', '66.04');  // 66.01
   });
-
   it('under model 1comp, vod of 30 should result in time avg concentrate value of 55.85', () => {
     cy.get('#volumeofdist').clear().type("30");
     cy.get('#solve').click();
 
     cy.get('#timeavgconc').should('have.text', '55.85');  // 55.84
   });
-
   it('under model 1comp, vod of 40 should result in time avg concentrate value of 52.08', () => {
     cy.get('#volumeofdist').clear().type("40");
     cy.get('#solve').click();
 
     cy.get('#timeavgconc').should('have.text', '52.08');  // 52.04
   });
-
   it('under model 1comp, vod of 50 should result in time avg concentrate value of 50.30', () => {
     cy.get('#volumeofdist').clear().type("50");
     cy.get('#solve').click();
 
     cy.get('#timeavgconc').should('have.text', '50.30'); // 50.26
   });
+});
+
+describe('Volume of Distribution Test, Model Type 2 Comp Urea', () => {
+  beforeEach(() => {
+    cy.visit('/');
+  });
+
+  it('under model 2comp urea, vod of 20 should result in time avg conc value of 72.90', () => {
+    cy.get('#modeltype').select('2CompUrea');
+    cy.get('#volumeofdist').clear().type("20");  
+    cy.get('#solve').click();
+
+    cy.get('#timeavgconc').should('have.text', '72.90');  // 72.87
+  });
+  it('under model 2comp urea, vod of 30 should result in time avg conc value of 62.04', () => {
+    cy.get('#modeltype').select('2CompUrea');
+    cy.get('#volumeofdist').clear().type("30");
+    cy.get('#solve').click();
+
+    cy.get('#timeavgconc').should('have.text', '62.04');  // 62.02
+  });
+  it('under model 2comp urea, vod of 40 should result in time avg conc value of 57.47', () => {
+    cy.get('#modeltype').select('2CompUrea');
+    cy.get('#volumeofdist').clear().type("40");
+    cy.get('#solve').click();
+
+    cy.get('#timeavgconc').should('have.text', '57.47');  // 57.46
+  });
+  it('under model 2comp urea, vod of 50 should result in time avg conc value of 55.05', () => {
+    cy.get('#modeltype').select('2CompUrea');
+    cy.get('#volumeofdist').clear().type("50");
+    cy.get('#solve').click();
+
+    cy.get('#timeavgconc').should('have.text', '55.05'); // 55.04
+  });
+});
 
 
+describe('Volume of Distribution Test, Model Type 2 Ad Lib, VOD Comp1 and Comp2', () => {
+  beforeEach(() => {
+    cy.visit('/');
+  });
+
+  it('under model 2comp ad lib, vod of 14, 28 should result in time avg conc value of 56.86', () => {
+    cy.get('#modeltype').select('2CompAdLib');
+    cy.get('#volumeofdist').clear().type("14");  
+    cy.get('#volumeofdistcomp2l').clear().type("28");  
+    cy.get('#solve').click();
+
+    cy.get('#avgclearance').should('have.text', '237.2'); // 237.2
+    cy.get('#timeavgconc').should('have.text', '56.86');  // 56.87
+  });
+  it('under model 2comp ad lib, vod of 14, 40 should result in time avg conc value of 56.46', () => {
+    cy.get('#modeltype').select('2CompAdLib');
+    cy.get('#volumeofdist').clear().type("14");  
+    cy.get('#volumeofdistcomp2l').clear().type("40");  
+    cy.get('#solve').click();
+
+    cy.get('#avgclearance').should('have.text', '237.2'); // 237.2
+    cy.get('#timeavgconc').should('have.text', '56.46');  // 56.46
+  });
+  it('under model 2comp ad lib, vod of 14, 60 should result in time avg conc value of 56.59', () => {
+    cy.get('#modeltype').select('2CompAdLib');
+    cy.get('#volumeofdist').clear().type("14");  
+    cy.get('#volumeofdistcomp2l').clear().type("60");  
+    cy.get('#solve').click();
+
+    cy.get('#avgclearance').should('have.text', '237.2'); // 237.2
+    cy.get('#timeavgconc').should('have.text', '56.59');  // 56.59
+  });
+  it('under model 2comp ad lib, vod of 14, 100 should result in time avg conc value of 57.14', () => {
+    cy.get('#modeltype').select('2CompAdLib');
+    cy.get('#volumeofdist').clear().type("14");  
+    cy.get('#volumeofdistcomp2l').clear().type("100");  
+    cy.get('#solve').click();
+
+    cy.get('#avgclearance').should('have.text', '237.2'); // 237.2
+    cy.get('#timeavgconc').should('have.text', '57.14');  // 57.14
+  });
+});
+
+describe('Volume of Distribution Test, Model Type 2 Ad Lib, Intercompartmental KC', () => {
+  beforeEach(() => {
+    cy.visit('/');
+  });
+
+  it('under model 2comp ad lib, Int KC of 800 should result in time avg conc value of 56.86', () => {
+    cy.get('#modeltype').select('2CompAdLib');
+    cy.get('#intercompartmentalkc').clear().type("800");  
+    cy.get('#solve').click();
+
+    cy.get('#timeavgconc').should('have.text', '56.86');  // 56.87
+  });
+  it('under model 2comp ad lib, Int KC of 900 should result in time avg conc value of 56.28', () => {
+    cy.get('#modeltype').select('2CompAdLib');
+    cy.get('#intercompartmentalkc').clear().type("900");  
+    cy.get('#solve').click();
+
+    cy.get('#timeavgconc').should('have.text', '56.28');  // 56.28
+  });
+  it('under model 2comp ad lib, Int KC of 1000 should result in time avg conc value of 55.82', () => {
+    cy.get('#modeltype').select('2CompAdLib');
+    cy.get('#intercompartmentalkc').clear().type("1000");  
+    cy.get('#solve').click();
+
+    cy.get('#timeavgconc').should('have.text', '55.82');  // 55.81
+  });
+  it('under model 2comp ad lib, Int KC of 1100 should result in time avg conc value of 55.42', () => {
+    cy.get('#modeltype').select('2CompAdLib');
+    cy.get('#intercompartmentalkc').clear().type("1100");  
+    cy.get('#solve').click();
+
+    cy.get('#timeavgconc').should('have.text', '55.42');  // 55.43
+  });
 });
 
 

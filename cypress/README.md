@@ -34,6 +34,8 @@ Dialsim is an open-source project designed for a multidisciplinary developer com
 
 * Debug Mode Test: Confirms that the 'Liters per treatment' UI element reveals debugging information upon interaction.
 
+* Protein Binding Test: Assesses the application's reponse to varied Protein Binding values.
+
 ## Automated Testing with GitHub Actions
 
 Our test suite is tightly integrated with GitHub [Actions](https://docs.github.com/en/actions/learn-github-actions). With every code push, tests are triggered automatically. For an overview of the most recent test outcomes, refer to the badge below: <center> [![Cypress Status](https://github.com/aaaahn/dialsim/actions/workflows/main.yml/badge.svg)](https://github.com/aaaahn/dialsim/actions/workflows/main.yml) </center> This badge provides a snapshot of individual test results.  For a deeper dive into test health and analytics, visit Cypress Cloud by clicking on the following badge: <center> [![dialsim](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/xz8xtb&style=plastic&logo=cypress)](https://cloud.cypress.io/projects/xz8xtb/runs)
@@ -81,9 +83,13 @@ https://on.cypress.io/installing-cypress
 4. Execute Tests
 
 ```
-@aaaahn ➜ /workspaces/dialsim (main) $ npx cypress run
+@aaaahn ➜ /workspaces/dialsim (implement-two-comp) $ npm run cypress:run
+Debugger attached.
 
-DevTools listening on ws://127.0.0.1:43535/devtools/browser/e2ba0a95-61cd-4013-906e-98d93388cfa7
+> dialsim@0.3.0 cypress:run
+> npx cypress run
+
+Debugger attached.
 
 ====================================================================================================
 
@@ -104,50 +110,56 @@ DevTools listening on ws://127.0.0.1:43535/devtools/browser/e2ba0a95-61cd-4013-9
 
 
   Default Values Test
-    ✓ solving with default inputs should result in avg clearance of 237.2 and avg concentrate of 53.06 (618ms)
+    ✓ solving with default inputs should result in avg clearance of 237.2 and avg concentrate of 51.62 (654ms)
 
   Duration Test
-    ✓ solving with duration of 3.0 hours should result in time avg concentrate of 57.19 (875ms)
-    ✓ solving with duration of 3.5 hours should result in time avg concentrate of 50.96 (841ms)
-    ✓ solving with duration of 4.0 hours should result in time avg concentrate of 46.29 (854ms)
+    ✓ solving with duration of 3.0 hours should result in time avg concentrate of 55.89 (1057ms)
+    ✓ solving with duration of 3.5 hours should result in time avg concentrate of 49.21 (1122ms)
+    ✓ solving with duration of 4.0 hours should result in time avg concentrate of 44.30 (1174ms)
 
   Hematocrit Test
-    ✓ hematocrit of 30 should result in average clearance of 235.1 and time avg concentrate of 53.48 (532ms)
+    ✓ hematocrit of 30 should result in average clearance of 235.1 and time avg concentrate of 52.00 (784ms)
+    ✓ hematocrit of 40 should result in average clearance of 234.4 and time avg concentrate of 52.13 (744ms)
 
   Additional UF Test
-    ✓ additional UF of 23 should result in avg clearance of 240.0 and time avg concentrate of 52.63 (659ms)
-    ✓ additional UF of 30 should result in avg clearance of 241.3 and time avg concentrate of 52.43 (784ms)
+    ✓ additional UF of 23 should result in avg clearance of 240.0 and time avg concentrate of 51.13 (932ms)
+    ✓ additional UF of 30 should result in avg clearance of 241.3 and time avg concentrate of 50.90 (893ms)
 
   Fluid Gain Test
-    ✓ fluid gain of 2 should result in avg clearance of 247.7 and time avg concentrate of 51.43 (706ms)
-    ✓ fluid gain of 3 should result in avg clearance of 253.0 and time avg concentrate of 50.56 (705ms)
-    ✓ fluid gain of 4 should result in avg clearance of 258.2 and time avg concentrate of 49.64 (706ms)
+    ✓ fluid gain of 2 should result in avg clearance of 247.7 and time avg concentrate of 49.74 (837ms)
+    ✓ fluid gain of 3 should result in avg clearance of 253.0 and time avg concentrate of 48.86 (982ms)
+    ✓ fluid gain of 4 should result in avg clearance of 258.2 and time avg concentrate of 48.01 (861ms)
 
-  Volume of Distribution Test
-    ✓ volume of distribution of 20 should result in time avg concentrate value of 65.98 (640ms)
-    ✓ volume of distribution of 30 should result in time avg concentrate value of 55.76 (648ms)
-    ✓ volume of distribution of 40 should result in time avg concentrate value of 52.27 (649ms)
-    ✓ volume of distribution of 50 should result in time avg concentrate value of 50.42 (630ms)
+  Volume of Distribution Test, Model Type 1Comp
+    ✓ under model 1comp, vod of 20 should result in time avg concentrate value of 66.04 (986ms)
+    ✓ under model 1comp, vod of 30 should result in time avg concentrate value of 55.85 (733ms)
+    ✓ under model 1comp, vod of 40 should result in time avg concentrate value of 52.08 (887ms)
+    ✓ under model 1comp, vod of 50 should result in time avg concentrate value of 50.30 (707ms)
 
   Debug Mode Test
-    ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (224ms)
-    ✓ clicking on the Liters per treatment label twice should hide debug table treatmentTable (278ms)
+    ✓ clicking on the Liters per treatment label should reveal debug table treatmentTable (201ms)
+    ✓ clicking on the Liters per treatment label twice should hide debug table treatmentTable (273ms)
+
+  Protein Binding Test, Under Solute Type of Plasma
+    ✓ protein binding of 10 should result in avg clearance of 221.7 and TAC of 54.59 (737ms)
+    ✓ protein binding of 20 should result in avg clearance of 204.5 and TAC of 58.51 (1017ms)
+    ✓ protein binding of 30 should result in avg clearance of 185.5 and TAC of 63.74 (1116ms)
 
 
-  16 passing (11s)
+  20 passing (18s)
 
 
   (Results)
 
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-  │ Tests:        16                                                                               │
-  │ Passing:      16                                                                               │
+  │ Tests:        20                                                                               │
+  │ Passing:      20                                                                               │
   │ Failing:      0                                                                                │
   │ Pending:      0                                                                                │
   │ Skipped:      0                                                                                │
   │ Screenshots:  0                                                                                │
   │ Video:        false                                                                            │
-  │ Duration:     11 seconds                                                                       │
+  │ Duration:     17 seconds                                                                       │
   │ Spec Ran:     spec.cy.js                                                                       │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
 
@@ -159,11 +171,11 @@ DevTools listening on ws://127.0.0.1:43535/devtools/browser/e2ba0a95-61cd-4013-9
 
        Spec                                              Tests  Passing  Failing  Pending  Skipped  
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-  │ ✔  spec.cy.js                               00:11       16       16        -        -        - │
+  │ ✔  spec.cy.js                               00:17       20       20        -        -        - │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
-    ✔  All specs passed!                        00:11       16       16        -        -        -  
+    ✔  All specs passed!                        00:17       20       20        -        -        -  
 
-@aaaahn ➜ /workspaces/dialsim (main) $ 
+@aaaahn ➜ /workspaces/dialsim (implement-two-comp) $ 
 ```
 
 ## License

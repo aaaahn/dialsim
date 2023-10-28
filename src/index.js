@@ -135,12 +135,32 @@ window.render_model_type = function render_model_type() {
   }
 };
 
+// when solute type is changed, enable/disable the appropriate html elements
+window.render_solute_type = function render_solute_type() {
+  const inputData = fetchInputValues();
+  let modeltype = inputData["solutetype"];
+
+  // Applying a class to make the difference obviously visible
+  if (modeltype === "Urea") {
+    document.getElementById("sigmalabel").classList.add("disabled");
+    document.getElementById("sigma").classList.add("disabled");
+    document.getElementById("label-proteinbinding").classList.add("disabled");
+    document.getElementById("proteinbinding").classList.add("disabled");
+  } else { // Plasma
+    document.getElementById("sigmalabel").classList.remove("disabled");
+    document.getElementById("sigma").classList.remove("disabled");
+    document.getElementById("label-proteinbinding").classList.remove("disabled");
+    document.getElementById("proteinbinding").classList.remove("disabled");
+  }
+};
+
 
 
 // This line ensures that the render_disabled function is called once the document's content has been fully loaded.
 document.addEventListener("DOMContentLoaded", render_disabled);
 document.addEventListener("DOMContentLoaded", render_disabled_uf);
 document.addEventListener("DOMContentLoaded", render_model_type);
+document.addEventListener("DOMContentLoaded", render_solute_type);
 
 function calculatePrePostDilution(inputData) {
 let Qf = inputData["additionaluf"];
@@ -173,6 +193,15 @@ function calculatePhi(KoA, Pe) {
   }
 }
 
+// =IF(C10=1,1,1-Interface!E19/100)
+function calcf(solutetype_val, proteinbinding_val) {
+  if (solutetype_val === "Urea") {
+    return 1;
+  } else {
+    return 1 - (proteinbinding_val / 100);
+  }
+}
+
 function calcClearanceTable(newCd, eff_uf, inputData) {
   let Qb = inputData["bloodflow"]; // let Qb = 360;
   let Qd = inputData["dialysateflow"]; // 500;
@@ -195,7 +224,8 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
 
   console.log(`Qf: ${Qf}`);
   let Hct = inputData["hematocrit"] / 100; // 0;
-  let f = 1.0;
+  let f = calcf(inputData["solutetype"], inputData["proteinbinding"]); // 1.0;
+  console.log(`f: ${f}`);
   let Calb = 500;
   let Cp = 100;
   let DP0 = 40;
@@ -505,6 +535,7 @@ function calc_vol_ext0(
   extracellular_dv_per_min_ml_val,
   sum_of_fractions_val
 ) {
+  /*
   console.log(`calc_vol_ext0:constant_dial_val: ${constant_dial_val}`);
   console.log(`calc_vol_ext0:prev_day_dialysis: ${prev_day_dialysis}`);
   console.log(`calc_vol_ext0:current_day_dialysis: ${current_day_dialysis}`);
@@ -515,7 +546,7 @@ function calc_vol_ext0(
   console.log(`calc_vol_ext0:extracellular_volume_val: ${extracellular_volume_val}`);
   console.log(`calc_vol_ext0:frac_uf_to_intracellular_val: ${frac_uf_to_intracellular_val}`);
   console.log(`calc_vol_ext0:extracellular_dv_per_min_ml_val: ${extracellular_dv_per_min_ml_val}`);
-  console.log(`calc_vol_ext0:sum_of_fractions_val: ${sum_of_fractions_val}`);
+  console.log(`calc_vol_ext0:sum_of_fractions_val: ${sum_of_fractions_val}`); */
   if (constant_dial_val) {
     return extracellular_volume_val * 1000;
   } else if (current_day_dialysis && !next_day_dialysis) {

@@ -151,7 +151,6 @@ See LICENSE.md for details.
             step="0.1"
             value="0"
             oninput="debouncedReady();"
-            disabled
           />
         </div>
         <div class="menu-item">
@@ -270,7 +269,7 @@ See LICENSE.md for details.
         </div>
         <div class="menu-item">
           <label for="solutetype"> Solute Type </label>
-          <select name="solutetype" id="solutetype" onchange="debouncedReady();" >
+          <select name="solutetype" id="solutetype" onchange="render_solute_type(); debouncedReady();" >
             <option value="Urea">Urea</option>
             <option value="Plasma">Plasma</option>
           </select>
@@ -290,15 +289,15 @@ See LICENSE.md for details.
           />
         </div>
         <div class="menu-item">
-          <label for="proteinbinding"> Protein Binding (%)* </label>
+          <label id="label-proteinbinding"> Protein Binding (%) </label>
           <input
             type="number"
             id="proteinbinding"
             name="proteinbinding"
             required
-            step="1"
+            step="10"
             min="0"
-            max="999"
+            max="100"
             value="0"
             oninput="debouncedReady();"
           />

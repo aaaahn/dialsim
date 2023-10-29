@@ -34,7 +34,7 @@ window.toggle_debug_mode = function toggle_debug_mode() {
 // and that value is zero
 // the two html elements are greyed out to signal the user that it's been disabled as input
 // otherwise, when the value is non-zero
-// the use entered value is copied into HTML element dilution.
+// the user entered value is copied into HTML element dilution.
 window.render_disabled = function render_disabled() {
   // console.log(`called - render_disabled: ${document.getElementById("replace").disabled}`);
 
@@ -128,6 +128,9 @@ window.render_model_type = function render_model_type() {
     document.getElementById("label-volumeofdist").textContent = "Volume of Distribution: Comp 1 (L)";
     document.getElementById("volumeofdist").value = 14;
     document.getElementById("volumeofdistcomp2l").value = 28;
+    document.getElementById("intercompartmentalkc").value = 800;
+    document.getElementById("fluidgaincompartment1").value = 100;
+    document.getElementById("fluidgaincompartment2").value = 0;
     document.getElementById("label-volumeofdistcomp2l").style.display = "block";
     document.getElementById("volumeofdistcomp2l").style.display = "block";
     document.getElementById("label-intercompartmentalkc").style.display = "block";

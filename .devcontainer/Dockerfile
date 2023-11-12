@@ -1,7 +1,7 @@
 # Use the default GitHub Codespaces image
 # https://github.com/devcontainers/images/blob/main/src/universal/history/2.5.1.md
 #FROM mcr.microsoft.com/vscode/devcontainers/universal:2.5.2-focal
-FROM mcr.microsoft.com/vscode/devcontainers/universal:2.5.3-focal
+FROM mcr.microsoft.com/vscode/devcontainers/universal:2.5.9-focal
 
 # Install Xvfb - dependency of Cypress
 # Install xdg-utils - depednecy of xdg-open used by parcel 

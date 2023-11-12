@@ -53,9 +53,32 @@ This project is set up with a GitHub Codespaces environment tailored for `Node.j
 2. Start the Dialsim Web App
 
 ```
-@aaaahn ➜ /workspaces/dialsim (implement-two-comp) $ npx cypress run
+@aaaahn ➜ /workspaces/dialsim (main) $ npm run start
 
+> dialsim@0.3.0 start
+> npx parcel
 
+Server running at http://localhost:1234
+✨ Built in 2.88s
+```
+
+3. Install Cypress
+
+```
+@aaaahn ➜ /workspaces/dialsim (main) $ npx cypress install
+ Installing Cypress (version: 13.1.0)
+ ✔  Downloaded Cypress
+ ✔  Unzipped Cypress
+ ✔  Finished Installation /home/codespace/.cache/Cypress/13.1.0
+ You can now open Cypress by running: node_modules/.bin/cypress open
+ https://on.cypress.io/installing-cypress
+ @aaaahn ➜ /workspaces/dialsim (main) $ 
+```
+
+4. Execute Tests
+
+```
+ @aaaahn ➜ /workspaces/dialsim (implement-two-comp) $ npx cypress run
 ====================================================================================================
 
   (Run Starting)

@@ -620,10 +620,10 @@ function calcWeeklyTable(treatmentTable, inputData) {
   var time_increment_minutes = 6;
   var endog_clear = inputData["endogenousclearance"]; // parseFloat(document.getElementById("endogenousclearance").value); // 0; // hard-coded AA37
   var generation = inputData["generationrate"] / (24 * 60); // parseFloat(document.getElementById("generationrate").value) / (24 * 60);
-  console.log(`generation: ${generation}`);
+  // console.log(`generation: ${generation}`);
 
   let kc_ml_min = calc_kc_ml_min(inputData["modeltype"], 800, inputData["volumeofdist"], inputData["intercompartmentalkc"]);
-  console.log(`kc_ml_min: ${kc_ml_min}`);
+  // console.log(`kc_ml_min: ${kc_ml_min}`);
   let extracell = 0.834522427; // this should come from an prior vTable (as argument to this function)
   let intracell = 0.817858394;
   var duration = inputData["duration"]; // parseFloat(document.getElementById("duration").value); // let duration = 3.33;
@@ -635,18 +635,18 @@ function calcWeeklyTable(treatmentTable, inputData) {
     .filter((clearance) => clearance && clearance !== 0);
   let number_of_treatments = validClearances.length;
   let extracellular_volume_val = extracellular_volume(inputData["volumeofdist"], inputData["modeltype"]);
-  console.log(`extracellular_volume_val: ${extracellular_volume_val}`);
+  // console.log(`extracellular_volume_val: ${extracellular_volume_val}`);
   let modeltype_val = inputData["modeltype"];
   let vol_of_dist_comp2_l = inputData["volumeofdistcomp2l"];
   let frac_uf_to_intracellular_val = frac_uf_to_intracellular(inputData["modeltype"], inputData["fluidgaincompartment1"]);
   let fluidgain_val = inputData["fluidgain"];
-  console.log(`fluidgain_val: ${fluidgain_val}`)
+  // console.log(`fluidgain_val: ${fluidgain_val}`)
   let extracellular_dv_per_min_ml_val = extracellular_dv_per_min_ml(
     fluidgain_val,
     inputData["modeltype"],
     inputData["fluidgaincompartment1"]
   );
-  console.log(`extracellular_dv_per_min_ml_val: ${extracellular_dv_per_min_ml_val}`)
+  // console.log(`extracellular_dv_per_min_ml_val: ${extracellular_dv_per_min_ml_val}`)
   let fluidgaincompartment2_val = inputData["fluidgaincompartment2"]
   let sum_of_fractions_val = sum_of_fractions(inputData["modeltype"], inputData['fluidgaincompartment1'], inputData['fluidgaincompartment2']);
   let constant_dial_val = constant_dial(duration, number_of_treatments);

@@ -4,7 +4,7 @@ This file is part of dialsim, released under the MIT License.
 See LICENSE.md for details.
 */
   
-describe('Dr Tims amLK suite', () => {
+describe("Dr Tim's amLK suite, Time", () => {
     beforeEach(() => {
         cy.visit('/');
     });
@@ -115,8 +115,12 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '16.57'); // 16.55
         cy.get('#avgpeakconc').should('have.text', '37.34'); // 37.33
     });
+});
 
-
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 4 to 15", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
 
     // rows 4 to 15
     it('Dur 3.5, Qb 100, Qd 100, KoA 100', () => {
@@ -196,6 +200,12 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '99.48');   //  99.48 
         cy.get('#avgpeakconc').should('have.text', '123.53');  // 123.55
     });
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 17 to 20", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
 
     // rows 17 - 20
     it('Dur 3.5, Qb 100, Qd 300, KoA 100', () => {
@@ -259,6 +269,12 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#avgpeakconc').should('have.text', '117.15');  // 117.13
     });
 
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA -  rows 22 - 25", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
     // rows 22 - 25
     it('Dur 3.5, Qb 100, Qd 600, KoA 100', () => {
         cy.get('#duration').clear().type("3.5");
@@ -319,6 +335,12 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#avgclearance').should('have.text', '97.5');   //  97.5
         cy.get('#timeavgconc').should('have.text', '93.03');   // 93.00 
         cy.get('#avgpeakconc').should('have.text', '117.06');  // 117.04
+    });
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 27 to 30", () => {
+    beforeEach(() => {
+        cy.visit('/');
     });
 
     // rows 27 - 30
@@ -382,6 +404,12 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '93.01');   // 92.98 
         cy.get('#avgpeakconc').should('have.text', '117.04');  // 117.02
     });
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 33 to 48", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
 
     // rows 33 - 48
     it('Dur 3.5, Qb 200, Qd 100, KoA 100', () => {
@@ -414,7 +442,7 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '109.64');  // 109.62 
         cy.get('#avgpeakconc').should('have.text', '133.71');  // 133.70
     });
-    it('Dur 3.5, Qb 200, Qd 100, KoA 300', () => {
+    it('Dur 3.5, Qb 200, Qd 100, KoA 300 -- fails to converge when KoA >= 400', () => {
         cy.get('#duration').clear().type("3.5");
         cy.get('#bloodflow').clear().type("200");
         cy.get('#dialysateflow').clear().type("100");  // !
@@ -429,7 +457,7 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '97.45');   //  97.45 
         cy.get('#avgpeakconc').should('have.text', '121.50');  // 121.52
     });
-    // fails to converge at koa of 400 and above
+    // fails to converge at koa of 400 and when
     /*
     it('Dur 3.5, Qb 200, Qd 100, KoA 400', () => {
         cy.get('#duration').clear().type("3.5");
@@ -448,6 +476,13 @@ describe('Dr Tims amLK suite', () => {
     });
     */
 
+});
+
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 50 to 53", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
 
     // rows 50 - 53
     it('Dur 3.5, Qb 200, Qd 300, KoA 100', () => {
@@ -510,8 +545,15 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '53.33');  // 53.80 
         cy.get('#avgpeakconc').should('have.text', '77.26');  // 77.23 
     });
+});
 
-    // rows 55 - 57
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 55 to 58", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
+
+    // rows 55 - 58
     it('Dur 3.5, Qb 200, Qd 600, KoA 100', () => {
         cy.get('#duration').clear().type("3.5");
         cy.get('#bloodflow').clear().type("200");
@@ -571,6 +613,13 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#avgclearance').should('have.text', '188.7');   // 188.7
         cy.get('#timeavgconc').should('have.text', '51.26');  //  51.21 
         cy.get('#avgpeakconc').should('have.text', '75.19');  //  75.11
+    });
+
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 60 to 63", () => {
+    beforeEach(() => {
+        cy.visit('/');
     });
 
     // rows 60 - 63
@@ -635,6 +684,13 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#avgpeakconc').should('have.text', '74.63');  // 74.57
     });
 
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 66 to 83", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
+
     // rows 66 - 83
     it('Dur 3.5, Qb 400, Qd 100, KoA 100', () => {
         cy.get('#duration').clear().type("3.5");
@@ -651,7 +707,7 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '139.95');  // 139.96 
         cy.get('#avgpeakconc').should('have.text', '164.06');  // 164.09
     });
-    it('Dur 3.5, Qb 400, Qd 100, KoA 200', () => {
+    it('Dur 3.5, Qb 400, Qd 100, KoA 200  -- fails to converge when KoA >= 300', () => {
         cy.get('#duration').clear().type("3.5");
         cy.get('#bloodflow').clear().type("400");
         cy.get('#dialysateflow').clear().type("100");  // !
@@ -666,7 +722,7 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '102.66');  // 102.66 
         cy.get('#avgpeakconc').should('have.text', '126.71');  // 126.73
     });
-    // fails to converge at koa of 300 and above
+    // fails to converge at koa of 300 and when
     /*
     it('Dur 3.5, Qb 400, Qd 100, KoA 300', () => {
         cy.get('#duration').clear().type("3.5");
@@ -684,6 +740,13 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#avgpeakconc').should('have.text', '126.71');  // 126.73
     });
    */
+
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 85 to 88", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
 
     // rows 85 - 88
     it('Dur 3.5, Qb 400, Qd 300, KoA 100', () => {
@@ -745,6 +808,12 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#avgclearance').should('have.text', '249.1');   // 249.1
         cy.get('#timeavgconc').should('have.text', '41.24');  // 41.24 
         cy.get('#avgpeakconc').should('have.text', '65.13');  // 65.09
+    });
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 90 to 93", () => {
+    beforeEach(() => {
+        cy.visit('/');
     });
 
     // rows 90 - 93
@@ -808,6 +877,12 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '36.00');  // 35.98 
         cy.get('#avgpeakconc').should('have.text', '59.87');  // 59.85
     });
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 95 to 98", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
 
     // rows 95 - 98
     it('Dur 3.5, Qb 400, Qd 1200, KoA 100', () => {
@@ -870,9 +945,15 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '34.37');  // 34.35 
         cy.get('#avgpeakconc').should('have.text', '58.24');  // 58.22
     });
+});
 
-    // rows 101 - 113
-    it('Dur 3.5, Qb 800, Qd 100, KoA 100', () => {
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 101 to 112", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
+
+    // rows 101 - 112
+    it('Dur 3.5, Qb 800, Qd 100, KoA 100  -- fails to converge when KoA >= 200', () => {
         cy.get('#duration').clear().type("3.5");
         cy.get('#bloodflow').clear().type("800");
         cy.get('#dialysateflow').clear().type("100");  // !
@@ -904,6 +985,13 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#avgpeakconc').should('have.text', '123.47');  // 123.49
     });
     */
+
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 114 to 122", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
 
     // rows 114 - 122
     it('Dur 3.5, Qb 800, Qd 300, KoA 100', () => {
@@ -967,6 +1055,12 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#avgpeakconc').should('have.text', '61.94');  // 61.91
     });
 
+});
+
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 124 to 127", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
 
     // rows 124-127
     it('Dur 3.5, Qb 800, Qd 600, KoA 100', () => {
@@ -1029,7 +1123,82 @@ describe('Dr Tims amLK suite', () => {
         cy.get('#timeavgconc').should('have.text', '31.38');   // 31.36 
         cy.get('#avgpeakconc').should('have.text', '55.28');  // 55.24
     });
+});
 
+describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 129 - 132", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
+
+    // rows 129 - 132
+    it('Dur 3.5, Qb 800, Qd 1200, KoA 100', () => {
+        cy.get('#duration').clear().type("3.5");
+        cy.get('#bloodflow').clear().type("800");
+        cy.get('#dialysateflow').clear().type("1200");  // !
+        cy.get('#koa').clear().type("100");
+        cy.get('#hematocrit').clear().type("33");
+        cy.get('#generationrate').clear().type("8000");
+        cy.get('#volumeofdist').clear().type("36");  
+
+        cy.get('#solve').click();
+
+        cy.get('#avgclearance').should('have.text', '96.8');   // 96.8
+        cy.get('#timeavgconc').should('have.text', '93.64');   // 93.65
+        cy.get('#avgpeakconc').should('have.text', '117.67');  // 117.71
+    });
+    it('Dur 3.5, Qb 800, Qd 1200, KoA 200', () => {
+        cy.get('#duration').clear().type("3.5");
+        cy.get('#bloodflow').clear().type("800");
+        cy.get('#dialysateflow').clear().type("1200");  // !
+        cy.get('#koa').clear().type("200");
+        cy.get('#hematocrit').clear().type("33");
+        cy.get('#generationrate').clear().type("8000");
+        cy.get('#volumeofdist').clear().type("36");  
+
+        cy.get('#solve').click();
+
+        cy.get('#avgclearance').should('have.text', '176.0');   // 176.0
+        cy.get('#timeavgconc').should('have.text', '54.36');   // 54.33 
+        cy.get('#avgpeakconc').should('have.text', '78.30');  // 78.26
+    });
+    it('Dur 3.5, Qb 800, Qd 1200, KoA 400', () => {
+        cy.get('#duration').clear().type("3.5");
+        cy.get('#bloodflow').clear().type("800");
+        cy.get('#dialysateflow').clear().type("1200");  // !
+        cy.get('#koa').clear().type("400");
+        cy.get('#hematocrit').clear().type("33");
+        cy.get('#generationrate').clear().type("8000");
+        cy.get('#volumeofdist').clear().type("36");  
+
+        cy.get('#solve').click();
+
+        cy.get('#avgclearance').should('have.text', '297.4');   // 297.4
+        cy.get('#timeavgconc').should('have.text', '36.49');   // 36.47 
+        cy.get('#avgpeakconc').should('have.text', '60.36');  // 60.35
+    });
+    it('Dur 3.5, Qb 800, Qd 1200, KoA 800', () => {
+        cy.get('#duration').clear().type("3.5");
+        cy.get('#bloodflow').clear().type("800");
+        cy.get('#dialysateflow').clear().type("1200");  // !
+        cy.get('#koa').clear().type("800");
+        cy.get('#hematocrit').clear().type("33");
+        cy.get('#generationrate').clear().type("8000");
+        cy.get('#volumeofdist').clear().type("36");  
+
+        cy.get('#solve').click();
+
+        cy.get('#avgclearance').should('have.text', '452.7');   // 452.7
+        cy.get('#timeavgconc').should('have.text', '29.26');   // 29.23 
+        cy.get('#avgpeakconc').should('have.text', '53.19');  // 53.17
+    });
+});
+
+
+
+describe("Dr Tim's amLK suite, Kr", () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
 
     // Kr
     it('Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 0.5', () => {

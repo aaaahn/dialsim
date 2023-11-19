@@ -84,17 +84,16 @@ Server running at http://localhost:1234
   (Run Starting)
 
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-  │ Cypress:        13.1.0                                                                         │
-  │ Browser:        Electron 106 (headless)                                                        │
-  │ Node Version:   v20.6.0 (/usr/local/share/nvm/versions/node/v20.6.0/bin/node)                  │
-  │ Specs:          1 found (spec.cy.js)                                                           │
+  │ Cypress:        13.5.0                                                                         │
+  │ Browser:        Electron 114 (headless)                                                        │
+  │ Node Version:   v20.9.0 (/usr/local/share/nvm/versions/node/v20.9.0/bin/node)                  │
+  │ Specs:          2 found (spec.cy.js, tmeyer_amlk.cy.js)                                        │
   │ Searched:       cypress/e2e/**/*.cy.{js,jsx,ts,tsx}                                            │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
 
-
 ────────────────────────────────────────────────────────────────────────────────────────────────────
                                                                                                     
-  Running:  spec.cy.js                                                                      (1 of 1)
+  Running:  spec.cy.js                                                                      (1 of 2)
 
 
   Default Values Test
@@ -169,6 +168,147 @@ Server running at http://localhost:1234
   │ Spec Ran:     spec.cy.js                                                                       │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
 
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  tmeyer_amlk.cy.js                                                               (2 of 2)
+
+  Dr Tim's amLK suite, Time
+    ✓ Dur 2, Qb 360, Qd 600, KoA 600 (2653ms)
+    ✓ Dur 3, Qb 360, Qd 600, KoA 600 (2440ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600 (2449ms)
+    ✓ Dur 5, Qb 360, Qd 600, KoA 600 (2354ms)
+    ✓ Dur 8, Qb 360, Qd 600, KoA 600 (2285ms)
+    ✓ Dur 12, Qb 360, Qd 600, KoA 600 (2339ms)
+    ✓ Dur 18, Qb 360, Qd 600, KoA 600 (2499ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 4 to 15
+    ✓ Dur 3.5, Qb 100, Qd 100, KoA 100 (2608ms)
+    ✓ Dur 3.5, Qb 100, Qd 100, KoA 200 (2765ms)
+    ✓ Dur 3.5, Qb 100, Qd 100, KoA 390 (2975ms)
+    ✓ Dur 3.5, Qb 100, Qd 100, KoA 400 (2813ms)
+    ✓ Dur 3.5, Qb 100, Qd 100, KoA 800 (2936ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 17 to 20
+    ✓ Dur 3.5, Qb 100, Qd 300, KoA 100 (2760ms)
+    ✓ Dur 3.5, Qb 100, Qd 300, KoA 200 (2924ms)
+    ✓ Dur 3.5, Qb 100, Qd 300, KoA 400 (2501ms)
+    ✓ Dur 3.5, Qb 100, Qd 300, KoA 800 (2714ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA -  rows 22 - 25
+    ✓ Dur 3.5, Qb 100, Qd 600, KoA 100 (2969ms)
+    ✓ Dur 3.5, Qb 100, Qd 600, KoA 200 (2659ms)
+    ✓ Dur 3.5, Qb 100, Qd 600, KoA 400 (2720ms)
+    ✓ Dur 3.5, Qb 100, Qd 600, KoA 800 (2588ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 27 to 30
+    ✓ Dur 3.5, Qb 100, Qd 1200, KoA 100 (2729ms)
+    ✓ Dur 3.5, Qb 100, Qd 1200, KoA 200 (2747ms)
+    ✓ Dur 3.5, Qb 100, Qd 1200, KoA 400 (2757ms)
+    ✓ Dur 3.5, Qb 100, Qd 1200, KoA 800 (2718ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 33 to 48
+    ✓ Dur 3.5, Qb 200, Qd 100, KoA 100 (2633ms)
+    ✓ Dur 3.5, Qb 200, Qd 100, KoA 200 (2834ms)
+    ✓ Dur 3.5, Qb 200, Qd 100, KoA 300 -- fails to converge when KoA >= 400 (2842ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 50 to 53
+    ✓ Dur 3.5, Qb 200, Qd 300, KoA 100 (2915ms)
+    ✓ Dur 3.5, Qb 200, Qd 300, KoA 200 (2551ms)
+    ✓ Dur 3.5, Qb 200, Qd 300, KoA 400 (2430ms)
+    ✓ Dur 3.5, Qb 200, Qd 300, KoA 800 (2477ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 55 to 58
+    ✓ Dur 3.5, Qb 200, Qd 600, KoA 100 (2784ms)
+    ✓ Dur 3.5, Qb 200, Qd 600, KoA 200 (2579ms)
+    ✓ Dur 3.5, Qb 200, Qd 600, KoA 400 (2517ms)
+    ✓ Dur 3.5, Qb 200, Qd 600, KoA 800 (2423ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 60 to 63
+    ✓ Dur 3.5, Qb 200, Qd 1200, KoA 100 (2796ms)
+    ✓ Dur 3.5, Qb 200, Qd 1200, KoA 200 (2786ms)
+    ✓ Dur 3.5, Qb 200, Qd 1200, KoA 400 (2554ms)
+    ✓ Dur 3.5, Qb 200, Qd 1200, KoA 800 (2614ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 66 to 83
+    ✓ Dur 3.5, Qb 400, Qd 100, KoA 100 (2630ms)
+    ✓ Dur 3.5, Qb 400, Qd 100, KoA 200  -- fails to converge when KoA >= 300 (2780ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 85 to 88
+    ✓ Dur 3.5, Qb 400, Qd 300, KoA 100 (2514ms)
+    ✓ Dur 3.5, Qb 400, Qd 300, KoA 200 (2214ms)
+    ✓ Dur 3.5, Qb 400, Qd 300, KoA 400 (2478ms)
+    ✓ Dur 3.5, Qb 400, Qd 300, KoA 800 (2782ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 90 to 93
+    ✓ Dur 3.5, Qb 400, Qd 600, KoA 100 (2631ms)
+    ✓ Dur 3.5, Qb 400, Qd 600, KoA 200 (2540ms)
+    ✓ Dur 3.5, Qb 400, Qd 600, KoA 400 (2491ms)
+    ✓ Dur 3.5, Qb 400, Qd 600, KoA 800 (2386ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 95 to 98
+    ✓ Dur 3.5, Qb 400, Qd 1200, KoA 100 (2728ms)
+    ✓ Dur 3.5, Qb 400, Qd 1200, KoA 200 (2678ms)
+    ✓ Dur 3.5, Qb 400, Qd 1200, KoA 400 (2664ms)
+    ✓ Dur 3.5, Qb 400, Qd 1200, KoA 800 (2685ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 101 to 112
+    ✓ Dur 3.5, Qb 800, Qd 100, KoA 100  -- fails to converge when KoA >= 200 (2622ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 114 to 122
+    ✓ Dur 3.5, Qb 800, Qd 300, KoA 100 (2967ms)
+    ✓ Dur 3.5, Qb 800, Qd 300, KoA 200 (2595ms)
+    ✓ Dur 3.5, Qb 800, Qd 300, KoA 400 (2919ms)
+    ✓ Dur 3.5, Qb 800, Qd 300, KoA 800 (2760ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 124 to 127
+    ✓ Dur 3.5, Qb 800, Qd 600, KoA 100 (2715ms)
+    ✓ Dur 3.5, Qb 800, Qd 600, KoA 200 (2455ms)
+    ✓ Dur 3.5, Qb 800, Qd 600, KoA 400 (2445ms)
+    ✓ Dur 3.5, Qb 800, Qd 600, KoA 800 (2668ms)
+
+  Dr Tim's amLK suite, Qb.Qd.KoA - rows 129 - 132
+    ✓ Dur 3.5, Qb 800, Qd 1200, KoA 100 (2686ms)
+    ✓ Dur 3.5, Qb 800, Qd 1200, KoA 200 (2803ms)
+    ✓ Dur 3.5, Qb 800, Qd 1200, KoA 400 (2588ms)
+    ✓ Dur 3.5, Qb 800, Qd 1200, KoA 800 (2520ms)
+
+  Dr Tims amLK suite, Kr
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 0.5 (2512ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 0.75 (2777ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 1 (2467ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 1.25 (2580ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 1.5 (2502ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 1.75 (2535ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 2 (2475ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 2.5 (2689ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 3 (2554ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 4 (2551ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 5 (2550ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 8 (2670ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 10 (2645ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 15 (2598ms)
+    ✓ Dur 3.5, Qb 360, Qd 600, KoA 600, Kr 20 (2595ms)
+
+
+  81 passing (4m)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        81                                                                               │
+  │ Passing:      81                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     3 minutes, 40 seconds                                                            │
+  │ Spec Ran:     tmeyer_amlk.cy.js                                                                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
 
 ====================================================================================================
 
@@ -177,10 +317,13 @@ Server running at http://localhost:1234
 
        Spec                                              Tests  Passing  Failing  Pending  Skipped  
   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-  │ ✔  spec.cy.js                               00:32       32       32        -        -        - │
+  │ ✔  spec.cy.js                               00:33       32       32        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  tmeyer_amlk.cy.js                        03:42       81       81        -        -        - │
   └────────────────────────────────────────────────────────────────────────────────────────────────┘
-    ✔  All specs passed!                        00:32       32       32        -        -        -  
+    ✔  All specs passed!                        04:15      113      113        -        -        -  
 
+    
 @aaaahn ➜ /workspaces/dialsim (implement-two-comp) $ 
 ```
 

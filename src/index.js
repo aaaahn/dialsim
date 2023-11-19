@@ -227,17 +227,17 @@ function calcClearanceTable(newCd, eff_uf, inputData) {
     Qf = eff_uf;
   }
 
-  console.log(`Qf: ${Qf}`);
+  // console.log(`Qf: ${Qf}`);
   let Hct = inputData["hematocrit"] / 100; // 0;
   let f = calcf(inputData["solutetype"], inputData["proteinbinding"]); // 1.0;
-  console.log(`f: ${f}`);
+  // console.log(`f: ${f}`);
   let Calb = 500;
   let Cp = 100;
   let DP0 = 40;
   let DP1 = 40;
   let PureUF = Qd <= 0 ? true : false; // false;
   let PureDialysis = Qf <= 0 ? true : false; //  = true;
-
+  
   let increment = 0.001;
   let Ka = (Cp - Cp * f) / Cp / f / (Calb - Cp + Cp * f);
   let Pa = (DP1 - DP0) / (DP1 + DP0);
@@ -1163,13 +1163,16 @@ function findClearances(inputData) {
 
 // for each treachment apply clearanceTable(eff_uf, inputData)
 function applyTreatment(eff_uf, inputData) {
+  document.body.style.backgroundColor = "#FFFFFF";
   var clearanceTable;
   var clearance;
+  var iter_count = 1;
 
   function fn(x, y, z) {
-    console.log(`goalseek fn(x) - try: x : ${x}`);
+    console.log(`goalseek fn(x) - iter_count: ${iter_count} try fn(x) : ${x}`);
     [clearanceTable, clearance] = calcClearanceTable(x, y, z);
     // console.log(`goalseek: clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
+    iter_count++;
     return clearanceTable[1000].Cd;
   }
   var fnParams = [45, eff_uf, inputData]; // first guess
@@ -1181,7 +1184,7 @@ function applyTreatment(eff_uf, inputData) {
       fnParams,
       percentTolerance: 10,
       maxIterations: 100,
-      maxStep: 5,
+      maxStep: 1, // 1.75, // 2.5, // 5,
       goal: 0.000000001,
       independentVariableIdx: 0, // the index position of the independent variable x in the fnParams array.
     });
@@ -1190,6 +1193,8 @@ function applyTreatment(eff_uf, inputData) {
     console.log(`final clearance: ${clearance}`);
     console.log(`result: ${result}`); */
   } catch (e) {
+    // this we failed to converge
+    document.body.style.backgroundColor = "#FFC0CB";
     console.error("error", e);
   }
   return [clearanceTable, clearance];

@@ -792,12 +792,15 @@ function calcWeeklyTable(treatmentTable, inputData) {
     console.log(`RIGHT: wt[sz[0]].conc_ext: ${wt[sz[0] - 1].conc_ext}`);
     console.log(`half_diff: ${half_diff}`);
     console.log(`updated extracell: ${extracell}`);
-    console.log(`Math.abs(wt[0].conc_ext - wt[last].conc_ext): ${Math.abs(wt[0].conc_ext - wt[last].conc_ext)}`); */
+    console.log(`Math.abs(wt[0].conc_ext - wt[last].conc_ext): ${Math.abs(wt[0].conc_ext - wt[last].conc_ext)}`); 
+    */
     console.log(`iteration: ${iteration}`);
     let max_iteration_limit = 100;
     if (iteration > max_iteration_limit) {
       // prevent a run-away loop
       console.log(`maximum iteration reached wt[last].conc_ext: ${wt[last].conc_ext}`);
+      // this we failed to converge
+      document.body.style.backgroundColor = "#FFFFE0";  // light yellow
       break;
     }
   } // outer (iteration) for loop ends here
@@ -1201,7 +1204,7 @@ function applyTreatment(eff_uf, inputData) {
     var result = brent({
       fn, 
       fnParams,
-      lowerBound: 45,
+      lowerBound: 1,
       upperBound: 145,
       tolerance: 1,
       maxIterations: 200, 
@@ -1348,6 +1351,7 @@ function fetchInputValues() {
     }
   });
 
+  data['koa'] = data['koa'] + 0.001;
   return data;
 }
 

@@ -1,5 +1,7 @@
 /* @flow */
 
+// Credit: https://gist.github.com/ryanspradlin/18c1010b7dd2d875284933d018c5c908
+
 // Derived from: https://en.wikipedia.org/wiki/Brent%27s_method#Algorithm
 
 // Brent's method is a hybrid root-finding algorithm that combines the

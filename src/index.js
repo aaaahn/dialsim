@@ -4,6 +4,7 @@ This file is part of Dialsim, released under the MIT License.
 See LICENSE.md for details.
 */
 import * as goalSeek from "goal-seek";
+import { brent } from './brent.ts';  
 var _ = require('lodash');
 
 let debug_mode = false;
@@ -791,12 +792,15 @@ function calcWeeklyTable(treatmentTable, inputData) {
     console.log(`RIGHT: wt[sz[0]].conc_ext: ${wt[sz[0] - 1].conc_ext}`);
     console.log(`half_diff: ${half_diff}`);
     console.log(`updated extracell: ${extracell}`);
-    console.log(`Math.abs(wt[0].conc_ext - wt[last].conc_ext): ${Math.abs(wt[0].conc_ext - wt[last].conc_ext)}`); */
+    console.log(`Math.abs(wt[0].conc_ext - wt[last].conc_ext): ${Math.abs(wt[0].conc_ext - wt[last].conc_ext)}`); 
+    */
     console.log(`iteration: ${iteration}`);
     let max_iteration_limit = 100;
     if (iteration > max_iteration_limit) {
       // prevent a run-away loop
       console.log(`maximum iteration reached wt[last].conc_ext: ${wt[last].conc_ext}`);
+      // this we failed to converge
+      document.body.style.backgroundColor = "#FFFFE0";  // light yellow
       break;
     }
   } // outer (iteration) for loop ends here
@@ -1161,6 +1165,10 @@ function findClearances(inputData) {
   return wt0;
 }
 
+function customToleranceFn(x){
+  return Math.abs(x) < 1 // (-1, +1)
+}
+
 // for each treachment apply clearanceTable(eff_uf, inputData)
 function applyTreatment(eff_uf, inputData) {
   document.body.style.backgroundColor = "#FFFFFF";
@@ -1168,6 +1176,7 @@ function applyTreatment(eff_uf, inputData) {
   var clearance;
   var iter_count = 1;
 
+  // (number, number, number ) => number
   function fn(x, y, z) {
     console.log(`goalseek fn(x) - iter_count: ${iter_count} try fn(x) : ${x}`);
     [clearanceTable, clearance] = calcClearanceTable(x, y, z);
@@ -1175,19 +1184,33 @@ function applyTreatment(eff_uf, inputData) {
     iter_count++;
     return clearanceTable[1000].Cd;
   }
-  var fnParams = [45, eff_uf, inputData]; // first guess
+  var fnParams = [99, eff_uf, inputData]; // first guess fn(Cd[0]) --> Cd[1000]
 
   // goal is to get Cd (result) to 0.001
   try {
+
+    /*
     var result = goalSeek.default({
       fn,
       fnParams,
-      percentTolerance: 10,
-      maxIterations: 100,
-      maxStep: 1, // 1.75, // 2.5, // 5,
+      customToleranceFn, // percentTolerance: 100,
+      maxIterations: 1000,
+      maxStep: 1, // 0.002, // 0.27, // 1, // 1.75, // 2.5, // 5,
       goal: 0.000000001,
       independentVariableIdx: 0, // the index position of the independent variable x in the fnParams array.
-    });
+    })
+*/
+
+    var result = brent({
+      fn, 
+      fnParams,
+      lowerBound: 1,
+      upperBound: 145,
+      tolerance: 1,
+      maxIterations: 200, 
+      independentVariableIdx: 0})
+    
+    ;
 /*
     console.log(`final clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
     console.log(`final clearance: ${clearance}`);
@@ -1328,6 +1351,7 @@ function fetchInputValues() {
     }
   });
 
+  data['koa'] = data['koa'] + 0.001;
   return data;
 }
 

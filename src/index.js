@@ -1353,7 +1353,6 @@ function fetchInputValues() {
 
   // salt
   data['hematocrit'] = data['hematocrit'] + 0.001;
-  // data['koa'] = data['koa'] + 0.002;
   data['koa'] = data['koa'] <= 1200 ? data['koa'] + 0.002 : data['koa'] + 0.00201
   return data;
 }

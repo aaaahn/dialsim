@@ -1,7 +1,7 @@
 {
   "name": "dialsim",
   "source": "index.html",
-  "version": "0.3.1",
+  "version": "0.4",
   "description": "dialsim project",
   "scripts": {
     "start": "npx parcel",

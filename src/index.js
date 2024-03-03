@@ -108,7 +108,7 @@ window.render_model_type = function render_model_type() {
   // Applying a class to make the difference obviously visible
   if (modeltype === "1Comp") {
     document.getElementById("label-volumeofdist").textContent = "Volume of Distribution (L)";
-    document.getElementById("volumeofdist").value = 42;
+    document.getElementById("volumeofdist").value = 36;
     document.getElementById("fluidgaincompartment1").value = 100;
     document.getElementById("label-volumeofdistcomp2l").style.display = "none";
     document.getElementById("volumeofdistcomp2l").style.display = "none";
@@ -1351,7 +1351,9 @@ function fetchInputValues() {
     }
   });
 
-  data['koa'] = data['koa'] + 0.001;
+  // salt
+  data['hematocrit'] = data['hematocrit'] + 0.001;
+  data['koa'] = data['koa'] <= 1200 ? data['koa'] + 0.002 : data['koa'] + 0.00201
   return data;
 }
 

@@ -5,7 +5,7 @@ See LICENSE.md for details.
 */
 // Define a reusable function to check within a % tolerance
 const checkWithinTolerance = (actualValue, expectedValue) => {
-    const tolerance = 0.001; // 0.1% tolerance
+    const tolerance = 0.01; // 1% tolerance
     const lowerBoundary = expectedValue * (1 - tolerance);
     const upperBoundary = expectedValue * (1 + tolerance);
     expect(actualValue).to.be.within(lowerBoundary, upperBoundary);

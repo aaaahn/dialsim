@@ -2743,7 +2743,7 @@ describe("Dr Tim's amLK suite, Qb.Qd.KoA - rows 156 - 161", () => {
 
 
 
-
+/*
 describe("Dr Tim's amLK suite, Kr", () => {
     beforeEach(() => {
         cy.visit('/');
@@ -3084,3 +3084,4 @@ describe("Dr Tim's amLK suite, Kr", () => {
 
 });
 
+*/

@@ -2,8 +2,8 @@ name: Cypress Tests
 on: push
 jobs:
   cypress-run:
-#    runs-on: ubuntu-22.04
-    runs-on: macos-latest
+    runs-on: ubuntu-22.04
+#    runs-on: macos-latest
     steps:  # there are three steps in this workflow
       - name: Checkout
         uses: actions/checkout@v4

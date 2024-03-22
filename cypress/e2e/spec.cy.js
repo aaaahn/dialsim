@@ -535,7 +535,7 @@ describe('Protein Binding Test, Under Solute Type of Plasma', () => {
     cy.visit('/');
   });
 
-  it('protein binding of 10 should result in avg clearance of 188.9 and TAC of 62.72', () => {
+  it('protein binding of 10 should result in avg clearance of 187.1 and TAC of 63.25', () => {
     cy.get('#duration').clear().type("3.33");
     cy.get('#bloodflow').clear().type("360");
     cy.get('#dialysateflow').clear().type("500");
@@ -548,11 +548,11 @@ describe('Protein Binding Test, Under Solute Type of Plasma', () => {
     cy.get('#volumeofdist').clear().type("42");  
     cy.get('#solve').click();
 
-    cy.get('#avgclearance').should('have.text', '188.9');
-    cy.get('#timeavgconc').should('have.text', '62.72');  //  54.59
+    cy.get('#avgclearance').should('have.text', '187.1');
+    cy.get('#timeavgconc').should('have.text', '63.25');  //  54.59
   });
 
-  it('protein binding of 20 should result in avg clearance of 204.5 and TAC of 58.51', () => {
+  it('protein binding of 20 should result in avg clearance of 175.8 and TAC of 66.85', () => {
     cy.get('#duration').clear().type("3.33");
     cy.get('#bloodflow').clear().type("360");
     cy.get('#dialysateflow').clear().type("500");
@@ -566,11 +566,11 @@ describe('Protein Binding Test, Under Solute Type of Plasma', () => {
     cy.get('#volumeofdist').clear().type("42");  
     cy.get('#solve').click();
 
-    cy.get('#avgclearance').should('have.text', '177.7');
-    cy.get('#timeavgconc').should('have.text', '66.22');  //  58.05  
+    cy.get('#avgclearance').should('have.text', '175.8');
+    cy.get('#timeavgconc').should('have.text', '66.85');  //  58.05  
   });
 
-  it('protein binding of 30 should result in avg clearance of 185.5 and TAC of 63.74', () => {
+  it('protein binding of 30 should result in avg clearance of 162.6 and TAC of 71.78', () => {
     cy.get('#duration').clear().type("3.33");
     cy.get('#bloodflow').clear().type("360");
     cy.get('#dialysateflow').clear().type("500");
@@ -583,7 +583,7 @@ describe('Protein Binding Test, Under Solute Type of Plasma', () => {
     cy.get('#volumeofdist').clear().type("42");  
     cy.get('#solve').click();
 
-    cy.get('#avgclearance').should('have.text', '166.4');
-    cy.get('#timeavgconc').should('have.text', '70.28');  //  
+    cy.get('#avgclearance').should('have.text', '162.6');
+    cy.get('#timeavgconc').should('have.text', '71.78');  //  
   });
 });

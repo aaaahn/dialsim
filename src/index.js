@@ -3,7 +3,6 @@ Dialsim Copyright © 2023 Andrew Y Ahn, Timothy W Meyer, Tammy L Sirich
 This file is part of Dialsim, released under the MIT License.
 See LICENSE.md for details.
 */
-import * as goalSeek from "goal-seek";
 import { brent } from './brent.ts';  
 var _ = require('lodash');
 
@@ -1206,7 +1205,7 @@ function applyTreatment(eff_uf, inputData) {
       fnParams,
       lowerBound: 1,
       upperBound: 145,
-      tolerance: 1,
+      tolerance: 0.0000000001, // 0.000000001,
       maxIterations: 200, 
       independentVariableIdx: 0})
     
@@ -1265,6 +1264,7 @@ window.calculateAndDraw = function calculateAndDraw() {
           inputData
         );
         // console.log(`ttcd apply i: ${i}`);
+        // console.log(`ttcd apply treatmentTable[i].clearance: ${treatmentTable[i].clearance}`);
       }
     }
   }
@@ -1350,10 +1350,6 @@ function fetchInputValues() {
       data[input.id] = input.value;
     }
   });
-
-  // salt
-  data['hematocrit'] = data['hematocrit'] + 0.001;
-  data['koa'] = data['koa'] <= 1200 ? data['koa'] + 0.002 : data['koa'] + 0.00201
   return data;
 }
 

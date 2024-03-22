@@ -55,7 +55,15 @@ export function brent({
     // Check if we have succeeded...
     if (fb === 0 || Math.abs(b - a) <= tolerance) {
       // Root found!
-      return b;
+      /*
+      console.log(`brent - root found fa: ${fa}`);
+      console.log(`brent - root found fb: ${fb}`);
+
+      console.log(`brent - root found b: ${b}`);
+      console.log(`brent - root found a: ${a}`);
+      console.log(`brent - root found Math.abs(b - a): ${Math.abs(b - a)}`);
+      */
+     return b;
     }
 
     // Try to use fast/less-reliable methods first...

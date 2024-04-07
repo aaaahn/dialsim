@@ -253,20 +253,7 @@ See LICENSE.md for details.
             oninput="debouncedReady();"
           />
         </div>
-        <div class="menu-item">
-          <label for="recirculation"> Recirculation (%)* </label>
-          <input
-            type="number"
-            id="recirculation"
-            name="recirculation"
-            required
-            step="1"
-            min="0"
-            max="999"
-            value="0"
-            oninput="debouncedReady();"
-          />
-        </div>
+       
         <div class="menu-item">
           <label for="solutetype"> Solute Type </label>
           <select name="solutetype" id="solutetype" onchange="render_solute_type(); debouncedReady();" >
@@ -438,12 +425,7 @@ See LICENSE.md for details.
             </label>
           </div>
 
-          <div>
-            <label>
-              <input type="checkbox" id="plotintra" onclick="ready();" />
-              Plot Intra.*
-            </label>
-          </div>
+         
 
           <div>
             <select name="charttype" id="charttype" onchange="ready();">

@@ -123,8 +123,8 @@ window.render_model_type = function render_model_type() {
     document.getElementById("label-intercompartmentalkc").style.display = "none";
     document.getElementById("intercompartmentalkc").style.display = "none";
     document.getElementById("label-fluidgaincompartment1").style.display = "none";
-    document.getElementById("label-fluidgaincompartment1").style.display = "none";
-    document.getElementById("fluidgaincompartment2").style.display = "none";
+    document.getElementById("fluidgaincompartment1").style.display = "none";
+    document.getElementById("label-fluidgaincompartment2").style.display = "none";
     document.getElementById("fluidgaincompartment2").style.display = "none";
   } else { // 2CompAdLib
     document.getElementById("label-volumeofdist").textContent = "Volume of Distribution: Comp 1 (L)";

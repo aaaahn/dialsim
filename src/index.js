@@ -126,6 +126,8 @@ window.render_model_type = function render_model_type() {
     document.getElementById("fluidgaincompartment1").style.display = "none";
     document.getElementById("label-fluidgaincompartment2").style.display = "none";
     document.getElementById("fluidgaincompartment2").style.display = "none";
+    document.getElementById("label-volumeofdistcomp2l").style.display = "none";
+    document.getElementById("volumeofdistcomp2l").style.display = "none";
   } else { // 2CompAdLib
     document.getElementById("label-volumeofdist").textContent = "Volume of Distribution: Comp 1 (L)";
     document.getElementById("volumeofdist").value = 14;
@@ -881,7 +883,7 @@ function find_local_maxima(xs) {
   let maxima = [];
   // iterate through all points and compare direct neighbors
   for (let i = 1; i < xs.length - 1; ++i) {
-    if (xs[i] > xs[i - 1] && xs[i] > xs[i + 1]) maxima.push(xs[i]);
+    if (xs[i] > xs[i - 1] && xs[i] > xs[i + 1] && xs[i] > xs[i - 2]&& xs[i] > xs[i + 2]&& xs[i] > xs[i - 3]&& xs[i] > xs[i + 3]) maxima.push(xs[i]);
   }
   return maxima;
 }
@@ -899,12 +901,17 @@ function buildSingleXYSet(xydata, i) {
   document.getElementById("timeavgconc").textContent =
     parseFloat(avg).toFixed(2);
   var maxs = find_local_maxima(y_values);
+   // console.log(`chart: ${chart}`);
+  console.log(`maxs: ${maxs}`)
+  var maxs_above_avg = maxs.filter(x => x > avg);
+  console.log(`maxs_above+abg: ${maxs_above_avg}`)
   var avg_max =
-    maxs.reduce((accumulator, currentValue) => {
+  maxs_above_avg.reduce((accumulator, currentValue) => {
       return accumulator + currentValue;
-    }, 0) / maxs.length;
+    }, 0) / maxs_above_avg.length;
   // console.log(`avg_max: ${avg_max}`);
   let avgpeakconc = parseFloat(avg_max).toFixed(2);
+  console.log(`avgpeakconc: ${avgpeakconc}`)
   document.getElementById("avgpeakconc").textContent = isNaN(avgpeakconc)
     ? parseFloat(avg).toFixed(2)
     : avgpeakconc;

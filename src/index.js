@@ -902,14 +902,22 @@ function buildSingleXYSet(xydata, i) {
     parseFloat(avg).toFixed(2);
   var maxs = find_local_maxima(y_values);
    // console.log(`chart: ${chart}`);
-  console.log(`maxs: ${maxs}`)
+  console.log(`maxs          : ${maxs}`)
   var maxs_above_avg = maxs.filter(x => x > avg);
-  console.log(`maxs_above+abg: ${maxs_above_avg}`)
+  console.log(`maxs_above_avg: ${maxs_above_avg}`)
+  console.log(`maxs.length: ${maxs.length}`)
+  console.log(`maxs_above_avg.length: ${maxs_above_avg.length}`)
+  /*
   var avg_max =
   maxs_above_avg.reduce((accumulator, currentValue) => {
       return accumulator + currentValue;
     }, 0) / maxs_above_avg.length;
-  // console.log(`avg_max: ${avg_max}`);
+  */
+  var avg_max =
+    maxs.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue;
+      }, 0) / maxs.length;
+    // console.log(`avg_max: ${avg_max}`);
   let avgpeakconc = parseFloat(avg_max).toFixed(2);
   console.log(`avgpeakconc: ${avgpeakconc}`)
   document.getElementById("avgpeakconc").textContent = isNaN(avgpeakconc)
@@ -1272,6 +1280,9 @@ window.calculateAndDraw = function calculateAndDraw() {
           treatmentTable[i].clear_uf,
           inputData
         );
+        treatmentTable[i].clearance = treatmentTable[i].clearance + inputData['endogenousclearance']
+        console.log(`treatmentTable[i].clearance: ${treatmentTable[i].clearance}`);
+
         // console.log(`ttcd apply i: ${i}`);
         // console.log(`ttcd apply treatmentTable[i].clearance: ${treatmentTable[i].clearance}`);
       }

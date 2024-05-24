@@ -1280,6 +1280,9 @@ window.calculateAndDraw = function calculateAndDraw() {
           treatmentTable[i].clear_uf,
           inputData
         );
+        treatmentTable[i].clearance = treatmentTable[i].clearance + inputData['endogenousclearance']
+        console.log(`treatmentTable[i].clearance: ${treatmentTable[i].clearance}`);
+
         // console.log(`ttcd apply i: ${i}`);
         // console.log(`ttcd apply treatmentTable[i].clearance: ${treatmentTable[i].clearance}`);
       }

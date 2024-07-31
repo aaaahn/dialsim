@@ -165,11 +165,25 @@ window.render_solute_type = function render_solute_type() {
   }
 };
 
+window.render_two_day_solve = function render_two_day_solve() {
+  const inputData = fetchInputValues();
+  let endogenousclearance_value = inputData["endogenousclearance"];
+  //console.log(`render_two_day_solve: ${endogenousclearance_value}`);
+  // Applying a class to make the difference obviously visible
+  if (endogenousclearance_value === 0) {
+    document.getElementById("two_day_solve").classList.add("disabled");
+  } else { // 
+    document.getElementById("two_day_solve").classList.remove("disabled");
+  }
+  
+};
+
 // This line ensures that the render_disabled function is called once the document's content has been fully loaded.
 document.addEventListener("DOMContentLoaded", render_disabled);
 document.addEventListener("DOMContentLoaded", render_disabled_uf);
 document.addEventListener("DOMContentLoaded", render_model_type);
 document.addEventListener("DOMContentLoaded", render_solute_type);
+document.addEventListener("DOMContentLoaded", render_two_day_solve);
 
 function calculatePrePostDilution(inputData) {
 let Qf = inputData["additionaluf"];
@@ -1200,6 +1214,14 @@ function applyTreatment(eff_uf, inputData) {
     iter_count++;
     return clearanceTable[1000].Cd;
   }
+  function fn2(x, y, z) {
+    console.log(`goalseek fn(x) - iter_count: ${iter_count} try fn(x) : ${x}`);
+    [clearanceTable, clearance] = calcClearanceTable(x, y, z);
+    // console.log(`goalseek: clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
+    iter_count++;
+    return clearanceTable[1000].Cd;
+  }
+
   var fnParams = [99, eff_uf, inputData]; // first guess fn(Cd[0]) --> Cd[1000]
 
   // goal is to get Cd (result) to 0.001
@@ -1344,6 +1366,119 @@ window.calculateAndDraw = function calculateAndDraw() {
   }
 };
 
+window.calculate2dayAndDraw = function calculate2dayAndDraw() {
+  const inputData = fetchInputValues();
+  console.log(inputData);
+
+  //
+
+  // assemble a list of eff_uf so that clearance values for each treatment day can be collected
+  // const ttable = document.getElementById("treatmentTable");
+  const treatmentTable = findClearances(inputData);
+
+  // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
+  // apply clearanceCalculation via goalSeek
+  var vTable;
+  for (let i = 0; i < treatmentTable.length; i++) {
+    if (treatmentTable[i].dialysis) {
+      // is there another treatment day with the same eff_uf? re-cycle the clearance
+      for (let j = 0; j < treatmentTable.length; j++) {
+        if (
+          i !== j &&
+          treatmentTable[i].eff_uf === treatmentTable[j].eff_uf &&
+          treatmentTable[j].clearance
+        ) {
+          treatmentTable[i].clearance = treatmentTable[j].clearance;
+          // console.log(`ttcd copy: i: ${i}, j: ${j}`);
+          break;
+        }
+      } // end inner cache search loop
+
+      // did the loop above manage to find a recylced clearance value?  if not, go calcualte one
+      if (!treatmentTable[i].clearance) {
+        [vTable, treatmentTable[i].clearance] = applyTreatment(
+          // treatmentTable[i].eff_uf,
+          treatmentTable[i].clear_uf,
+          inputData
+        );
+        treatmentTable[i].clearance = treatmentTable[i].clearance + inputData['endogenousclearance']
+        console.log(`treatmentTable[i].clearance: ${treatmentTable[i].clearance}`);
+
+        // console.log(`ttcd apply i: ${i}`);
+        // console.log(`ttcd apply treatmentTable[i].clearance: ${treatmentTable[i].clearance}`);
+      }
+    }
+  }
+  // Filter out invalid clearance values and then calculate the average
+  const validClearances = treatmentTable
+    .map((entry) => entry.clearance)
+    .filter((clearance) => clearance && clearance !== 0);
+  const avg_clearance =
+    validClearances.length > 0
+      ? validClearances.reduce((sum, clearance) => sum + clearance, 0) /
+        validClearances.length
+      : 0;
+  document.getElementById("avgclearance").textContent =
+    parseFloat(avg_clearance).toFixed(1);
+  populateTable(vTable, "clearanceTable");
+
+  try {
+    // populateTable(treatmentTable, ttable);
+    let weeklyTable = calcWeeklyTable(treatmentTable, inputData); // (clearanceValue) pass in co
+
+    // Create and update the line chart when "Solve" button is clicked
+    const chartData = weeklyTable.map((item) => ({
+      x: item.ptime,
+      y: inputData["charttype"] === "ConcvsTime" ? item.cext : item.vext,
+    }));
+    chartData.legend_text =
+      inputData["charttype"] === "ConcvsTime"
+        ? "Concentration(mg/dL) vs. Time(hours)"
+        : "Volume (liters) vs. Time (hours)";
+    chartData.legend_text_short =
+      inputData["charttype"] === "ConcvsTime" ? "Conc" : "Vol";
+    chartData.timeavgconclabel_text =
+      inputData["charttype"] === "ConcvsTime"
+        ? "Time-Averaged Conc. (mg/dL)"
+        : "Time-Averaged Volume (liters)";
+    chartData.avgpeakconclabel_text =
+      inputData["charttype"] === "ConcvsTime"
+        ? "Average Peak Conc. (mg/dL)"
+        : "Average Peak Volume (liters)";
+    chartData.plottac = inputData["plottac"];
+
+    // chartData is an array of xs and ys:
+    // [{x: 0, y: 123}, {x: 1, y: 134}..]
+    // pass on charting data under two conditions:
+    //  1. when the stack is empty (which means web page is in "factory state")
+    //  2. when hold is turned on
+    if (chartDataStack.length === 0 || !is_in_dynamic_mode()) {
+      chartDataStack.push(chartData);
+    }
+    // createChart(chartData);
+    // console.log(`chartDataStack.length: ${chartDataStack.length}`);
+    createChart(chartDataStack);
+
+    populateTable(weeklyTable, "weeklyTable");
+  } catch (e) {
+    console.error("error", e);
+  }
+};
+
+
+// save state and convert into JSON string
+// 
+function save_state() {
+  const inputData = fetchInputValues();
+  const state_string = JSON.stringify(inputData);
+  // state_string = '{'fluidgain':50, 'modeltype':1, 'volumeofdist':14, 'volumeofdistcomp2l':0, 'fluidgaincompartment1':0, 'fluidgaincompartment2':0, 'duration':3.33, 'charttype':'ConcvsTime', 'plottac':true, 'hold':false}';  
+  console.log(`state_string: ${state_string}`);
+  // Save the state to your desired storage mechanism
+  // For example, you can save it to local storage:
+  // localStorage.setItem('state', state);
+}
+
+// this function scrapes the DOM for all input elements and returns their values in an object (dictionary)
 function fetchInputValues() {
   // Select all input elements and convert NodeList to an array
   const inputs = Array.from(document.querySelectorAll("input, select"));

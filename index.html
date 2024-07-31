@@ -250,7 +250,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="debouncedReady();"
+            oninput="render_two_day_solve(); debouncedReady();"
           />
         </div>
        
@@ -437,6 +437,10 @@ See LICENSE.md for details.
           </div>
         </menu>
       </div>
+
+        <div><div></div>
+        <button id="two_day_solve" onclick="calculate2dayAndDraw();">Solve!</button> 
+        </div>
 
       <h3>Results</h3>
 

@@ -167,7 +167,7 @@ window.render_solute_type = function render_solute_type() {
 
 window.render_two_day_solve = function render_two_day_solve() {
   const inputData = fetchInputValues();
-  let endogenousclearance_value = inputData["endogenousclearance"];
+  let endogenousclearance_value = inputData["endogenousclearance2"];
   //console.log(`render_two_day_solve: ${endogenousclearance_value}`);
   // Applying a class to make the difference obviously visible
   if (endogenousclearance_value === 0) {
@@ -1219,7 +1219,8 @@ function applyTreatment(eff_uf, inputData) {
     [clearanceTable, clearance] = calcClearanceTable(x, y, z);
     // console.log(`goalseek: clearanceTable[1000].Cd: ${clearanceTable[1000].Cd}`);
     iter_count++;
-    return clearanceTable[1000].Cd;
+    //return stdKtV/d
+    return ;
   }
 
   var fnParams = [99, eff_uf, inputData]; // first guess fn(Cd[0]) --> Cd[1000]
@@ -1370,99 +1371,70 @@ window.calculate2dayAndDraw = function calculate2dayAndDraw() {
   const inputData = fetchInputValues();
   console.log(inputData);
 
+
+  // given spKt/V, so can find the equilibrated value
+  // eKtV = spKt/V*duration/(duration + 30))
+  //stdKtV/d wihtout residual function = (10080(1-e^(-eKtV))/t)/((((1-e^(-eKtV))/t)/eKtV)+10080/Nt - 1)/(1-0.74/F(Uf/V))
+  // t = duration, V = volume, N & F = number_of_treatments, Uf = ultrafiltration rate, 
   //
+  //stdKtV/d = stdKtV/d wihtout residual function + endogenousclearance*10080/V
+  //
+  // using this formula, we need to find the duration that will give us the desired stdKtV/d, which is over 2.3
+  //is duration in seconds?? -- probably
+  // convert endogenous clearance into proper
+  
+  var stdKtV_d = 10;
+  //var spKt_V = 1.4;
+  
+  //console.log(`duration: ${duration}`)
+  var number_of_treatments =
+    inputData["monday"] +
+    inputData["tuesday"] +
+    inputData["wednesday"] +
+    inputData["thursday"] +
+    inputData["friday"] +
+    inputData["saturday"] +
+    inputData["sunday"];
+  //console.log(`number_of_treatments: ${number_of_treatments}`)
+  //console.log(`inputData["additionaluf"]: ${inputData["weeklyuf"]}`)
+  var duration_in_mins = hours_to_mins(inputData["duration"]);
+  var eKtV = inputData["spKt_V"]*duration_in_mins/(duration_in_mins + 30);
+  duration_in_mins = 3 * duration_in_mins;
+  console.log(`eKtV: ${eKtV}`);
+  //console.log(`(1-2.718**(-eKtV)))/eKtV: ${(1-2.718**(-eKtV))/eKtV}`);
+  while(stdKtV_d > 2.3) {
+    //console.log(`duration_in_mins: ${duration_in_mins}`);
+    
+    var stdKtV_dwo = (10080*(1-2.718**(-eKtV))/duration_in_mins)/((((1-2.718**(-eKtV)))/eKtV)+10080/number_of_treatments/duration_in_mins - 1)/(1-(0.74/number_of_treatments)*((inputData["weeklyuf"])/((inputData["volumeofdist2"])*1000)));
+    console.log(`stdKtV_dwo: ${stdKtV_dwo}`);
+    console.log(`endogclear: ${inputData["endogenousclearance2"]}`);
+    console.log(`volofdist: ${inputData["volumeofdist2"]}`);
+    stdKtV_d = stdKtV_dwo + (inputData["endogenousclearance2"])*10080/(inputData["volumeofdist2"])/1000;
+    console.log(`stdKtV_d: ${stdKtV_d}`);
+    console.log(`duration_in_mins: ${duration_in_mins}`);
+    duration_in_mins -= 5;
+  }
+  document.getElementById("two_day_duration").textContent =
+    duration_in_mins + 5 + " minutes";
+  // wecan then simply run the former calculate2dayAndDraw() function as it was, but with the new duration value and different days
 
-  // assemble a list of eff_uf so that clearance values for each treatment day can be collected
+
+
+  //  change the days that are checked to be monday and thursday, can manually do that with the table
+    // and the rest to be unchecked
+
+  //treatmentTable[___] = TRUE;
+  //treatmentTable[___] = FALSE;
+  //treatmentTable[___] = FALSE;
+  //treatmentTable[___] = TRUE;
+  //treatmentTable[___] = FALSE;
+  //treatmentTable[___] = FALSE;  
+  //treatmentTable[___] = FALSE;
+
+  // 
+  // assemble a list of eff_uf so that clearance values for each treatment day cand be collected
   // const ttable = document.getElementById("treatmentTable");
-  const treatmentTable = findClearances(inputData);
-
-  // loop thru treatmentTable[0..6].eff_uf and build out treatmentTable[0..6].clearance
-  // apply clearanceCalculation via goalSeek
-  var vTable;
-  for (let i = 0; i < treatmentTable.length; i++) {
-    if (treatmentTable[i].dialysis) {
-      // is there another treatment day with the same eff_uf? re-cycle the clearance
-      for (let j = 0; j < treatmentTable.length; j++) {
-        if (
-          i !== j &&
-          treatmentTable[i].eff_uf === treatmentTable[j].eff_uf &&
-          treatmentTable[j].clearance
-        ) {
-          treatmentTable[i].clearance = treatmentTable[j].clearance;
-          // console.log(`ttcd copy: i: ${i}, j: ${j}`);
-          break;
-        }
-      } // end inner cache search loop
-
-      // did the loop above manage to find a recylced clearance value?  if not, go calcualte one
-      if (!treatmentTable[i].clearance) {
-        [vTable, treatmentTable[i].clearance] = applyTreatment(
-          // treatmentTable[i].eff_uf,
-          treatmentTable[i].clear_uf,
-          inputData
-        );
-        treatmentTable[i].clearance = treatmentTable[i].clearance + inputData['endogenousclearance']
-        console.log(`treatmentTable[i].clearance: ${treatmentTable[i].clearance}`);
-
-        // console.log(`ttcd apply i: ${i}`);
-        // console.log(`ttcd apply treatmentTable[i].clearance: ${treatmentTable[i].clearance}`);
-      }
-    }
-  }
-  // Filter out invalid clearance values and then calculate the average
-  const validClearances = treatmentTable
-    .map((entry) => entry.clearance)
-    .filter((clearance) => clearance && clearance !== 0);
-  const avg_clearance =
-    validClearances.length > 0
-      ? validClearances.reduce((sum, clearance) => sum + clearance, 0) /
-        validClearances.length
-      : 0;
-  document.getElementById("avgclearance").textContent =
-    parseFloat(avg_clearance).toFixed(1);
-  populateTable(vTable, "clearanceTable");
-
-  try {
-    // populateTable(treatmentTable, ttable);
-    let weeklyTable = calcWeeklyTable(treatmentTable, inputData); // (clearanceValue) pass in co
-
-    // Create and update the line chart when "Solve" button is clicked
-    const chartData = weeklyTable.map((item) => ({
-      x: item.ptime,
-      y: inputData["charttype"] === "ConcvsTime" ? item.cext : item.vext,
-    }));
-    chartData.legend_text =
-      inputData["charttype"] === "ConcvsTime"
-        ? "Concentration(mg/dL) vs. Time(hours)"
-        : "Volume (liters) vs. Time (hours)";
-    chartData.legend_text_short =
-      inputData["charttype"] === "ConcvsTime" ? "Conc" : "Vol";
-    chartData.timeavgconclabel_text =
-      inputData["charttype"] === "ConcvsTime"
-        ? "Time-Averaged Conc. (mg/dL)"
-        : "Time-Averaged Volume (liters)";
-    chartData.avgpeakconclabel_text =
-      inputData["charttype"] === "ConcvsTime"
-        ? "Average Peak Conc. (mg/dL)"
-        : "Average Peak Volume (liters)";
-    chartData.plottac = inputData["plottac"];
-
-    // chartData is an array of xs and ys:
-    // [{x: 0, y: 123}, {x: 1, y: 134}..]
-    // pass on charting data under two conditions:
-    //  1. when the stack is empty (which means web page is in "factory state")
-    //  2. when hold is turned on
-    if (chartDataStack.length === 0 || !is_in_dynamic_mode()) {
-      chartDataStack.push(chartData);
-    }
-    // createChart(chartData);
-    // console.log(`chartDataStack.length: ${chartDataStack.length}`);
-    createChart(chartDataStack);
-
-    populateTable(weeklyTable, "weeklyTable");
-  } catch (e) {
-    console.error("error", e);
-  }
+  
 };
 
 

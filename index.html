@@ -250,7 +250,7 @@ See LICENSE.md for details.
             min="0"
             max="999"
             value="0"
-            oninput="render_two_day_solve(); debouncedReady();"
+            oninput="debouncedReady();"
           />
         </div>
        
@@ -299,7 +299,7 @@ See LICENSE.md for details.
             <option value="2CompAdLib">2 Comp Ad Lib</option>
           </select>
         </div>
-
+        
         <div class="menu-item">
           <label id="label-volumeofdist"> Volume of Distribution (L) </label>
           <input
@@ -378,6 +378,83 @@ See LICENSE.md for details.
           />
         </div>
         
+        <h3>Two Day Dialysis Parameters</h3>
+        <div class="menu-item">
+          <label for="spKt_V"> spKt/V (per treatment) </label>
+            <input
+              type="number"
+              id="spKt_V"
+              name="spKt_V"
+              required
+              step="0.1"
+              min="0"
+              max="9"
+              value="1.4"
+              oninput="debouncedReady();"
+            />
+          </div>
+          <div class="menu-item">
+            <label for="duration2"> Duration(hours) </label>
+              <input
+                type="number"
+                id="duration2"
+                name="duration2"
+                required
+                step="0.5"
+                min="0"
+                max="9"
+                value="3.5"
+                oninput="debouncedReady();"
+              />
+            </div>
+            <div class="menu-item">
+              <label for="endogenousclearance2">
+                Endogenous Clearance (mL/min)
+              </label>
+              <input
+                type="number"
+                id="endogenousclearance2"
+                name="endogenousclearance2"
+                required
+                step="1"
+                min="0"
+                max="999"
+                value="0"
+                oninput="render_two_day_solve(); debouncedReady();"
+              />
+            </div>
+            <div class="menu-item">
+              <label id="label-volumeofdist2"> Volume of Distribution (L) </label>
+              <input
+                type="number"
+                id="volumeofdist2"
+                name="volumeofdist2"
+                required
+                step="10"
+                min="0"
+                max="1000"
+                value="36"
+                oninput="debouncedReady();"
+              />
+            </div>
+            <div class="menu-item">
+              <label id="weeklyuf"> Weekly UF (L) </label>
+              <input
+                type="number"
+                id="weeklyuf"
+                name="weeklyuf"
+                step="1"
+                min="0"
+                max="999"
+                value="0"
+                oninput="debouncedReady();" 
+              />
+            </div>
+            <span id="two_day_duration"></span>
+            <div><div></div>
+            <button id="two_day_solve" onclick="calculate2dayAndDraw();">Solve!</button> 
+            </div>
+
         <div class="menu-item"> <p></p></div>
         <div class="menu-item"> <p></p></div>
         <div class="menu-item"> <p></p></div>
@@ -438,12 +515,11 @@ See LICENSE.md for details.
         </menu>
       </div>
 
-        <div><div></div>
-        <button id="two_day_solve" onclick="calculate2dayAndDraw();">Solve!</button> 
-        </div>
+    
+      
 
       <h3>Results</h3>
-
+    
       <div id="menu3">
         <menu>
           <div class="menu-item">

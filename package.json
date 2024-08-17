@@ -12,6 +12,7 @@
     "cypress:rundrtimsuite": "npx cypress run --spec cypress/e2e/tmeyer_amlk.cy.js"
   },
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "chart.js": "4.4.2",
     "goal-seek": "^0.1.4",
     "lodash": "^4.17.21",

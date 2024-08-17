@@ -1383,39 +1383,37 @@ window.calculate2dayAndDraw = function calculate2dayAndDraw() {
   //is duration in seconds?? -- probably
   // convert endogenous clearance into proper
   
-  var stdKtV_d = 10;
+  var stdKtV_d = 0;
   //var spKt_V = 1.4;
   
   //console.log(`duration: ${duration}`)
-  var number_of_treatments =
-    inputData["monday"] +
-    inputData["tuesday"] +
-    inputData["wednesday"] +
-    inputData["thursday"] +
-    inputData["friday"] +
-    inputData["saturday"] +
-    inputData["sunday"];
+  var number_of_treatments = 2;
   //console.log(`number_of_treatments: ${number_of_treatments}`)
   //console.log(`inputData["additionaluf"]: ${inputData["weeklyuf"]}`)
   var duration_in_mins = hours_to_mins(inputData["duration"]);
+  
+  duration_in_mins = duration_in_mins;
   var eKtV = inputData["spKt_V"]*duration_in_mins/(duration_in_mins + 30);
-  duration_in_mins = 3 * duration_in_mins;
   console.log(`eKtV: ${eKtV}`);
   //console.log(`(1-2.718**(-eKtV)))/eKtV: ${(1-2.718**(-eKtV))/eKtV}`);
-  while(stdKtV_d > 2.3) {
+  while(stdKtV_d < 2.3) {
     //console.log(`duration_in_mins: ${duration_in_mins}`);
-    
-    var stdKtV_dwo = (10080*(1-2.718**(-eKtV))/duration_in_mins)/((((1-2.718**(-eKtV)))/eKtV)+10080/number_of_treatments/duration_in_mins - 1)/(1-(0.74/number_of_treatments)*((inputData["weeklyuf"])/((inputData["volumeofdist2"])*1000)));
+    var spKt_V = hours_to_mins(inputData["duration"]) * duration_in_mins/((inputData["volumeofdist2"])*1000)*(duration_in_mins + 30)/duration_in_mins;
+    eKtV = spKt_V*duration_in_mins/(duration_in_mins + 30);
+    var stdKtV_dwo = (10080*(1-2.718**(-eKtV))/duration_in_mins)/((((1-2.718**(-eKtV)))/eKtV)+10080/number_of_treatments/duration_in_mins - 1)/(1-(0.74*(inputData["weeklyuf"]))/(number_of_treatments*((inputData["volumeofdist2"]))));
+    //console.log(`UFF factor: ${1/(1-(0.74*(inputData["weeklyuf"]))/(number_of_treatments*((inputData["volumeofdist2"]))))}`);
+    //console.log(`exp: ${(2.718**(-eKtV))}`);
+    //console.log(`exp: ${(10080*(1-2.718**(-eKtV)))}`);
+    //console.log(`alpha: ${1-2.718**(-eKtV)}`);
     console.log(`stdKtV_dwo: ${stdKtV_dwo}`);
     console.log(`endogclear: ${inputData["endogenousclearance2"]}`);
     console.log(`volofdist: ${inputData["volumeofdist2"]}`);
     stdKtV_d = stdKtV_dwo + (inputData["endogenousclearance2"])*10080/(inputData["volumeofdist2"])/1000;
     console.log(`stdKtV_d: ${stdKtV_d}`);
     console.log(`duration_in_mins: ${duration_in_mins}`);
-    duration_in_mins -= 5;
+    duration_in_mins += 1;
   }
-  document.getElementById("two_day_duration").textContent =
-    duration_in_mins + 5 + " minutes";
+  document.getElementById("two_day_duration").textContent = duration_in_mins - 1 + " minutes";
   // wecan then simply run the former calculate2dayAndDraw() function as it was, but with the new duration value and different days
 
 

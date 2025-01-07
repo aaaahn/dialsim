@@ -8,8 +8,10 @@ See LICENSE.md for details.
   <head>
     <meta charset="UTF-8" />
     <title>Dialsim</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./src/styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script type="module" src="src/index.js"></script>
     <style>
       body {
@@ -79,10 +81,21 @@ See LICENSE.md for details.
   </head>
 
   <body>
+    <ul class="nav nav-pills justify-content-center"  id="pills-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Three-Day</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Two-day</button>
+      </li>
+
+
     <div id="menu">
       <menu>
         <!-- Your menu components here -->
-        <h3>Dialysis Parameters</h3>
+  <div class="tab-content">      
+  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0"> 
+    <h3>Dialysis Parameters</h3>
         <div class="menu-item">
         <label for="duration"> Duration(hours) </label>
           <input
@@ -377,8 +390,9 @@ See LICENSE.md for details.
             oninput="debouncedReady();"
           />
         </div>
-        
-        <h3>Two Day Dialysis Parameters</h3>
+  </div>
+  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="1">
+    <h3>Two Day Dialysis Parameters</h3>
         <div class="menu-item">
           <label for="spKt_V"> spKt/V (per treatment) </label>
             <input
@@ -453,27 +467,37 @@ See LICENSE.md for details.
             <span id="two_day_duration"></span>
             <div><div></div>
             <button id="two_day_solve" onclick="calculate2dayAndDraw();">Solve!</button> 
-            </div>
+            </div>  
+  </div>
+</div>
+  
+        
+        
 
-        <div class="menu-item"> <p></p></div>
-        <div class="menu-item"> <p></p></div>
-        <div class="menu-item"> <p></p></div>
-        <div class="menu-item"> <p></p></div>
-        <div class="menu-item"> <p></p></div>
-        <div class="menu-item"> <p></p></div>
-        <div class="menu-item"> <p></p></div>
-        <div class="menu-item"> 
-          <label id="literspertreatment" onclick="toggle_debug_mode(); debouncedReady();">(L/t) Liters per treatment</label>
-          <div class="menu-item"> <p></p></div>
-        </div>
-          <img alt="GitHub Release" src="https://img.shields.io/github/v/release/aaaahn/dialsim">
-        <div>
-          <a href="https://github.com/aaaahn/dialsim/blob/main/LICENSE.md">License</a>
-        </div>
+  <div class="menu-item"> <p></p></div>
+  <div class="menu-item"> <p></p></div>
+  <div class="menu-item"> <p></p></div>
+  <div class="menu-item"> <p></p></div>
+  <div class="menu-item"> <p></p></div>
+  <div class="menu-item"> <p></p></div>
+  <div class="menu-item"> <p></p></div>
+  <div class="menu-item"> 
+    <label id="literspertreatment" onclick="toggle_debug_mode(); debouncedReady();">(L/t) Liters per treatment</label>
+    <div class="menu-item"> <p></p></div>
+  </div>
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/aaaahn/dialsim">
+  <div>
+    <a href="https://github.com/aaaahn/dialsim/blob/main/LICENSE.md">License</a>
+  </div>
 
-      </menu>
+</menu>
+</div>
+</div>
 
-    </div>
+</div>
+
+</ul> 
+
 
     <div class="right-side">
       <br /><br /><br />
@@ -644,5 +668,6 @@ See LICENSE.md for details.
       <table id="weeklyTable"></table>
     </details>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

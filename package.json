@@ -12,7 +12,7 @@
     "cypress:rundrtimsuite": "npx cypress run --spec cypress/e2e/tmeyer_amlk.cy.js"
   },
   "dependencies": {
-    "chart.js": "4.4.2",
+    "chart.js": "4.4.8",
     "goal-seek": "^0.1.4",
     "lodash": "^4.17.21",
     "prettier": "^3.0.3"
